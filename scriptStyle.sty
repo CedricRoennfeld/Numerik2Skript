@@ -20,6 +20,7 @@
 \usepackage{amsmath, amsthm, amssymb, amsfonts} % AMS
 
 \usepackage[german, english]{babel}
+\usepackage{mathtools}
 
 % We use 'etoolbox' to hook into \section, and 'fancyhdr' for headers/footers.
 \usepackage{etoolbox}
@@ -80,7 +81,8 @@
 \SetKwProg{UntilTe}{until}{}{}
 \SetKwProg{OutputTe}{Ausgame}{}{}
 \SetKwProg{InputTe}{Eingabe: }{}{}
-\SetKwProg{InitTe}{Initialisierung: }{}{}
+\SetKwInput{InitTe}{Initialisierung: }
+\SetKwInput{ErgTe}{Ergebnis: }
 
 
 
@@ -200,5 +202,9 @@
 
 \newcommand{\vertiii}[1]{{\left\vert\kern-0.25ex\left\vert\kern-0.25ex\left\vert #1 
     \right\vert\kern-0.25ex\right\vert\kern-0.25ex\right\vert}}
+
+
+\newcommand{\Span}[1]{\text{span}\{#1\}}
+
 
 \endinput
