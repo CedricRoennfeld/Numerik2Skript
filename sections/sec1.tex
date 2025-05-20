@@ -1,0 +1,171 @@
+\section{Wiederholung}
+Wir starten mit einer kurzen Wiederholung zur Fixpunktiteration zum Lösen von Gleichungen 
+der Form $Tx=x$ durch $x_{n+1}=Tx_n$.
+
+\begin{thmbox}{Satz}[Banach 1922]
+    Sei $M$ eine abgeschlossene nichtleere Teilmenge in einem vollständig metrischem Raum $(X,d)$. 
+    Sei $T:M\rightarrow M$ eine Selbstabbildung und $k$-kontraktiv, d.h. $d(Tx,Ty)\leq k\cdot d(x,y)\ \forall x,y\in M$ 
+    mit $0\leq k < 1$. Dann folgt:
+    \begin{enumerate}
+        \item Existenz und Eindeutigkeit: die Gleichung $Tx=x$ hat genau eine Lösung, d.h. $T$ hat genau einen 
+        Fixpunkt in M.
+        \item Konvergenz der Iteration $x_{k+1}=Tx_k$. Die Folge $(x_k)_{k\in\mathbb{N}}$ konvergiert gegen den 
+        Fixpunkt $x^*$ für einen beliebigen Startpunkt $x_0\in M$.
+        \item Fehlerabschätzung: Für alle $n=0,1,\dotsc$ gilt 
+        \begin{itemize}
+            \item a-priori: $d(x_n,x^*)\leq k^n(1-k)^{-1}d(x_0,x_1)$
+            \item a-posteriori: $d(x_{n+1},x^*)\leq k(1-k)^{-1}d(x_n,x_{n+1})$
+        \end{itemize}
+        \item Konvergenzrate: Für alle $n\in\mathbb{N}$ gilt $d(x_{n+1},x^*)\leq k\cdot d(x_n,x^*)$
+    \end{enumerate}
+\end{thmbox}
+\textit{Beweis.} 
+\begin{enumerate}
+    \item[2.] Wir zeigen, dass $(x_n)$ eine Cauchy-Folge ist. Für den Abstand zweier benachbarter Folgeglieder $x_n$ 
+    und $x_{n+1}$ gilt
+    \[d(x_n,x_{n+1})=d(Tx_{n-1},Tx_n)\leq k\cdot d(x_{n-1},x_n)\leq \dotsc \leq k^n\cdot d(x_0,x_1)\]
+    Mehrfache Anwendung der Dreiecksungleichung liefert daher für $n,m\in\mathbb{N}$:
+    \begin{align*}
+        d(x_n,x_{n+m}) &\leq d(x_n,x_{n+1}) + d(x_{n+1},x_{n+2}) + \dotsc + d(x_{n+m-1}, x_{n+m}) \\
+        & \leq (k^n + k^{n+1} + \dotsc + k^{n+m})\cdot d(x_0,x_1) \\
+        & \leq k^n(1+k+k^2+\dotsc)\cdot d(x_0,x_1) \\
+        & = k^n\cdot(1-k)^{-1}d(x_0,x_1)
+    \end{align*}
+    Demnach folgt $d(x_n,x_{n+m})\rightarrow 0$ für $n\rightarrow \infty$ und da $X$ vollständig ist 
+    konvergiert $(x_n)$ gegen ein $x^*\in X$.
+    \item[1.] Da $T$ stetig ist (aufgrund $k$-Kontraktivität) folgt für die konvergente Folge $(x_n)$, dass 
+    \[x^* = \lim_{n\rightarrow\infty} x_{n+1} = \lim_{n\rightarrow\infty} Tx_n = Tx^*\]
+    Da $M$ abgeschlossen ist existiert also ein Fixpunkt in $M$. \\
+    Dieser ist eindeutig, denn für $x,y$ mit $Tx=x$ und $Ty=y$ gilt $d(x,y)=d(Tx,Ty)\leq k d(x,y)$, also $d(x,y)=0$.
+    \item[3.] Aus dem Beweis zu 2. haben wir $d(x_n,x_{n+m})\leq k^n(1-k)^{-1}d(x_0,x_1)$, wegen der Stetigkeit 
+    der Metrik folgt die a-priori-Fehlerabschätzung aus $m\rightarrow\infty$. \\
+    Die a-posteriori-Fehlerabschätzung folgt analog aus dem Ansatz
+    \begin{align*}
+        d(x_{n+1},x_{n+1+m}) &\leq d(x_{n+1},x_{n+2}) + \dotsc + d(x_{n+m}, x_{n+1+m}) \\
+        & \leq (k + \dotsc + k^{m})\cdot d(x_n,x_{n+1}) \\
+        & \leq k\cdot(1-k)^{-1}d(x_n,x_{n+1})
+    \end{align*}
+    \item[4.] Folgt direkt durch $d(x_{n+1},x^*)=d(Tx_n,Tx^*)\leq k\cdot d(x_n,x^*)$ 
+\end{enumerate}
+
+\begin{egbox} 
+    Wir betrachten das Nullstellenproblem $f:\mathbb{R}\rightarrow\mathbb{R}, x\mapsto \cos x - x = 0$. \\
+    Umformung ergibt $\underbrace{\cos x}_{Tx} = x$ und somit die Fixpunktiteration $x_{k+1}=Tx_k=\cos(x_k)$ \\
+    \begin{center}
+        \begin{tikzpicture}
+        \begin{axis}[
+            axis lines=middle,
+            xmin=0, xmax=2,
+            ymin=0, ymax=1.1,
+            xtick={1.5708},
+            xticklabels={$\frac{\pi}{2}$},
+            ytick=\empty,
+            grid=none,
+            width=9cm,
+            height=6cm,
+            domain=0:2,
+            samples=200,
+            clip=false,
+            xlabel=$x$,
+            ylabel=$y$,
+            every axis x label/.style={at={(axis description cs:1.05,0)},anchor=west},
+            every axis y label/.style={at={(axis description cs:0,1.05)},anchor=south},
+        ]
+            
+            % Funktionsgraphen
+            \addplot[thick, black, domain=0:2] {cos(deg(x))} node[pos=0.6, above right] {$f(x)=\cos x$};
+            \addplot[thick, black, domain=0:1.1] {x} node[pos=0.9, above left] {$g(x)=x$};
+            
+            % Fixpunktlinie
+            \addplot[dashed, black] coordinates {(0.739,0) (0.739,0.739)};
+            
+            % Punkt auf der Diagonalen
+            \filldraw[black] (axis cs:0.739,0.739) circle (2pt);
+            \node at (axis cs:0.739,-0.06) {$x^*$};
+        \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \underline{Prüfung der Voraussetzungen des Banach'schen FP-Satzes:} \\
+    Wir wählen als Einschränkung $M=[0,1]$, dies liefert uns eine Selbstabbildung auf einer abgeschlossenen 
+    Teilmenge $M$ des vollständig metrischen Raum $\mathbb{R}$ mit der Abstandsfunktion $ d(x,y) = |x-y|$. \\
+    Weiter ist die Abbildung $k$-kontraktiv:  Nach Mittelwertsatz der Differentialrechnung gilt 
+    \[|\cos x - \cos y| = \underbrace{|\sin \xi|}_{\leq \sin(1)}\cdot|x-y|\leq \underbrace{0,85}_{=:k}\cdot |x-y|, 
+    \quad \text{für } \xi\in[0,1]\]
+    Wir können also nach Banach die Existenz und Eindeutigkeit eines Fixpunkt $x^*$ folgern, diesen Fixpunkt 
+    finden wir durch die konvergente Folge $x_{k+1}=\cos x_k$. 
+\end{egbox}
+Wir betrachten im folgenden die Idee der Umwandlung eines Nullstellenproblems in Fixpunkt-Gleichung noch etwas 
+allgemeiner. Für eine Gleichung $f(x)=0$ mit $f:\mathbb{R}\rightarrow\mathbb{R}$ haben wir verschiedene Möglichkeiten 
+zur Umformung:\\
+\begin{enumerate}
+    \item[a)] Betrachte $Tx := x-f(x)$ gefolgert aus $f(x)=0\Leftrightarrow -f(x)=0 \Leftrightarrow x-f(x)=x$.
+    \item[b)] Betrachte $Tx := x-\omega \cdot f(x)$ mit $\omega\neq 0$ (lineare Relaxation)
+    \item[c)] Betrachte $Tx:=x-\omega \cdot g(f(x))$ mit $\omega \neq 0$ und geeigneter Funktion $g$ 
+    (nichtlineare Relaxation). Wenn $g(0)\neq 0$ dann betrachte $Tx:=x-\omega\cdot(g(f(x))+g(0))$
+    \newpage
+    \item[d)] Betrachte $Tx:=x-(f'(x))^{-1} f(x)$ (Newtonverfahren) \\
+    Newton hat teils Probleme, bei falschen Startwerten: \\
+    \begin{center}
+        \begin{tikzpicture}
+
+        % Startwert
+        \pgfmathsetmacro{\xzero}{1.5}
+        \pgfmathsetmacro{\fxzero}{\xzero * exp(-\xzero^2)}
+        \pgfmathsetmacro{\dfxzero}{exp(-\xzero^2) * (1 - 2 * \xzero^2)}
+        \pgfmathsetmacro{\xone}{\xzero - \fxzero / \dfxzero}
+
+        \pgfmathsetmacro{\fxone}{\xone * exp(-\xone^2)}
+        \pgfmathsetmacro{\dfxone}{exp(-\xone^2) * (1 - 2 * \xone^2)}
+        \pgfmathsetmacro{\xtwo}{\xone - \fxone / \dfxone}
+
+        \pgfmathsetmacro{\fxtwo}{\xtwo * exp(-\xtwo^2)}
+        \pgfmathsetmacro{\dfxtwo}{exp(-\xtwo^2) * (1 - 2 * \xtwo^2)}
+        \pgfmathsetmacro{\xthree}{\xtwo - \fxtwo / \dfxtwo}
+
+        \begin{axis}[
+            axis lines=middle,
+            xmin=-.1, xmax=3,
+            ymin=-0.4, ymax=0.4,
+            samples=300,
+            width=12cm,
+            height=7cm,
+            domain=-.1:3,
+            clip=false,
+            xtick=\empty,
+            ytick=\empty,
+        ]
+        
+            % Funktion f(x) = x*exp(-x^2)
+            \addplot[thick, black] {x * exp(-x^2)} node[pos=0.2, above left] {$f(x)$};
+
+            % Punkte (x0, x1, x2)
+            \addplot[only marks, mark=*, mark size=2pt] coordinates {
+            (\xzero, \fxzero)
+            (\xone, \fxone)
+            (\xtwo, \fxtwo)
+            };
+            
+            % Beschriftung der x-Werte
+            \node at (axis cs:\xzero,-0.08) {$x_0$};
+            \node at (axis cs:\xone,-0.08) {$x_1$};
+            \node at (axis cs:\xtwo,-0.08) {$x_2$};
+
+            % Tangente bei x0
+            \addplot[dashed, domain=\xzero-1:\xzero+1] {\fxzero + \dfxzero*(x - \xzero)};
+            % Tangente bei x1
+            \addplot[dashed, domain=\xone-1:\xone+1] {\fxone + \dfxone*(x - \xone)};
+            % Tangente bei x2
+            \addplot[dashed, domain=\xtwo-1:\xtwo+1] {\fxtwo + \dfxtwo*(x - \xtwo)};
+            
+            % Pfeile
+            %\draw[->, thick] (axis cs:\xzero,\fxzero) -- (axis cs:\xone,0);
+            %\draw[->, thick] (axis cs:\xone,\fxone) -- (axis cs:\xtwo,0);
+            %\draw[->, thick] (axis cs:\xtwo,\fxtwo) -- (axis cs:\xthree,0);
+            
+            \node at (axis cs:\xthree,-0.08) {$x_3$};
+
+        \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \item[e)] Betrachte $Tx:=h^{-1}(f(x)-g(x))$, wobei $f(x)=h(x)+g(x)$ (Splitting-Verfahren) 
+\end{enumerate}
