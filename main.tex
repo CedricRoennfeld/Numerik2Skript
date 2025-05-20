@@ -5,7 +5,9 @@
 
 \begin{document}
 
-\section{Wiederholung?}
+\tableofcontents
+
+\section{Wiederholung}
 Wir starten mit einer kurzen Wiederholung zur Fixpunktiteration zum Lösen von Gleichungen 
 der Form $Tx=x$ durch $x_{n+1}=Tx_n$.
 
@@ -448,15 +450,16 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
     \begin{algorithm}[H]
         \SetAlgoNoLine
         \InitTe{$A\in \mathbb{K}^{n\times n}$ sei hermitisch und positiv definit.}
-        \ErgTe{$x^{(k)}$ als Approximation für $A^{-1}b$, $r^{(k)}=b-Ax^{(k)}$ als zugehöriges Residuum.} 
+        \ErgTe{$x^{(k)}$ als Approximation für $A^{-1}b$, 
+        \newline$r^{(k)}=b-Ax^{(k)}$ als zugehöriges Residuum.} 
         \SetAlgoLined
         Wähle $x^{(0)}\in\mathbb{K}^{n}$ beliebig \\
         $r^{(0)} \leftarrow b-Ax^{(0)}$ \\
         $d^{(0)} \leftarrow r^{(0)}$ \\
         \ForTe{$k=0,1,\dotsc,$}{
             $\alpha^{(k)} \leftarrow \dfrac{\|r^{(k)}\|_2^2}{{d^{(k)}}^*Ad^{(k)}}$ \\
-            $x^{(k+1)} \leftarrow x^{(k)} + \alpha^{(k)}Ad^{(k)}$ \\
-            $r^{(k+1)} \leftarrow r^{(k)} - \alpha^{(k)}d^{(k)}$ \\
+            $x^{(k+1)} \leftarrow x^{(k)} + \alpha^{(k)}d^{(k)}$ \\
+            $r^{(k+1)} \leftarrow r^{(k)} - \alpha^{(k)}Ad^{(k)}$ \\
             $\beta^{(k)} \leftarrow \dfrac{\|r^{(k+1)}\|_2^2}{\|r^{(k)}\|_2^2}$ \\
             $d^{(k+1)} \leftarrow r^{(k+1)} + \beta^{(k)}d^{(k)}$
         }
@@ -472,4 +475,492 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
         Ein schnelles und einfaches Verfahren für allgemeine Matrixzen ist derzeit nicht bekannt. Ein komplizierteres 
         Verfahren mit ähnlicher Konvergenzgeschwindigkeit ist das GMRES-Verfahren. 
     \end{rembox}
+    \subsection{Präkonditionierung des CG-Verfahren}
+    \begin{defbox}
+        $\kappa_M(A) = \Cond_M(A) = \|A^{-1}\|_M\cdot \|A\|_M$ wird als Kondition der Matrix $A$ bezüglich 
+        der Norm $\|\cdot\|_M$ bezeichnet. 
+        Sie beschreibt die shlimmstmögliche Fortpflanzung des Eingangsfehlers beim Lösen eines LGS.
+    \end{defbox}
+    Gegeben sei $Az=b$ mit der Lösung $z=A^{-1}b$. Der Einfluss vom Eingangsfehlers sei $\Delta b$:
+    \[z + \Delta z = A^{-1}(b+\Delta b) = A^{-1}b + A^{-1}\Delta b\]
+    Die berechnete Lösung erhält den Fortpflanzungsfehler $\Delta z = A^{-1}\Delta b$. \\ 
+    Sei $\|\cdot\|$ die zu $\|\cdot\|_M$ verträgliche Matrixnorm (d.h. $\|Ax\|\leq \|A\|_M\cdot\|x\|$), 
+    so ergibt sich als relativer Fehler:
+    \begin{align*}
+        \dfrac{\|\Delta z\|}{\|z\|} &= \dfrac{\|\Delta z\|}{\|b\|} \cdot\dfrac{\|b\|}{\|z\|} \\
+        &= \dfrac{\|A^{-1}\Delta b\|}{\|b\|} \cdot\dfrac{\|Az\|}{\|z\|} \\
+        &\leq \|A^{-1}\|_M\cdot\|A\|_M\cdot\dfrac{\|\Delta b\|}{\|b\|}\cdot\dfrac{\|z\|}{\|z\|} \\
+        &= \Cond_M{A}\cdot\dfrac{\|\Delta b\|}{\|b\|} \\
+    \end{align*}
+    Typischerweise ist die Konvergenz eines numerischen Verfahrens umso langsamer, je schlechter die Matrix $A$ 
+    konditioniert ist, d.h. je größer die Konditionszahl $A$ ist. \\ \\
+    \textbf{Idee:} Gleichungssystem $Ax=b$ in ein äquivalentes LGS umwandeln, sodass die Kondition sich verbessert:\\
+    $M^{-1}Ax = M^{-1}b$ ({\scriptsize$\triangle$}), wobei $M$ hermitisch und positiv definit ist. \\
+    \textbf{Problem:} Die Matrix $M^{-1}A$ muss nicht notwendig hermitisch sein, daher nutzen wir die 
+    Cholesky-Zerlegung $M=CC^*$
+    un derhalten\footnote{$L^{-*} = (L^*)^{-1}$}: 
+    \[L^{-1}AL^{-*}z = L^{-1}b \quad \text{mit } x = L^{-*}z\]
+    Hierbei ist die Koeffizientenmatrix $L^{-1}AL^{-*}$ sicher hermitisch und positiv definit, 
+    denn für beliebiges $z\in\mathbb{K}^n$ und $x=L^{-*}z$ gilt: 
+    \[z^*L^{-1}AL^{-*}z = x^*L^{-*}z = x^*Ax \geq 0\]
+    Wir können also CG-Verfahren zum Lösen von $L^{-1}AL^{-*}z = L^{-1}b$ nutzen.
+    \textbf{Ziel:} Die Konditionszahl von $L^{-1}AL^{-*}$ soll kleiner werden als die Konditionszahl von $A$, dies 
+    liefert schnellere Konvergenz der Iterierten $z^{(k)}$ und der Lösung $x^{(k)}=L^{-*}z$ 
+    \newpage
+    \begin{rembox}
+        Die Faktorisierung $M=LL^*$ muss nicht explizit berechnet werden, 
+        da die Variable z wieder durch $x$ subsituiert werden kann.
+        Man benötigt für das CG-Verfahren die Berechnung der Koeffizienten $\beta^{(k)}$, 
+        die Norm $\|L^{-1}b-L^{-1}AL^{-*}z^{(k)}\|$, $r^{(k)} = b-Ax^{(k)}$ und den Hilfsvektor 
+        (Residuum der Präkonditionierten Form ({\scriptsize$\triangle$})) $s^{(k)} = M^{-1}r^{(k)}$. \\
+        Es gilt 
+        \[\|L^{-1}b-L^{-1}AL^{-*}z^{(k)}\|_2^2 = \|L^{-1}\underbrace{(b-Ax^{(k)})}_{=r^{(k)}}\| = 
+        {r^{(k)}}^*\underbrace{L^{-*}L^{-1}r^{(k)}}_{=s^{(k)}} = {r^{(k)}}^*s^{(k)}\]
+    \end{rembox}
+    Es ergibt sich folgender neuer Algorithmus: \\ \\
+    \algobox{Präkonditioniertes CG-Verfahren (PCGV)}{
+    \begin{algorithm}[H]
+        \SetAlgoNoLine
+        \InitTe{$A,M\in \mathbb{K}^{n\times n}$ seien hermitisch und positiv definit.}
+        \ErgTe{$x^{(k)}$ als Approximation für $A^{-1}b$, 
+        \newline $r^{(k)}=b-Ax^{(k)}$ Residuum im Schritt $k$,
+        \newline $s^{(k)}$ das Residduum von ({\scriptsize$\triangle$}).} 
+        \SetAlgoLined
+        Wähle $x^{(0)}\in\mathbb{K}^{n}$ beliebig \\
+        $r^{(0)} \leftarrow b-Ax^{(0)}$ \\
+        Löse $Ms^{(0)} = r^{(0)}$ \\
+        $d^{(0)} \leftarrow s^{(0)}$ \\
+        \ForTe{$k=0,1,\dotsc,$}{
+            $\alpha^{(k)} \leftarrow \dfrac{{r^{(k)}}^*s^{(s)}}{{d^{(k)}}^*Ad^{(k)}}$ \\
+            $x^{(k+1)} \leftarrow x^{(k)} + \alpha^{(k)}d^{(k)}$ \\
+            $r^{(k+1)} \leftarrow r^{(k)} - \alpha^{(k)}Ad^{(k)}$ \\
+            Löse $Ms^{(k+1)} = r^{(k+1)}$ \\
+            $\beta^{(k)} \leftarrow \dfrac{{r^{(k+1)}}^*s^{(s+1)}}{{r^{(k)}}^*s^{(s)}}$ \\
+            $d^{(k+1)} \leftarrow s^{(k+1)} + \beta^{(k)}d^{(k)}$
+        }
+        \SetAlgoNoLine
+        \UntilTe{stop (beliebiges Stopkriterium)}{}
+    \end{algorithm}
+    }
+    Der Aufwand im Vergleich zum CGV erhöht sich beim PCGV um das Lösen eines LGS $Ms=r$. Die erhoffte schnellere
+    Konvergenz des Iterationsverfahren macht sich also nur bezahlt, wenn das LGS $Ms=r$ entsprechend billig gelöst
+    werden kann. \\
+    Da $A$ bei Anwendung des CGV typscherweise dünn besetzt ist, dominieren die Kosten für die Lösung des LGS $Ms=r$ 
+    bei dem Gesamtkosten des PCGV.
+    \begin{thmbox}{Satz}
+        Die $k$-te Iteriterte $x^{(k)}$ vom Algorithmus des PCGV liegt in dem affin verschobenene Krylow-Raum
+        $x^{(0)} + \mathcal{K}_k(M^{-1}A, M^{-1}r^{(0)})$ und ist in dieser Menge die eindeuig bestimmte Minimalstelle
+        des Fuktionals $\phi(x) = \tfrac{1}{2}x^*Ax-x^*b$.
+    \end{thmbox}
+    \textit{Beweis.} Vgl. Beweis zu 2.12 \\ \\
+    Nach diesem Satz leigt die entsprechende Iterierte $z^{(k)}=L^*x^{(k)}$ in dem affin verschobenen Kylow-Raum
+    $z^{(0)} + \mathcal{K}_k(L^{-1}AL^{-*}, L^{-1}b-L^{-1}AL^{-1}z^{(0)})$ mit $z^{(0)} = L^*x^{(0)}$ 
+    und minimiert in dieser Menge das Fehlerfunktional $\psi(z) = \tfrac{1}{2}L^{-1}AL^{-*}z-z^*L^{-1}b$.  \\
+    Durch die Transformierte $x=L^{-*}z$ werden die Iterierten un ddie genannten Krylow-Räume aufeinander abgebildet
+    und es gilt $\psi(z) = \phi(x)$.
+    \begin{rembox}
+        Die Konstruktion geeigneter Präkonditionsmatrizen $M$ ist eine schwierige Sache.
+    \end{rembox}
+    Bevor wir mit einer Anwendung der neuen Methodik starten, wiederholen wir kurz einen wichtigen Satz der Analysis:
+    \begin{thmbox}{Satz}[Satz von Taylor]
+        Seo $f:[a,b]\rightarrow \mathbb{R}$ eine $(n+1)$-mal stetig differenzierbare Funktion und $x,x_0\in[a,b]$. 
+        Dann existiert ein $\xi$ zwischen $x$ und $x_0$, so dass
+        \[f(x) = \sum_{k=0}^{n}\dfrac{f^{(k)}(x_0)}{k!}(x-x_0)^k + 
+        \underbrace{\dfrac{f^{(n+1)}(\xi)}{(n+1)!}\cdot(x-x_0)^{n+1}}_{R_n(x,x_0)}\]
+    \end{thmbox}
+    \begin{egbox}[Exkurs: Modellproblem]
+        Wir betrachten das Randwertproblem des Laplace Operators\footnote{
+            Sei $f$ eine Funktion in kartesischen Koordinaten $(x,y)$, so ist der Laplace Operator definiert durch 
+            \[\Delta f = \dfrac{\partial^2 f(x,y)}{\partial x^2} + \dfrac{\partial^2 f(x,y)}{\partial y^2}\]
+            }:
+        \[-\dfrac{\partial^2 u(x,y)}{\partial x^2} - \dfrac{\partial^2 u(x,y)}{\partial y^2} = f(x,y) \quad 
+        \text{ für } (x,y)\in Q\]
+        gemeinsam mit der Dirichlet-Randbedingung $u(x,y)=0$ für $(x,y)\in \partial Q$ auf dem Einheitsquadrat 
+        $Q=(0,1)\times(0,1)\subset\mathbb{R}^2$. \\
+        Die Lösung $u=u(x,y)$ beschreibt z.B. die Auslenkung einer (idealisierten) Membran, die über dem Gebiet $Q$ 
+        horizontal gespannt ist und mit einer Kraftdichte $f$ vertikal belastet wird. \\
+        Eine Lösung ist im Allgemeinen nicht analytisch angebbar, sodass man auf numerische Näherungslösungen 
+        zurückgreifen muss.
+        Betrachte $Q$ als Quadratgitter: 
+        \begin{center}
+        \begin{tikzpicture}[scale=2, thick]
+            % Grid
+            \draw[line width=1pt] (0,0) rectangle (1,1);
+            \foreach \x in {1/6, 2/6, 3/6, 4/6, 5/6}
+                \draw[line width=0.8pt] (\x,0) -- (\x,1);
+            \foreach \y in {1/6, 2/6, 3/6, 4/6, 5/6}
+                \draw[line width=0.8pt] (0,\y) -- (1,\y);
+            % Horizontal arrow + 1
+            \draw[<->, line width=0.9pt] (0.2,1.1) -- (0.8,1.1);
+            \node at (0.5,1.25) {\Large $1$};
+            % Vertical arrow + 1
+            \draw[<->, line width=0.9pt] (1.1,0.2) -- (1.1,0.8);
+            \node at (1.22,0.5) {\Large $1$};
+        \end{tikzpicture}
+        \end{center}
+        mit $m$ Knoten und Gitterabstand $h=\tfrac{1}{m-1}$. Die gesamte Knotenzahl ist $n=m^2$. \\
+        Die Ableitung von $f$ an der Stelle $x_0$ sei definiert durch
+        \[f'(x_0) := 
+        \lim_{\Delta x \rightarrow 0} \dfrac{f(x_0+\Delta x)-f(x_0)}{(x_0+\Delta x) - x_0} 
+        = \lim_{\Delta x \rightarrow 0} \dfrac{f(x_0+\Delta x)-f(x_0)}{\Delta x} \]
+        durch Linearisierung (Tangentengleichung) bzw. für genauere Approximationen Taylorformel ergibt sich:
+        \begin{align*}
+            f_L(x) &= f(x_0) + f'(x_0)(x-x_0) \\
+            f(x) &= f(x_0) + f'(x_0)(x-x_0) + \tfrac{1}{2} f''(x_0)(x-x_0)^2 + \dotsc + R_n(x,x_0)
+        \end{align*}
+        und damit 
+        \begin{align*}
+            f(x+\Delta x) &= f(x_0) + f'(x_0)\Delta x + \tfrac{1}{2}f''(x_0)(\Delta x)^2 + R \tag{1}\\
+            f(x-\Delta x) &= f(x_0) - f'(x_0)\Delta x + \tfrac{1}{2}f''(x_0)(\Delta x)^2 + \tilde{R} \tag{2} \\
+        \end{align*}
+        Mit dieser Approximation ergibt sich für die Differenzquotienten:
+        \begin{align*}
+            \dfrac{\diff^+}{\diff x} f(x)\mid_{x=x_0} &= \dfrac{1}{\Delta x}\left(f(x_0+\Delta x) - f(x_0)\right) 
+            \tag{rechtsseitiger DQ}\\
+            \dfrac{\diff^-}{\diff x} f(x)\mid_{x=x_0} &= \dfrac{1}{\Delta x}\left(f(x_0)-f(x_0+\Delta x)\right) 
+            \tag{linksseitiger DQ}\\
+            \dfrac{\diff}{\diff x} f(x)\mid_{x=x_0} 
+            &= \dfrac{1}{2\Delta x}\left(f(x_0+\Delta x) - f(x_0-\Delta x)\right)\tag{zentraler DQ}
+        \end{align*}
+        Der zentrale Differenzquotienten approximiert dabei mit einer Ordnung häher als der links- und rechtsseitige 
+        Differenzquotient, da quadratische Terme in (1) und (2) sich gegenseitig wegkürzen. \\ \\
+        Wir nutzen dies nun um die Laplace-Operator in 2 Dimensionen zu approximieren: \\
+        \begin{center}
+\begin{tikzpicture}[scale=0.5, thick, every node/.style={font=\large}]
+
+  % Gitter zeichnen
+  \draw[line width=1pt] (0,0) grid (6,6);
+
+  % Zentrum
+  \def\x{3}
+  \def\y{3}
+
+  % Nachbarn markieren (blau)
+  \foreach \dx/\dy in {1/0, -1/0, 0/1, 0/-1}
+    \fill[mydarkblue] (\x+\dx,\y+\dy) circle (4pt);
+
+  % Zentrumspunkt (rot)
+  \fill[mydarkred] (\x,\y) circle (4pt);
+
+  % Labels - rechts
+  \node (toplabel)   [mydarkblue] at (\x+5,\y+1.5) {$(x, y{+}h)$};
+  \node (centerlabel)[mydarkred]  at (\x+4.6,\y+0.5)   {$(x, y)$};
+  \node (rightlabel) [mydarkblue] at (\x+5,\y-0.5) {$(x{+}h, y)$};
+  % Labels - links
+  \node (leftlabel)  [mydarkblue]  at (\x-5,\y-0.5)   {$(x{-}h, y)$};
+  \node (bottomlabel)[mydarkblue] at (\x-5,\y-1.5) {$(x, y{-}h)$};
+
+  % Pfeile 
+  \draw[->, thick, mydarkblue] (toplabel.west)   to[out=180, in=45] (\x+0.2,\y+1+0.2);
+  \draw[->, thick, mydarkred]  (centerlabel.west)to[out=180, in=45]  (\x+0.2,\y+0.2);
+  \draw[->, thick, mydarkblue] (rightlabel.west) to[out=180, in=-45] (\x+1+0.2,\y-0.2);
+  \draw[->, thick, mydarkblue] (leftlabel.east) to[out=0, in=-135] (\x-1-0.2,\y-0.2);
+  \draw[->, thick, mydarkblue] (bottomlabel.east) to[out=0, in=-135] (\x-0.2,\y-1-0.2);
+
+\end{tikzpicture}
+        \end{center}
+        Für innnere Punkte in unserem Quadratgitter gilt die sogenannte \glqq 5-Punktregel\grqq{}:
+        \[-h^{-2}\left(u(x+h,y)-2u(x,y)+u(x-h,y)+u(x,y+h)-2u(x,y)+u(x,y-h)\right)=f(x,y)\]
+        Durch Berücksichtigung der Randbedingung $u(x,y)=0$ für $(x,y)\in\partial Q$ ist dies äquivalent zu einem 
+        linearen Gleichungssystem $Ax=b$ für den Vektor $x\in\mathbb{R}^n$ der unbekannten Knotenwerte 
+        $x_i=u(P_i)$
+        Die Matrix $A$ hat die Gestalt
+        \[A = \left.\begin{pmatrix}
+            B & -I & 0 & \dots\\
+            -I & B & -I & \\
+            0 & -I & B & \ddots \\
+            \vdots& & \ddots & \ddots
+        \end{pmatrix}\right\} n \quad \text{ mit } B = \left.\begin{pmatrix}
+            4 & -1 & 0 & \dots\\
+            -1 & 4 & -1 & \\
+            0 & -1 & 4 & \ddots \\
+            \vdots& & \ddots & \ddots
+        \end{pmatrix}\right\}m\]
+        und der Einheitsmatrix $I$, d.h. $B,I\in\mathbb{R}^{m\times m}$. 
+        Die rechte Seite ist $b=h^2(f(P_1),\dotsc,f(P_n))^T$. \\
+        Wir erhalten ein sehr großes LGS mit dünn besetzter Bandmatrix mit Bandbreite $2m+1$, symmetrisch, 
+        schwach diagonaldominant, positiv definit. Es biete sich also an unsere iterativen Verfahren zum Lösen 
+        anzuwenden.
+    \end{egbox}
+    \newpage
+    \begin{thmbox}{Satz}[CG-Konvergenz]
+        Sei $x$ die Lösung des linearen Gleichungssystems $Ax=b$. Für das CG-Verfahren gilt die Fehlerabschätzung
+        \[\|x^{(k)} - x\|_A \leq 2\left(\dfrac{\sqrt{\kappa(A)-1}}{\sqrt{\kappa}}+1\right)^k \cdot \|x^{(0)}-x\|\]
+        Zur Reduktion des Anfangsfehlers um den Faktor $\varepsilon$ sind circa 
+        \[k(\varepsilon)\approx \tfrac{1}{2}\sqrt{\kappa(A)}\cdot \ln(\tfrac{2}{\varepsilon}) +1 \]
+        Iterationsschritte erforderlich. 
+    \end{thmbox}
+    Für den Beweis des Satzes \textcolor{red}{(in Anhang?)} benötigen wir noch einen Hilfssatz:
+    \begin{thmbox}{Hilfssatz}[polynomiale Normschranke]
+        Für ein Polynom $p\in P_k:=\mathbb{R}_k[X]$ mit $p(0)=1$, gelte auf einer Menge $S\subset \mathbb{R}$, welche
+        alle Eigenwerte von $A$ enthält, $\sup_{\mu\in S} |p(\mu)| \leq M$. Dann gilt 
+        \[\|x^{(k)} - x\|_A \leq M\cdot\|x^{(0)}-x\|_A\]
+    \end{thmbox}
+    \textit{Beweis des Hilfssatz.} Unter Beachtung der Beziehung 
+    \[\|x^{(k)}-x\|_A = \min\{\|y-x\|_A : y\in x^{(0)}+\mathcal{K}_k(A,r^{(0)})\}\]
+    erhalten wir 
+    \[\|x^{(k)}-x\|_A = \min_{p\in P_{k-1}}\|x^{(0)}-x+p(A)r^{(0)}\|_A\]
+    Wegen $r^{(0)} = Ax^{(0)}-b = A(x^{(0)}-x)$ folgt
+    \begin{align*}
+        \|x^{(k)}-x\|_A &= \min_{p\in P_{k-1}} \|(I+A\cdot p(A))\cdot (x^{(0)}-x)\|_A \\
+        &\leq \min_{p\in P_{k-1}} \|I+A\cdot p(A)\|_A\cdot\|x^{(0)}-x\|_A \\
+        &\leq \min_{p\in P_{k-1}, p(0)=1} \|p(A)\|_A\cdot\|x^{(0)}-x\|_A 
+    \end{align*}
+    mit der von $A$-Norm (Energienorm)$\|\cdot\|_A$ erzeugten natürlichen Matrixnorm $\|\cdot\|_A$. \\
+    Für beliebiges $y\in\mathbb{R}^n$ gilt mit einer Orthonormalbasis $\{w_1,\dotsc,w_n\}$ aus Eigenvektoren von $A$:
+    \[y=\sum_{j=1}^{n}\gamma_j w_j,\quad \gamma_j = \langle y, w_j\rangle\]
+    und folglich 
+    \[\|p(A)y\|_A^2 = \sum_{j=1}^{n} \lambda_j p(\lambda_j)^2\gamma_j^2 
+    \leq M^2 \sum_{j=1}^{n} \lambda_j \gamma_j^2 = M^2 \|y\|_A^2\]
+    Dies impliziert 
+    \[\|p(A)\|_A = \sup_{y\in\mathbb{R}^n\backslash\{0\}} \dfrac{\|p(A)y\|_A}{\|y\|_A}\leq M\]
+    und damit die Behauptung. \qed \\ \\
+    \textit{Beweis von Satz 2.21}Durch Verwendung des Hilfssatz mit $S:=[\lambda, \Lambda]$, 
+    wobei $\lambda$ den kleinsten un d$\Lambda$ den größten Eigenwert von $A$ beschreibt, folgt:
+    \[\|x^{(k)}-x\|_A \leq \min_{p\in P_{k-1}, p(0)=1} 
+    \left(\sup_{\lambda\leq\mu\leq\Lambda}|p(\mu)|\right)\cdot\|x^{(0)}-x\|_A \]
+    Dies ergibt die Behauptung wenn wir noch zeigen können, dass 
+    \[\sup_{\lambda\leq\mu\leq\Lambda}|p(\mu)| 
+    \leq 2\cdot \dfrac{(1-\sqrt{\tfrac{\lambda}{\Lambda}})^k}{(1+\sqrt{\tfrac{\lambda}{\Lambda}})^k}\]
+    Hierbei handelt es sich um ein Problem der Bestapproximation von Polynomen bzgl. 
+    der Maximumsnorm (Chebyshev-Approximation).
+    Die Lösung $\overline{p}$ ist gegeben durch 
+    \[\overline{p}(\mu) = \dfrac{T_k(\tfrac{\Lambda+\lambda-2\mu}{\Lambda-\lambda})}
+    {T_k(\tfrac{\Lambda+\lambda}{\Lambda-\lambda})},\]
+    wobei $T_k$ das $k$-te Chebyshev-Polynom auf $[-1,1]$ ist. Es folgt
+    \[\sup_{\lambda\leq\mu\Lambda} = T_k\left(\dfrac{\Lambda+\lambda}{\lambda-\lambda}\right)^{-1}\]
+    Aus der Darstellungen
+    \[T_k(\mu) = \tfrac{1}{2}\left((\mu+\sqrt{\mu^2-1})^k+(\mu-\sqrt{\mu^2-1})^k\right), 
+    \quad \text{für } \mu\in[-1,1]\]
+    für die Chebyshev-Polynome folgt mittels der Identität
+    \[\dfrac{\kappa+1}{\kappa-1} + \sqrt{\left(\dfrac{\kappa+1}{\kappa-1}\right)^2-1} 
+    = \dfrac{\kappa+1}{\kappa-1} + \dfrac{2\sqrt{\kappa}}{\kappa-1} = \dfrac{(\sqrt{\kappa}+1)^2}{\kappa - 1}
+    = \dfrac{\sqrt{\kappa}+1}{\sqrt{\kappa}-1}\]
+    die folgende Abschätzung nach unten:
+    \[T_k\left(\dfrac{\Lambda+\lambda}{\Lambda-\lambda}\right) = T_k\left(\dfrac{\kappa+1}{\kappa-1}\right)
+    = \dfrac{1}{2}\left(\left(\dfrac{\sqrt{\kappa}+1}{\sqrt{\kappa}-1}\right)^k + 
+    \left(\dfrac{\sqrt{\kappa}-1}{\sqrt{\kappa}+1}\right)^k\right) 
+    \geq \left(\dfrac{\sqrt{\kappa}+1}{\sqrt{\kappa}-1}\right)^k\]
+    Also wird $\sup_{\lambda\leq\mu\leq\Lambda}\overline{p}(\mu)
+    \leq 2\left(\tfrac{\sqrt{\kappa}-1}{\sqrt{\kappa}-1}\right)^k$, was die erste Ungleichung des Satzes zeigt. \\
+    Für den zweiten Teil betrachten wir die Anzahl der Schritte, dass
+    \[2\left(\dfrac{\sqrt{\kappa}-1}{\sqrt{\kappa}-1}\right)^{k(\varepsilon)} < \varepsilon \quad \iff \quad 
+    k(\varepsilon) > \ln(\tfrac{2}{\varepsilon})\cdot
+    \left(\ln\left(\dfrac{\sqrt{\kappa}-1}{\sqrt{\kappa}-1}\right)\right)^{-1}\]
+    Wegen der Reihendarstellung $\ln\tfrac{x+1}{x-1} = 2(\tfrac{1}{x} + \tfrac{1}{3}\tfrac{1}{x^3} 
+    + \tfrac{1}{5}\tfrac{1}{x^5} + \dotsc)$ ist die zweite Ungleichung genau dann erfüllt wenn 
+    \[k(\varepsilon) > \tfrac{1}{2}\sqrt{\kappa}\ln(\tfrac{2}{\varepsilon})\]
+    \qed
+    %
+    %
+    %
+    \section{Eigenwertprobleme}
+    Aus der linearen Algebra ist das klassische Eigenwertproblem bekannt. Gegeben sei eine Matrix 
+    $A\in\mathbb{K}^{n\times n}$ und gesucht sind $\lambda\in\mathbb{K}$ und $v\in\mathbb{K}^n$, $v\neq 0$ 
+    sodass $Av=\lambda v$. Das Umstellen des Eigenwertproblems ergibt das System $(A-\lambda I)v=0$ (*). Hierbei muss 
+    $A-\lambda I$ singulär sein, sonst ist die einedeuige Lösung des Systems gegeben durch $v=0$.\\
+    Per Hand würden wir hier nun das charakteristische Poylnom $\chi_A(\lambda)=\det(A-\lambda I)$ aufstellen und 
+    dessen Nullstellen bestimmen, da dies genau die Werte für $\lambda$ sind, für welche das obige System nicht-triviale
+    Lösungen hat. \\
+    Für die nuerische Berechung der Eigenwerte ist dies nicht ratsam, da Nullstellenbestimmung bei Polynomen 
+    hochgradig schlecht konditioniert ist. \\
+    Wir stellen folgende Zusammenhänge der Berechnung von Eigenwerten und Eigenvektoren fest:
+    \begin{enumerate}
+        \item[a)] Eigenwert-Bestimmung: Eigenvektor über LGS (*).
+        \item[b)] Eigenvektor-Bestimmung: 
+            Eigenwert über Rayleigh-Quotient $\lambda=\dfrac{\langle Av,v\rangle}{\|v\|_2^2}$ 
+    \end{enumerate}
+    \begin{thmbox}{Hilfssatz}
+        Seien $A,B\in\mathbb{K}^{n\times n}$ beliebige Matrizen und $\|\cdot\|$ eine natürliche Matrixnorm. Dann gilt 
+        für jeden Eigenwert $\lambda$ von $A$, welcher nicht zugleich auch Eigenwert von $B$ ist, die Beziehung
+        \[\|(\lambda I-B)^{-1}(A-B)\|\geq 1\]
+    \end{thmbox}
+    \textit{Beweis.} Ist $w$ ein Eigenwektor vom Eigenwert $\lambda$ von $A$, so folgt aus der Identität 
+    $(A-B)w = (I\lambda - B)w$, dass wenn $\lambda$ kein Eigenwert von $B$ ist, d.h. $\lambda I-B$ invertierbar: 
+    \[(\lambda I-B)^{-1}(A-B)w=w\]
+    Demnach ist also 
+    \[1\leq \sup_{x\in\mathbb{K}^n\backslash\{0\}} \dfrac{\|(\lambda I-B)^{-1}(A-B)x\|}{\|x\|}
+    =\|(\lambda I-B)^{-1}(A-B)\|\]
+    \begin{thmbox}{Satz}[Satz von Gerschgorin]
+        Alle Eigenwerte eine Matrix $A\in\mathbb{K}^{n\times n}$ liegen in der Vereinigung der sogenannten 
+        Gerschgorin-Kreise
+        \[K_j := \left\{z\in\mathbb{C} : |z-a_{jj}|\leq \sum_{k\neq j} |a_{jk}|\right\},
+        \qquad \text{für } j=1,\dotsc,n.\]
+        Für eine Teilmenge $I\subset\{1,\dotsc,n\}$ gilt, sind die Mengen $U=\displaystyle \bigcup_{j\in I} K_j$ 
+        und $V=\displaystyle \bigcup_{j\notin I} K_j$ disjunkt, so liegen in $U$ genau $m:=|I|$ und in $V$ genau $n-m$ 
+        Eigenwerte von $A$ (mehrfache Eigenwerte werden entsprechend ihrer algebraischen Vielfachheit gezählt).
+    \end{thmbox}
+    \textit{Beweis.} Zur ersten Behauptung: Wir setzen $B=diag(a_{jj})$ in dem Hilfssatz 3.1 und nehmen 
+    $\|\cdot\|_\infty$ als natürliche Matrixnorm. Für $\lambda\neq a_{jj}$ folgt dann 
+    \[\|(\lambda I -D)^{-1}(A-D)\|_\infty = \max_{j=1,\dotsc,n}\dfrac{1}{\lambda-a_{jj}}\sum_{k\neq j} |a_{jk}|\geq 1,\]
+    d.h. $\lambda$ liegt in einem der Gerschgorinkreise. \\
+    Für den zweiten Teil sei o.B.d.A. $I=\{1,\dotsc,m\}$. \\
+    Setzen wir $A_t = D + t(A-D)$, dann liegen genau $m$ Eigenwerte von $A_0=D$ in $U$ und $n-m$ 
+    Eigenwerte in $V$. Das selbe folgt auch für $A_1=A$, da die Eigenwerte von $A_t$ stetige Funktionen in $t$ sind. 
+    \qed \\ \\
+    \textcolor{red}{(in Anhang)} Ein Alternativer Beweis zur ersten Behauptung liefert eine Betrachtung des 
+    Eigenwertproblems $Ax=\lambda x$ mit $x\neq 0$. Offensichtlich existiert ein $x_i$ mit $|x_j|\leq |x_i|$ für alle 
+    $j\neq i$. Die $i$-te Komponente von $Ax$ ist gegeben durch 
+    \[\lambda x_i = (Ax)_i = \sum_{j=1}^{m} a_{jj}x_j \]
+    Somit folgt 
+    \[|\lambda-a_{ii}| = \left|\sum_{j\neq i} a_{ij} \dfrac{x_j}{x_i}\right|\leq \sum_{j\neq i}|a_{ij}|\]
+    Demnach liegt $\lambda\in K_i$.\qed
+    \begin{egbox}
+        Gegeben sei die Matrix 
+        \[A = \begin{pmatrix}
+            1 & 0.1 & -0.2 \\ 0 & 2 & 0.4 \\ -0.2 & 0 & 3
+        \end{pmatrix}\]
+        Es ergeben sich die folgenden Gerschgorinkreise:
+        \begin{align*}
+            K_1 = \{z\in\mathbb{C} : |z-1|\leq 0.3\} \\
+            K_2 = \{z\in\mathbb{C} : |z-2|\leq 0.4\} \\
+            K_3 = \{z\in\mathbb{C} : |z-3|\leq 0.2\} \\
+        \end{align*}
+        \begin{center}
+            \begin{tikzpicture}[scale=3]
+            % Axes
+            \draw[->] (-0.2,0) -- (4,0) node[right] {Re\((z)\)};
+            \draw[->] (0,-1) -- (0,1) node[above] {Im\((z)\)};
+            
+            % Circle 1
+            \draw[thick] (1,0) circle (0.3);
+            \filldraw (1,0) circle (0.02) node[below] {\(1\)};
+            \draw[thick] (1,0) -- ++(70:0.3);
+            \node at ($(1,0)+(70:0.4)$) {\(r = 0.3\)};
+            
+            % Circle 2
+            \draw[thick] (2,0) circle (0.4);
+            \filldraw (2,0) circle (0.02) node[below] {\(2\)};
+            \draw[thick] (2,0) -- ++(70:0.4);
+            \node at ($(2,0)+(70:0.5)$) {\(r = 0.4\)};
+            
+            % Circle 3
+            \draw[thick] (3,0) circle (0.2);
+            \filldraw (3,0) circle (0.02) node[below] {\(3\)};
+            \draw[thick] (3,0) -- ++(70:0.2);
+            \node at ($(3,0)+(70:0.3)$) {\(r = 0.2\)};
+
+            \end{tikzpicture}
+        \end{center}
+    \end{egbox}
+    \begin{thmbox}{Satz}[Stabilitätssatz]
+        Sei $A\in\mathbb{K}^{n\times n}$ eine Matrix, zu der es $n$ linear unabhängige Eigenvektoren gibt 
+        $\{w^{(1)},\dotsc,w^{(n)}\}$ und sei $B\in\mathbb{K}^{n\times n}$ eine zweite Matrix. Dann gibt es zu 
+        jedem Eigenwert$\lambda(B)$ von $B$ einen Eigenwert $\lambda(A)$ von $A$, sodass mit der Matrix 
+        $W=(w^{(1)}|\dotsc|w^{(n)})$ gilt
+        \[|\lambda(A)-\lambda(B)|\leq\Cond_2(W)\cdot\|A-B\|_2\]
+    \end{thmbox}
+    \textit{Bewies.} Die Eigenwertgleichungen $Aw^{(i)}=\lambda_i(A)w^{(i)}$ lassen sich in der Form 
+    $AW=W\cdot\diag(\lambda_i(A))$ schreiben, d.h. $A=W\cdot\diag(\lambda_i(A))\cdot W^{-1}$ ist ähnlich zu der 
+    Diagonalmatrix $\Lambda = \diag(\lambda_i(A))$. Wenn nun $\lambda=\lambda(B)$ kein Eigenwert von $A$ ist, so gilt 
+    \[\|(\lambda I - A)^{-1}\|_2 = \|W(\lambda I - \Lambda)^{-1}W^{-1}\|_2 
+    \leq \|W\|_2\cdot\|W^{-1}\|_2\cdot\|(\lambda I-\Lambda)^{-1}\| 
+    = \Cond_2(W)\cdot \max_{i=1,\dotsc,n} |\lambda-\lambda_i(A)|^{-1}\]
+    Mit dem Hilfssatz 3.1 folgt dann die Behauptung. \qed \\ \\
+    Für hermitische Matrizen $A\in\mathbb{K}^{n\times n}$ existiert bekannterweise eine Orthonormalbasis des 
+    $\mathbb{K}^{n\times n}$ aus Eigenvektoren, sodass die Matrix $W$ als unität angenommen werden kann, 
+    d.h. $ww^{-*}=I$. In diesem Fall gilt $\Cond_2(W)=\|W^{-*}\|_2\cdot\|W\|_2 = 1$.
+    \textbf{Regel:} Allgemein kann man sagen, dass das Eigenwertproblem für hermtische Matrizen gut konditioniert
+    ist, während das allgemeine Eigenwertproblem je nach Größe von $\Cond_2(W)$ beliebig schlecht konditioniert 
+    sein kann.
+    \subsection{Iterative Verfahren}
+    Im folgenden wollen wir ein iteratives Verfahren zu Lösung des partiellen Eigenwertproblems einer 
+    Matrix $A\in\mathbb{K}^{n\times n}$.
+    \begin{defbox}
+        Die Potenzmethode (Von-Mises-Iteration) erzeugt ausgehend von einem Startvektor $z^{(0)}\in\mathbb{C}^n$ mit
+        $\|z^0\|=1$ eine Folge von Iterationen $z^k\in\mathbb{C}^n, k=1,2,\dotsc$ durch 
+        \[\tilde{z}^{(k)}=Az^{(k-1)} \quad\text{und}\quad z^{(k)} = \tfrac{\tilde{z}^{(k)}}{\|\tilde{z}^{(k)}\|}.\]
+        Für einen beliebigen  Index $j\in\{1,\dotsc,n\}$, (z.B. maximale Komponente von $z^k$) wird gesetzt:
+        \[\lambda^{(k)} = \dfrac{(Az^{(k)})_j}{(z^{(k)})_j}\]
+        \textit{Zur Normierung wird üblicherweise $\|\cdot\|=\|\cdot\|_2$ oder $\|\cdot\|_\infty$ verwendet.} 
+    \end{defbox}
+    Zur Analyse des Verfahrens nehmen wir an, dass die Matrix $A$ diagonalisierbar ist, d.h. ähnlich zu einer 
+    Diagonalmatrix ist. Dies ist äquivalent zu der Tatsache, dass $A$ eine Basis von Eigenvektoren 
+    $\{w^{(1)},\dotsc,w^{(n)}\}$ besitzt. Weiter seien diese Eigenvektoren $w^{(i)}$ normiert. \\
+    Wir nehmen an, dass $z^{(0)}$ eine nicht-triviale Komponente bezüglich $w^{(n)}$ besitzt. 
+    (Dies ist keine wesentliche Einschränkung, da aufgrund des unvermeidbaren Rundungsfhlers dieser Fall der 
+    Iteration sicher einmal auftritt)
+    \begin{thmbox}{Satz}[Potenz-Methode]
+        Die Matrix $A$ sei diagonalisierbar und ihr betragsgrößter Eigenwert sei separiert von den anderen 
+        Eigenwerten, d.h. $|\lambda_n|>|\lambda_{n-1}|\geq|\lambda_{n-2}|\geq\dotsc\geq|\lambda_1|$. \\ 
+        Der Startvektor $z^{(0)}$ habe eine nicht-triviale Komponente bezüglich des zugehörigen Eigenvektors $w^{(n)}$.
+        Dann gibt es Zahlen $\delta_k\in\mathbb{C}, |\delta_k|=1$, 
+        sodass $\|z^{(k)}-\delta_k\cdot w^{(n)}\|\rightarrow 0$ für $k\rightarrow\infty$ und es gilt
+        \[\lambda^{(k)}-\lambda_n = \mathcal{O}\left(\left|\dfrac{\lambda_{n-1}}{\lambda_n}\right|^k\right)\qquad 
+        \text{ für } k\rightarrow \infty\]
+    \end{thmbox}
+    \textit{Beweis.} Sei $z^{(0)}=\sum_i \alpha_i\cdot w^{(i)}$ die Basisdarstellugn des Startvektors 
+    (mit $\alpha_n\neq 0$). Für die Iterierten gilt:
+    \[z^{(k)} = \dfrac{\tilde{z}^{(k)}}{\|\tilde{z}^{(k-1)}\|} = \dfrac{Az^{(k-1)}}{\|Az^{(k-1)}\|} 
+    = \dotsc = \dfrac{A^kz^{(0)}}{\|A^kz^{(0)}\|}\]
+    Dabei gilt:
+    \[A^kz^{(0)} = \sum_{i=1}^{n}\alpha_i\lambda_i^kw^{(i)} = \lambda_n^k \alpha_n\cdot\left(w^{(n)} + 
+    \sum_{i\neq n} \dfrac{\alpha_i}{\alpha_n}\left(\dfrac{\lambda_i}{\lambda_n}\right)^k w^{(i)}\right)\]
+    Wegen $|\tfrac{\lambda_i}{\lambda_n}|\leq \rho:=|\tfrac{\lambda_{n-1}}{\lambda_n}|<1$ für $i=1,\dotsc,n-1$ folgt
+    \[A^kz^{(0)} = \lambda_n^k\alpha_n(w_n+\mathcal{O}(\rho^k))
+    \qquad \text{ für } k\rightarrow \infty\]
+    Dies ergibt:
+    \[z^{(k)} = \dfrac{\lambda_n^k\alpha_n(w^{(n)}+
+    \mathcal{O}(1))}{|\lambda_n^k\alpha_n|\cdot\|w^{(n)}+\mathcal{O}(\rho^k)\|}
+    = \underbrace{\dfrac{\lambda_n^k\alpha_n}{|\lambda_n^k\alpha_n|}}_{=:\delta_k}\cdot (w^{(n)}+\mathcal{O}(\rho^k))\]
+    Dabei ist $\delta_k\in\mathbb{C}$ und $|\delta_k|=1$, daher folgt die erste Aussage.\\
+    Weiter gilt 
+    \begin{align*}
+        \lambda^{(k)} &= \dfrac{(Az^{(k)})_j}{(z^{(k)})_j} \\
+        &= \dfrac{(A^{k+1}z^{(0)})_j}{\|(A^{k+1}z^{(0)})_j\|}\cdot\dfrac{{\|(A^{k+1}z^{(0)})_j\|}}{(A^kz^{(0)})_j} \\
+        &= \dfrac{\lambda_n^{k+1}(\alpha_n w_{n,j}+\sum_{i\neq n} \alpha_i(\tfrac{\lambda_i}{\lambda_n})^{k+1}w_{i,j})}
+        {\lambda_n^k(\alpha_n w_{n,j}+\sum_{i\neq n} \alpha_i(\tfrac{\lambda_i}{\lambda_n})^kw_{i,j})} \\
+        &= \lambda_n + \mathcal{O}\left(\left|\dfrac{\lambda_{n-1}}{\lambda_n}\right|^k\right)\qquad 
+        \text{ für } k\rightarrow \infty
+    \end{align*}
+    \qed \\ \\
+    Die Konvergenz der Potenzmethode ist umso besser, je mehr der betragsgrößte Eigenwert $\lambda_n$ von den übrigen 
+    betragsmäßig separiert ist. Der Beweis ist verallgemeinerbar für betragsgrößte Eigenwerte, welche merhfach 
+    auftreten, sofern die Matrix diagonalisierbar ist. \\ \\
+    \textbf{Weiterentwicklung der Potenzmethode:} Als nächstes wollen wir uns die \glqq{}Inverse Iteration\grqq{} nach
+    Wielandt anschauen. \\
+    Wir nehmen an, man hat bereits eine Näherung $\tilde{\lambda}$ für einen Eigenwert $\lambda_k$ der regulären Matrix 
+    $A$ (z.B. durch Einschließungssätze). Die Näherung sei gut in dem Sinne, 
+    dass $|\lambda_k-\tilde{\lambda}|\ll |\lambda_i-\tilde{\lambda}|$ für $i\neq k$.\\
+    Sei $\lambda$ ein Eigenwert von $A$, dann ist $\lambda^{-1}$ ein Eigenwert von $A^{-1}$. 
+    Wir betrachten das Eigenwertproblem, welches sich für die Matrix $A-\tilde{\lambda}I$ ergibt:
+    \[(A-\tilde{\lambda}I)v=\xi v \iff (A-\tilde{\lambda}I-\xi I)v = 0 \iff (A-(\tilde{\lambda}+\xi)I)v=0\]
+    Also ist $\xi=\lambda_k-\tilde{\lambda}$ ein Eigenwert von $A-\tilde{\lambda}I$ und folglich ist 
+    $\mu=\tfrac{1}{\xi}=(\lambda_k-\tilde{\lambda})^{-1}$ ein Eigenwert von $(A-\tilde{\lambda}I)^{-1}$. \\
+    Allgemeiner hat im Falle $\tilde{\lambda}\neq\lambda_k$ die Matrix $(A-\tilde{\lambda}I)^{-1}$ die Eigenwerte 
+    $\mu_i = (\lambda_i-\tilde{\lambda})^{-1}$ für $i=1,\dotsc,n$ un des gilt 
+    \[\left|\dfrac{1}{\lambda_k-\tilde{\lambda}}\right| \gg \left|\dfrac{1}{\lambda_i-\tilde{\lambda}}\right|\qquad 
+    \text{für } i\neq k\]
+    \newpage
+    \begin{defbox}
+        Die inverse Iteration besteht in der Anwendung der Potenzmethode auf die Matrix $(A-\tilde{\lambda}I)^{-1}$
+        mit einer a priori Schätzung $\tilde{\lambda}$ zum gesuchten Eigenwert $\lambda_k$. \\ 
+        Ausgehend von einem Startwert $z^{(0)}$ werden Iterierte $z^{(t)}$ bestimmt als Lsg. der Gleichungssysteme
+        \[(A-\tilde{\lambda}I)z^{(t)} = \tilde{z}^{(t-1)},
+        \qquad z^{(t)} = \dfrac{\tilde{z}^{(t)}}{\|\tilde{z}^{(t)}\|}\]
+        Die zugehörige Eigenwertnäherung wird bestimmt durch 
+        \[\mu^{(t)}=\dfrac{(z^{(t)})_k}{((A-\tilde{\lambda}I)z^{(t)})_k}\]
+        mit Nenner $\neq 0$ (oder im symmetrischen Fall mit Hilfe der Rayleigh-Quotienten).
+    \end{defbox}
+    Aufgrund der Aussagen über Potenzmethoden liefert die inverse Iteration also für eine diagonalisierbare Matrix
+    jeden Eigenwert, zu dem bereits eien hinreichend gute Näherung bekannt ist.
+    \begin{egbox}[Page-Rank-Algorithmus]
+        Das Ziel des Page-Rank-Algorithmus ist die Bestimmung der Ausgabereihenfolge bei Suchergebnissen. Dabei berufen 
+        wir uns auf folgende Regeln:
+        \begin{enumerate}
+            \item[(1)] Eine Website erhält eine umso höhere Bewertung, je mehr Links auf sie zeigen.
+            \item[(2)] Links von höher bewerteten Websites soll relevanter sein, als solceh von unbedeutenden
+            \item[(3)] Ein Link von einer Website, die wenig Links nach außen hat, soll höher gewichtet werden als der
+                von einer Website mit vielen Links nach außen. 
+        \end{enumerate}
+        Wir beschreiben unser Model als ein Netz mit $n$ Seiten, wobei ein Index $k$ immer für eine Seite steht. \\
+        Gesucht ist die Bedeutung einer Seite $x_k\in\mathbb{R}$ \\
+        $L_k$ sei die Menge der Seiten, die auf $k$ verlinken, Links auf Seiten von sich selbst werden dabei nicht
+        berücksichtigt. \\
+        $n_k$ sei die Anzahl der Links, der Webite $k$ nach außen.\\
+        Wir streben ein lineares Model an, da dieses mathematisch einfacher handhabbar ist. Wir modellieren mittels
+        folgendem LGS
+        \[x_k = \sum_{j\in L_k}\tfrac{1}{n_j}\cdot x_j\]
+        Die Gleichung $x=Ax$ entspricht hierbei die Eigenwertgleichung für den Eigenwert $1$.
+    \end{egbox}
 \end{document} 

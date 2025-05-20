@@ -8,6 +8,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, calc, decorations.pathreplacing, positioning}
+
 % Load required packages
 \usepackage[framemethod=tikz]{mdframed} % For boxed environments
 \usepackage[linesnumbered,lined,commentsnumbered]{algorithm2e}
@@ -91,6 +94,8 @@
 \definecolor{myblue}{RGB}{230,255,255}
 \definecolor{mygreen}{RGB}{230,255,230}
 \definecolor{mygrey}{RGB}{242,242,242}
+\definecolor{mydarkblue}{RGB}{20,60,150}
+\definecolor{mydarkred}{RGB}{130,10,10}
 
 \newmdenv[
   backgroundcolor=myblue,
@@ -205,6 +210,9 @@
 
 
 \newcommand{\Span}[1]{\text{span}\{#1\}}
+\newcommand{\Cond}{\text{cond}}
+\newcommand{\diff}{\text{d}}
+\newcommand{\diag}{\text{diag}}
 
 
 \endinput
