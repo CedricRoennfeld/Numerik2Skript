@@ -5,7 +5,36 @@
 
 \begin{document}
 
+% Titelseite
+\begin{titlepage}
+    \centering
+    \vspace*{3cm}
+    \Large\textbf{Numerische Mathematik II -- Numerische lineare Algebra und Optimierung in den Datenwissenschaften}
+
+    \vspace{1cm}
+    \large
+    Prof.\ Dr.\ rer.\ nat.\ Jens\ Starke
+    \\
+    Sommersemester 2025
+
+    \vfill
+\end{titlepage}
+
 \tableofcontents
+\newpage
+\vspace*{2cm}
+\begin{center}
+    \begin{minipage}{0.85\textwidth}
+        \small
+        Diese Mitschrift basiert auf der gleichnamigen Vorlesung \textit{Numerische Mathematik II - 
+        Numerische lineare Algebra und Optimierung in den Datenwissenschaften}, gehalten im Sommersemester 2025 
+        an der Universität Rostock.\\[0.5em]
+        Alle Rechte an Inhalt und Struktur der Lehrveranstaltung liegen bei dem Modulverantwortlichen, 
+        Prof.\ Dr.\ rer.\ nat.\ Jens Starke, sowie der Universität Rostock.\\[0.5em]
+        Diese Mitschrift dient ausschließlich zu Lern- und Dokumentationszwecken. Eine kommerzielle Nutzung oder 
+        Weiterverbreitung ohne Zustimmung ist nicht gestattet.
+    \end{minipage}
+\end{center}
 
 \section{Wiederholung}
 Wir starten mit einer kurzen Wiederholung zur Fixpunktiteration zum Lösen von Gleichungen 
@@ -60,7 +89,40 @@ der Form $Tx=x$ durch $x_{n+1}=Tx_n$.
 \begin{egbox} 
     Wir betrachten das Nullstellenproblem $f:\mathbb{R}\rightarrow\mathbb{R}, x\mapsto \cos x - x = 0$. \\
     Umformung ergibt $\underbrace{\cos x}_{Tx} = x$ und somit die Fixpunktiteration $x_{k+1}=Tx_k=\cos(x_k)$ \\
-    \textcolor{red}{Abb. 1.1} \\
+    \begin{center}
+        \begin{tikzpicture}
+        \begin{axis}[
+            axis lines=middle,
+            xmin=0, xmax=2,
+            ymin=0, ymax=1.1,
+            xtick={1.5708},
+            xticklabels={$\frac{\pi}{2}$},
+            ytick=\empty,
+            grid=none,
+            width=9cm,
+            height=6cm,
+            domain=0:2,
+            samples=200,
+            clip=false,
+            xlabel=$x$,
+            ylabel=$y$,
+            every axis x label/.style={at={(axis description cs:1.05,0)},anchor=west},
+            every axis y label/.style={at={(axis description cs:0,1.05)},anchor=south},
+        ]
+            
+            % Funktionsgraphen
+            \addplot[thick, black, domain=0:2] {cos(deg(x))} node[pos=0.6, above right] {$f(x)=\cos x$};
+            \addplot[thick, black, domain=0:1.1] {x} node[pos=0.9, above left] {$g(x)=x$};
+            
+            % Fixpunktlinie
+            \addplot[dashed, black] coordinates {(0.739,0) (0.739,0.739)};
+            
+            % Punkt auf der Diagonalen
+            \filldraw[black] (axis cs:0.739,0.739) circle (2pt);
+            \node at (axis cs:0.739,-0.06) {$x^*$};
+        \end{axis}
+        \end{tikzpicture}
+    \end{center}
     \underline{Prüfung der Voraussetzungen des Banach'schen FP-Satzes:} \\
     Wir wählen als Einschränkung $M=[0,1]$, dies liefert uns eine Selbstabbildung auf einer abgeschlossenen 
     Teilmenge $M$ des vollständig metrischen Raum $\mathbb{R}$ mit der Abstandsfunktion $ d(x,y) = |x-y|$. \\
@@ -78,9 +140,71 @@ zur Umformung:\\
     \item[b)] Betrachte $Tx := x-\omega \cdot f(x)$ mit $\omega\neq 0$ (lineare Relaxation)
     \item[c)] Betrachte $Tx:=x-\omega \cdot g(f(x))$ mit $\omega \neq 0$ und geeigneter Funktion $g$ 
     (nichtlineare Relaxation). Wenn $g(0)\neq 0$ dann betrachte $Tx:=x-\omega\cdot(g(f(x))+g(0))$
+    \newpage
     \item[d)] Betrachte $Tx:=x-(f'(x))^{-1} f(x)$ (Newtonverfahren) \\
     Newton hat teils Probleme, bei falschen Startwerten: \\
-    \textcolor{red}{Abb 1.2}
+    \begin{center}
+        \begin{tikzpicture}
+
+        % Startwert
+        \pgfmathsetmacro{\xzero}{1.5}
+        \pgfmathsetmacro{\fxzero}{\xzero * exp(-\xzero^2)}
+        \pgfmathsetmacro{\dfxzero}{exp(-\xzero^2) * (1 - 2 * \xzero^2)}
+        \pgfmathsetmacro{\xone}{\xzero - \fxzero / \dfxzero}
+
+        \pgfmathsetmacro{\fxone}{\xone * exp(-\xone^2)}
+        \pgfmathsetmacro{\dfxone}{exp(-\xone^2) * (1 - 2 * \xone^2)}
+        \pgfmathsetmacro{\xtwo}{\xone - \fxone / \dfxone}
+
+        \pgfmathsetmacro{\fxtwo}{\xtwo * exp(-\xtwo^2)}
+        \pgfmathsetmacro{\dfxtwo}{exp(-\xtwo^2) * (1 - 2 * \xtwo^2)}
+        \pgfmathsetmacro{\xthree}{\xtwo - \fxtwo / \dfxtwo}
+
+        \begin{axis}[
+            axis lines=middle,
+            xmin=-.1, xmax=3,
+            ymin=-0.4, ymax=0.4,
+            samples=300,
+            width=12cm,
+            height=7cm,
+            domain=-.1:3,
+            clip=false,
+            xtick=\empty,
+            ytick=\empty,
+        ]
+        
+            % Funktion f(x) = x*exp(-x^2)
+            \addplot[thick, black] {x * exp(-x^2)} node[pos=0.2, above left] {$f(x)$};
+
+            % Punkte (x0, x1, x2)
+            \addplot[only marks, mark=*, mark size=2pt] coordinates {
+            (\xzero, \fxzero)
+            (\xone, \fxone)
+            (\xtwo, \fxtwo)
+            };
+            
+            % Beschriftung der x-Werte
+            \node at (axis cs:\xzero,-0.08) {$x_0$};
+            \node at (axis cs:\xone,-0.08) {$x_1$};
+            \node at (axis cs:\xtwo,-0.08) {$x_2$};
+
+            % Tangente bei x0
+            \addplot[dashed, domain=\xzero-1:\xzero+1] {\fxzero + \dfxzero*(x - \xzero)};
+            % Tangente bei x1
+            \addplot[dashed, domain=\xone-1:\xone+1] {\fxone + \dfxone*(x - \xone)};
+            % Tangente bei x2
+            \addplot[dashed, domain=\xtwo-1:\xtwo+1] {\fxtwo + \dfxtwo*(x - \xtwo)};
+            
+            % Pfeile
+            %\draw[->, thick] (axis cs:\xzero,\fxzero) -- (axis cs:\xone,0);
+            %\draw[->, thick] (axis cs:\xone,\fxone) -- (axis cs:\xtwo,0);
+            %\draw[->, thick] (axis cs:\xtwo,\fxtwo) -- (axis cs:\xthree,0);
+            
+            \node at (axis cs:\xthree,-0.08) {$x_3$};
+
+        \end{axis}
+        \end{tikzpicture}
+    \end{center}
     \item[e)] Betrachte $Tx:=h^{-1}(f(x)-g(x))$, wobei $f(x)=h(x)+g(x)$ (Splitting-Verfahren) 
 \end{enumerate}
 \section{Iteratives Vorgehen zur Lösung linearer Gleichungssysteme}
@@ -147,7 +271,7 @@ Einsetzen der Definition von $\tilde{T}$ liefert:
 \textit{Beweis.} \\
 $\Leftarrow:$ Falls $\rho(T)<1$ dann existiert eine Norm $\|\cdot\|_\varepsilon$ auf $\mathbb{K}^n$ 
 und eine dadurch induzierte Operatornorm $\vertiii{\cdot}_\varepsilon$ auf $\mathbb{K}^{n\times n}$ 
-mit $\vertiii{T}_\varepsilon \leq \rho(T) + \varepsilon < 1$ \textcolor{red}{Warum?} \\
+mit $\vertiii{T}_\varepsilon \leq \rho(T) + \varepsilon < 1$ für $\varepsilon$ klein genug. \\
 Satz 2.2 liefert dann die Konvergenz des Algorithmus. \\ \\
 $\Rightarrow:$ Angenommen $\rho(T)\geq 1$, d.h. es existiert ein Eigenwert $\lambda$ von $T$ 
 mit $|\lambda|\geq 1$ und zugehörigem Eigenvektor $z$. Für $x^{(0)}=x^*+z$ und festes $k$ sich der Iterationsfehler
@@ -286,7 +410,7 @@ Da $A$ strikt diagonaldominant ist, muss $a_ii \neq 0$ und damit sind beide Verf
     \end{align*}
 \end{egbox}
 \subsection{Gradientenverfahren}
-\textbf{Motivation:} Eine Funtion $f:\mathbb{K}^n\rightarrow \mathbb{K}$ soll minimiert werden. 
+\subsubsection{Gradientenverfahren für Optimierung} Eine Funtion $f:\mathbb{K}^n\rightarrow \mathbb{K}$ soll minimiert werden. 
 Von einem Startpunkt $x^{(0)}$ ausgehen bewegen wir uns nun Stück für Stück in Richtung des steilsten Abstiegs, 
 intuitiv sollten wir so ein Minimum finden. \\
 Als Iterationsvorschrift ergibt sich $x^{(k+1)} = x^{(k)}+\alpha^{(k)}\cdot d^{(k)}, \quad k=0,1,\dotsc$\\
@@ -296,9 +420,10 @@ Das Ziel ist des Verfahren ist es, dass sich der Wert von $f$ in jedem Schritt v
 d.h. $f(x^{(k+1)})<f(x^{(k)})$. 
 Es ergibt sich ein 1-dim. Optimierungsproblem für die Schrittweite $\alpha^{(k)}$:
 \[\alpha^{(k+1)}=\min_{\alpha\neq 0}\{f(x^{(k)}+\alpha\cdot d^{(k)})\}\]
-Ein Nachteil des Verfahren ist, dass ein sogenannter \glqq Zick-Zack-Kurs\grqq{} entstehen kann. \\ \\
-\textbf{Verfahren der konjugierten Gradienten:} Die obige Idee kann zur effizienten Lösung 
-linearer Gleichungssysteme genutzt werden.
+Ein Nachteil des Verfahrens ist die mögliche Entstehung oszillierender Pfade (\glqq Zick-Zack-Verhalten\grqq{}) 
+aufgrund unvorteilhafter Richtungen.\\ \\
+\subsubsection{Das Verfahren der konjugierten Gradienten}
+Die obige Idee kann zur effizienten Lösung linearer Gleichungssysteme genutzt werden.
 Gegeben sei das LGS $Ax=b$ mit $A\in\mathbb{K}^{n\times n}$ hermitisch, 
 d.h. $a_{ij}=\overline{a_{ji}}$ (hieraus folgt inbesondere, dass die Hauptdiagonale reell ist). 
 Zur Lösung wird hierbei die Minimierung des quaratischen Funktionals 
@@ -340,6 +465,7 @@ Nach (6) ist $d^{(k)} = 0$ jedoch nur dann möglich, wenn $r^{(k)}$ und $d^{(k-1
 doch nach Definition verläuft die Suchrichtung tangential zur Niveaufläche von $\phi$, 
 also orthogonal zum Gradienten $r^{(k)}$.
 Somit folgt $d^{(k)} = 0$ nur wenn $r^{(k)}=0$, was $x^{(k)}=\hat{x}$ implizieren würde. \\ \\
+\subsubsection{Eigenschaften des CG-Verfahrens}
 Wegen der zusätzlichen Orthogonalitätsbedingung $\langle d^{(k+1)},d^{(k)}\rangle_A=0$ nennt man die 
 Suchrichtungen zueinander $A$-konjugiert und das Verfahren, Verfahren der konjugierten Gradienten (CG-Verfahren). 
 \begin{thmbox}{Lemma}
@@ -435,6 +561,7 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
         \end{align*}
         Inbesondere gilt Gleichheit bei $x=x^{(k)}$.
     \end{enumerate}
+    \subsubsection{Praktische Aspekte der Implementierung}
     \begin{rembox}
         Für eien Implementierung des CG-Verfahren sollte man nicht die Gleichungen (5) und (7) für $\alpha^{(k)}$ 
         und $\beta^{(k)}$ verwenden, sondern lieber folgende Darstellungen, welche numerisch stabiler sind:
@@ -479,7 +606,7 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
     \begin{defbox}
         $\kappa_M(A) = \Cond_M(A) = \|A^{-1}\|_M\cdot \|A\|_M$ wird als Kondition der Matrix $A$ bezüglich 
         der Norm $\|\cdot\|_M$ bezeichnet. 
-        Sie beschreibt die shlimmstmögliche Fortpflanzung des Eingangsfehlers beim Lösen eines LGS.
+        Sie beschreibt die schlimmstmögliche Fortpflanzung des Eingangsfehlers beim Lösen eines LGS.
     \end{defbox}
     Gegeben sei $Az=b$ mit der Lösung $z=A^{-1}b$. Der Einfluss vom Eingangsfehlers sei $\Delta b$:
     \[z + \Delta z = A^{-1}(b+\Delta b) = A^{-1}b + A^{-1}\Delta b\]
@@ -494,6 +621,7 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
     \end{align*}
     Typischerweise ist die Konvergenz eines numerischen Verfahrens umso langsamer, je schlechter die Matrix $A$ 
     konditioniert ist, d.h. je größer die Konditionszahl $A$ ist. \\ \\
+    \subsubsection{Präkonditionierung mittels Cholesky}
     \textbf{Idee:} Gleichungssystem $Ax=b$ in ein äquivalentes LGS umwandeln, sodass die Kondition sich verbessert:\\
     $M^{-1}Ax = M^{-1}b$ ({\scriptsize$\triangle$}), wobei $M$ hermitisch und positiv definit ist. \\
     \textbf{Problem:} Die Matrix $M^{-1}A$ muss nicht notwendig hermitisch sein, daher nutzen wir die 
@@ -503,10 +631,9 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
     Hierbei ist die Koeffizientenmatrix $L^{-1}AL^{-*}$ sicher hermitisch und positiv definit, 
     denn für beliebiges $z\in\mathbb{K}^n$ und $x=L^{-*}z$ gilt: 
     \[z^*L^{-1}AL^{-*}z = x^*L^{-*}z = x^*Ax \geq 0\]
-    Wir können also CG-Verfahren zum Lösen von $L^{-1}AL^{-*}z = L^{-1}b$ nutzen.
+    Wir können also CG-Verfahren zum Lösen von $L^{-1}AL^{-*}z = L^{-1}b$ nutzen. \\ \\
     \textbf{Ziel:} Die Konditionszahl von $L^{-1}AL^{-*}$ soll kleiner werden als die Konditionszahl von $A$, dies 
     liefert schnellere Konvergenz der Iterierten $z^{(k)}$ und der Lösung $x^{(k)}=L^{-*}z$ 
-    \newpage
     \begin{rembox}
         Die Faktorisierung $M=LL^*$ muss nicht explizit berechnet werden, 
         da die Variable z wieder durch $x$ subsituiert werden kann.
@@ -517,25 +644,25 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
         \[\|L^{-1}b-L^{-1}AL^{-*}z^{(k)}\|_2^2 = \|L^{-1}\underbrace{(b-Ax^{(k)})}_{=r^{(k)}}\| = 
         {r^{(k)}}^*\underbrace{L^{-*}L^{-1}r^{(k)}}_{=s^{(k)}} = {r^{(k)}}^*s^{(k)}\]
     \end{rembox}
-    Es ergibt sich folgender neuer Algorithmus: \\ \\
+    \subsubsection{Algorithmus: PCG-Verfahren}
     \algobox{Präkonditioniertes CG-Verfahren (PCGV)}{
     \begin{algorithm}[H]
         \SetAlgoNoLine
         \InitTe{$A,M\in \mathbb{K}^{n\times n}$ seien hermitisch und positiv definit.}
         \ErgTe{$x^{(k)}$ als Approximation für $A^{-1}b$, 
         \newline $r^{(k)}=b-Ax^{(k)}$ Residuum im Schritt $k$,
-        \newline $s^{(k)}$ das Residduum von ({\scriptsize$\triangle$}).} 
+        \newline $s^{(k)}$ das Residuum von ({\scriptsize$\triangle$}).} 
         \SetAlgoLined
         Wähle $x^{(0)}\in\mathbb{K}^{n}$ beliebig \\
         $r^{(0)} \leftarrow b-Ax^{(0)}$ \\
         Löse $Ms^{(0)} = r^{(0)}$ \\
         $d^{(0)} \leftarrow s^{(0)}$ \\
         \ForTe{$k=0,1,\dotsc,$}{
-            $\alpha^{(k)} \leftarrow \dfrac{{r^{(k)}}^*s^{(s)}}{{d^{(k)}}^*Ad^{(k)}}$ \\
+            $\alpha^{(k)} \leftarrow \dfrac{{r^{(k)}}^*s^{(k)}}{{d^{(k)}}^*Ad^{(k)}}$ \\
             $x^{(k+1)} \leftarrow x^{(k)} + \alpha^{(k)}d^{(k)}$ \\
             $r^{(k+1)} \leftarrow r^{(k)} - \alpha^{(k)}Ad^{(k)}$ \\
             Löse $Ms^{(k+1)} = r^{(k+1)}$ \\
-            $\beta^{(k)} \leftarrow \dfrac{{r^{(k+1)}}^*s^{(s+1)}}{{r^{(k)}}^*s^{(s)}}$ \\
+            $\beta^{(k)} \leftarrow \dfrac{{r^{(k+1)}}^*s^{(k+1)}}{{r^{(k)}}^*s^{(k)}}$ \\
             $d^{(k+1)} \leftarrow s^{(k+1)} + \beta^{(k)}d^{(k)}$
         }
         \SetAlgoNoLine
@@ -556,19 +683,21 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
     Nach diesem Satz leigt die entsprechende Iterierte $z^{(k)}=L^*x^{(k)}$ in dem affin verschobenen Kylow-Raum
     $z^{(0)} + \mathcal{K}_k(L^{-1}AL^{-*}, L^{-1}b-L^{-1}AL^{-1}z^{(0)})$ mit $z^{(0)} = L^*x^{(0)}$ 
     und minimiert in dieser Menge das Fehlerfunktional $\psi(z) = \tfrac{1}{2}L^{-1}AL^{-*}z-z^*L^{-1}b$.  \\
-    Durch die Transformierte $x=L^{-*}z$ werden die Iterierten un ddie genannten Krylow-Räume aufeinander abgebildet
+    Durch die Transformierte $x=L^{-*}z$ werden die Iterierten und die genannten Krylow-Räume aufeinander abgebildet
     und es gilt $\psi(z) = \phi(x)$.
     \begin{rembox}
         Die Konstruktion geeigneter Präkonditionsmatrizen $M$ ist eine schwierige Sache.
     \end{rembox}
+    \subsection{Anwendung und Konvergenzgeschwindigkeit des CG-Verfahren}
+    \subsubsection{Lösen von Randwertproblemen mittels CG-Verfahren}
     Bevor wir mit einer Anwendung der neuen Methodik starten, wiederholen wir kurz einen wichtigen Satz der Analysis:
     \begin{thmbox}{Satz}[Satz von Taylor]
-        Seo $f:[a,b]\rightarrow \mathbb{R}$ eine $(n+1)$-mal stetig differenzierbare Funktion und $x,x_0\in[a,b]$. 
+        Sei $f:[a,b]\rightarrow \mathbb{R}$ eine $(n+1)$-mal stetig differenzierbare Funktion und $x,x_0\in[a,b]$. 
         Dann existiert ein $\xi$ zwischen $x$ und $x_0$, so dass
         \[f(x) = \sum_{k=0}^{n}\dfrac{f^{(k)}(x_0)}{k!}(x-x_0)^k + 
         \underbrace{\dfrac{f^{(n+1)}(\xi)}{(n+1)!}\cdot(x-x_0)^{n+1}}_{R_n(x,x_0)}\]
     \end{thmbox}
-    \begin{egbox}[Exkurs: Modellproblem]
+    \begin{egbox}
         Wir betrachten das Randwertproblem des Laplace Operators\footnote{
             Sei $f$ eine Funktion in kartesischen Koordinaten $(x,y)$, so ist der Laplace Operator definiert durch 
             \[\Delta f = \dfrac{\partial^2 f(x,y)}{\partial x^2} + \dfrac{\partial^2 f(x,y)}{\partial y^2}\]
@@ -683,6 +812,7 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
         anzuwenden.
     \end{egbox}
     \newpage
+    \subsubsection{Konvergenzgeschwindigkeit des CG-Verfahren}
     \begin{thmbox}{Satz}[CG-Konvergenz]
         Sei $x$ die Lösung des linearen Gleichungssystems $Ax=b$. Für das CG-Verfahren gilt die Fehlerabschätzung
         \[\|x^{(k)} - x\|_A \leq 2\left(\dfrac{\sqrt{\kappa(A)-1}}{\sqrt{\kappa}}+1\right)^k \cdot \|x^{(0)}-x\|\]
@@ -690,7 +820,7 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
         \[k(\varepsilon)\approx \tfrac{1}{2}\sqrt{\kappa(A)}\cdot \ln(\tfrac{2}{\varepsilon}) +1 \]
         Iterationsschritte erforderlich. 
     \end{thmbox}
-    Für den Beweis des Satzes \textcolor{red}{(in Anhang?)} benötigen wir noch einen Hilfssatz:
+    Für den Beweis des Satzes benötigen wir noch einen Hilfssatz:
     \begin{thmbox}{Hilfssatz}[polynomiale Normschranke]
         Für ein Polynom $p\in P_k:=\mathbb{R}_k[X]$ mit $p(0)=1$, gelte auf einer Menge $S\subset \mathbb{R}$, welche
         alle Eigenwerte von $A$ enthält, $\sup_{\mu\in S} |p(\mu)| \leq M$. Dann gilt 
@@ -755,6 +885,7 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
     %
     %
     \section{Eigenwertprobleme}
+    \subsection{Einleitung}
     Aus der linearen Algebra ist das klassische Eigenwertproblem bekannt. Gegeben sei eine Matrix 
     $A\in\mathbb{K}^{n\times n}$ und gesucht sind $\lambda\in\mathbb{K}$ und $v\in\mathbb{K}^n$, $v\neq 0$ 
     sodass $Av=\lambda v$. Das Umstellen des Eigenwertproblems ergibt das System $(A-\lambda I)v=0$ (*). Hierbei muss 
@@ -770,6 +901,7 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
         \item[b)] Eigenvektor-Bestimmung: 
             Eigenwert über Rayleigh-Quotient $\lambda=\dfrac{\langle Av,v\rangle}{\|v\|_2^2}$ 
     \end{enumerate}
+    \subsection{Einschließungssätze und Stabilität}
     \begin{thmbox}{Hilfssatz}
         Seien $A,B\in\mathbb{K}^{n\times n}$ beliebige Matrizen und $\|\cdot\|$ eine natürliche Matrixnorm. Dann gilt 
         für jeden Eigenwert $\lambda$ von $A$, welcher nicht zugleich auch Eigenwert von $B$ ist, die Beziehung
@@ -781,6 +913,7 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
     Demnach ist also 
     \[1\leq \sup_{x\in\mathbb{K}^n\backslash\{0\}} \dfrac{\|(\lambda I-B)^{-1}(A-B)x\|}{\|x\|}
     =\|(\lambda I-B)^{-1}(A-B)\|\]
+    \subsubsection{Gerschgorin-Kreise}
     \begin{thmbox}{Satz}[Satz von Gerschgorin]
         Alle Eigenwerte eine Matrix $A\in\mathbb{K}^{n\times n}$ liegen in der Vereinigung der sogenannten 
         Gerschgorin-Kreise
@@ -793,12 +926,12 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
     \textit{Beweis.} Zur ersten Behauptung: Wir setzen $B=diag(a_{jj})$ in dem Hilfssatz 3.1 und nehmen 
     $\|\cdot\|_\infty$ als natürliche Matrixnorm. Für $\lambda\neq a_{jj}$ folgt dann 
     \[\|(\lambda I -D)^{-1}(A-D)\|_\infty = \max_{j=1,\dotsc,n}\dfrac{1}{\lambda-a_{jj}}\sum_{k\neq j} |a_{jk}|\geq 1,\]
-    d.h. $\lambda$ liegt in einem der Gerschgorinkreise. \\
+    d.h. $\lambda$ liegt in einem der Gerschgorin-Kreise. \\
     Für den zweiten Teil sei o.B.d.A. $I=\{1,\dotsc,m\}$. \\
     Setzen wir $A_t = D + t(A-D)$, dann liegen genau $m$ Eigenwerte von $A_0=D$ in $U$ und $n-m$ 
     Eigenwerte in $V$. Das selbe folgt auch für $A_1=A$, da die Eigenwerte von $A_t$ stetige Funktionen in $t$ sind. 
     \qed \\ \\
-    \textcolor{red}{(in Anhang)} Ein Alternativer Beweis zur ersten Behauptung liefert eine Betrachtung des 
+    Ein Alternativer Beweis zur ersten Behauptung liefert eine Betrachtung des 
     Eigenwertproblems $Ax=\lambda x$ mit $x\neq 0$. Offensichtlich existiert ein $x_i$ mit $|x_j|\leq |x_i|$ für alle 
     $j\neq i$. Die $i$-te Komponente von $Ax$ ist gegeben durch 
     \[\lambda x_i = (Ax)_i = \sum_{j=1}^{m} a_{jj}x_j \]
@@ -810,7 +943,7 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
         \[A = \begin{pmatrix}
             1 & 0.1 & -0.2 \\ 0 & 2 & 0.4 \\ -0.2 & 0 & 3
         \end{pmatrix}\]
-        Es ergeben sich die folgenden Gerschgorinkreise:
+        Es ergeben sich die folgenden Gerschgori-Kreise:
         \begin{align*}
             K_1 = \{z\in\mathbb{C} : |z-1|\leq 0.3\} \\
             K_2 = \{z\in\mathbb{C} : |z-2|\leq 0.4\} \\
@@ -843,6 +976,7 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
             \end{tikzpicture}
         \end{center}
     \end{egbox}
+    \subsubsection{Stabilität von Eigenwerten}
     \begin{thmbox}{Satz}[Stabilitätssatz]
         Sei $A\in\mathbb{K}^{n\times n}$ eine Matrix, zu der es $n$ linear unabhängige Eigenvektoren gibt 
         $\{w^{(1)},\dotsc,w^{(n)}\}$ und sei $B\in\mathbb{K}^{n\times n}$ eine zweite Matrix. Dann gibt es zu 
@@ -859,19 +993,20 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
     Mit dem Hilfssatz 3.1 folgt dann die Behauptung. \qed \\ \\
     Für hermitische Matrizen $A\in\mathbb{K}^{n\times n}$ existiert bekannterweise eine Orthonormalbasis des 
     $\mathbb{K}^{n\times n}$ aus Eigenvektoren, sodass die Matrix $W$ als unität angenommen werden kann, 
-    d.h. $ww^{-*}=I$. In diesem Fall gilt $\Cond_2(W)=\|W^{-*}\|_2\cdot\|W\|_2 = 1$.
+    d.h. $ww^{-*}=I$. In diesem Fall gilt $\Cond_2(W)=\|W^{-*}\|_2\cdot\|W\|_2 = 1$. \\ \\
     \textbf{Regel:} Allgemein kann man sagen, dass das Eigenwertproblem für hermtische Matrizen gut konditioniert
     ist, während das allgemeine Eigenwertproblem je nach Größe von $\Cond_2(W)$ beliebig schlecht konditioniert 
     sein kann.
     \subsection{Iterative Verfahren}
     Im folgenden wollen wir ein iteratives Verfahren zu Lösung des partiellen Eigenwertproblems einer 
-    Matrix $A\in\mathbb{K}^{n\times n}$.
+    Matrix $A\in\mathbb{K}^{n\times n}$ betrachten.
+    \subsubsection{Potenz-Methode}
     \begin{defbox}
         Die Potenzmethode (Von-Mises-Iteration) erzeugt ausgehend von einem Startvektor $z^{(0)}\in\mathbb{C}^n$ mit
-        $\|z^0\|=1$ eine Folge von Iterationen $z^k\in\mathbb{C}^n, k=1,2,\dotsc$ durch 
-        \[\tilde{z}^{(k)}=Az^{(k-1)} \quad\text{und}\quad z^{(k)} = \tfrac{\tilde{z}^{(k)}}{\|\tilde{z}^{(k)}\|}.\]
-        Für einen beliebigen  Index $j\in\{1,\dotsc,n\}$, (z.B. maximale Komponente von $z^k$) wird gesetzt:
-        \[\lambda^{(k)} = \dfrac{(Az^{(k)})_j}{(z^{(k)})_j}\]
+        $\|z^0\|=1$ eine Folge von Iterationen $z^{(t)}\in\mathbb{C}^n, t=1,2,\dotsc$ durch 
+        \[\tilde{z}^{(t)}=Az^{(t-1)} \quad\text{und}\quad z^{(t)} = \tfrac{\tilde{z}^{(t)}}{\|\tilde{z}^{(t)}\|}.\]
+        Für einen beliebigen  Index $k\in\{1,\dotsc,n\}$, (z.B. maximale Komponente von $z^k$) wird gesetzt:
+        \[\lambda^{(t)} = \dfrac{(Az^{(t)})_k}{(z^{(t)})_k}\]
         \textit{Zur Normierung wird üblicherweise $\|\cdot\|=\|\cdot\|_2$ oder $\|\cdot\|_\infty$ verwendet.} 
     \end{defbox}
     Zur Analyse des Verfahrens nehmen wir an, dass die Matrix $A$ diagonalisierbar ist, d.h. ähnlich zu einer 
@@ -884,40 +1019,41 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
         Die Matrix $A$ sei diagonalisierbar und ihr betragsgrößter Eigenwert sei separiert von den anderen 
         Eigenwerten, d.h. $|\lambda_n|>|\lambda_{n-1}|\geq|\lambda_{n-2}|\geq\dotsc\geq|\lambda_1|$. \\ 
         Der Startvektor $z^{(0)}$ habe eine nicht-triviale Komponente bezüglich des zugehörigen Eigenvektors $w^{(n)}$.
-        Dann gibt es Zahlen $\delta_k\in\mathbb{C}, |\delta_k|=1$, 
-        sodass $\|z^{(k)}-\delta_k\cdot w^{(n)}\|\rightarrow 0$ für $k\rightarrow\infty$ und es gilt
-        \[\lambda^{(k)}-\lambda_n = \mathcal{O}\left(\left|\dfrac{\lambda_{n-1}}{\lambda_n}\right|^k\right)\qquad 
-        \text{ für } k\rightarrow \infty\]
+        Dann gibt es Zahlen $\delta_t\in\mathbb{C}, |\delta_t|=1$, 
+        sodass $\|z^{(t)}-\delta_t\cdot w^{(n)}\|\rightarrow 0$ für $t\rightarrow\infty$ und es gilt
+        \[\lambda^{(t)}-\lambda_n = \mathcal{O}\left(\left|\dfrac{\lambda_{n-1}}{\lambda_n}\right|^t\right)\qquad 
+        \text{ für } t\rightarrow \infty\]
     \end{thmbox}
-    \textit{Beweis.} Sei $z^{(0)}=\sum_i \alpha_i\cdot w^{(i)}$ die Basisdarstellugn des Startvektors 
+    \textit{Beweis.} Sei $z^{(0)}=\sum_i \alpha_i\cdot w^{(i)}$ die Basisdarstellung des Startvektors 
     (mit $\alpha_n\neq 0$). Für die Iterierten gilt:
-    \[z^{(k)} = \dfrac{\tilde{z}^{(k)}}{\|\tilde{z}^{(k-1)}\|} = \dfrac{Az^{(k-1)}}{\|Az^{(k-1)}\|} 
-    = \dotsc = \dfrac{A^kz^{(0)}}{\|A^kz^{(0)}\|}\]
+    \[z^{(t)} = \dfrac{\tilde{z}^{(t)}}{\|\tilde{z}^{(t-1)}\|} = \dfrac{Az^{(t-1)}}{\|Az^{(t-1)}\|} 
+    = \dotsc = \dfrac{A^tz^{(0)}}{\|A^tz^{(0)}\|}\]
     Dabei gilt:
-    \[A^kz^{(0)} = \sum_{i=1}^{n}\alpha_i\lambda_i^kw^{(i)} = \lambda_n^k \alpha_n\cdot\left(w^{(n)} + 
-    \sum_{i\neq n} \dfrac{\alpha_i}{\alpha_n}\left(\dfrac{\lambda_i}{\lambda_n}\right)^k w^{(i)}\right)\]
+    \[A^tz^{(0)} = \sum_{i=1}^{n}\alpha_i\lambda_i^tw^{(i)} = \lambda_n^t \alpha_n\cdot\left(w^{(n)} + 
+    \sum_{i\neq n} \dfrac{\alpha_i}{\alpha_n}\left(\dfrac{\lambda_i}{\lambda_n}\right)^t w^{(i)}\right)\]
     Wegen $|\tfrac{\lambda_i}{\lambda_n}|\leq \rho:=|\tfrac{\lambda_{n-1}}{\lambda_n}|<1$ für $i=1,\dotsc,n-1$ folgt
-    \[A^kz^{(0)} = \lambda_n^k\alpha_n(w_n+\mathcal{O}(\rho^k))
-    \qquad \text{ für } k\rightarrow \infty\]
+    \[A^tz^{(0)} = \lambda_n^t\alpha_n(w^{(n)}+\mathcal{O}(\rho^t))
+    \qquad \text{ für } t\rightarrow \infty\]
     Dies ergibt:
-    \[z^{(k)} = \dfrac{\lambda_n^k\alpha_n(w^{(n)}+
-    \mathcal{O}(1))}{|\lambda_n^k\alpha_n|\cdot\|w^{(n)}+\mathcal{O}(\rho^k)\|}
-    = \underbrace{\dfrac{\lambda_n^k\alpha_n}{|\lambda_n^k\alpha_n|}}_{=:\delta_k}\cdot (w^{(n)}+\mathcal{O}(\rho^k))\]
-    Dabei ist $\delta_k\in\mathbb{C}$ und $|\delta_k|=1$, daher folgt die erste Aussage.\\
+    \[z^{(t)} = \dfrac{\lambda_n^t\alpha_n(w^{(n)}+
+    \mathcal{O}(1))}{|\lambda_n^t\alpha_n|\cdot\|w^{(n)}+\mathcal{O}(\rho^t)\|}
+    = \underbrace{\dfrac{\lambda_n^t\alpha_n}{|\lambda_n^t\alpha_n|}}_{=:\delta_k}\cdot (w^{(n)}+\mathcal{O}(\rho^t))\]
+    Dabei ist $\delta_t\in\mathbb{C}$ und $|\delta_t|=1$, daher folgt die erste Aussage.\\
     Weiter gilt 
     \begin{align*}
-        \lambda^{(k)} &= \dfrac{(Az^{(k)})_j}{(z^{(k)})_j} \\
-        &= \dfrac{(A^{k+1}z^{(0)})_j}{\|(A^{k+1}z^{(0)})_j\|}\cdot\dfrac{{\|(A^{k+1}z^{(0)})_j\|}}{(A^kz^{(0)})_j} \\
-        &= \dfrac{\lambda_n^{k+1}(\alpha_n w_{n,j}+\sum_{i\neq n} \alpha_i(\tfrac{\lambda_i}{\lambda_n})^{k+1}w_{i,j})}
-        {\lambda_n^k(\alpha_n w_{n,j}+\sum_{i\neq n} \alpha_i(\tfrac{\lambda_i}{\lambda_n})^kw_{i,j})} \\
-        &= \lambda_n + \mathcal{O}\left(\left|\dfrac{\lambda_{n-1}}{\lambda_n}\right|^k\right)\qquad 
-        \text{ für } k\rightarrow \infty
+        \lambda^{(t)} &= \dfrac{(Az^{(t)})_k}{(z^{(t)})_k} \\
+        &= \dfrac{(A^{t+1}z^{(0)})_k}{\|(A^{t+1}z^{(0)})_k\|}\cdot\dfrac{{\|(A^{t+1}z^{(0)})_k\|}}{(A^tz^{(0)})_k} \\
+        &= \dfrac{\lambda_n^{t+1}(\alpha_n w_{n,k}+\sum_{i\neq n} \alpha_i(\tfrac{\lambda_i}{\lambda_n})^{t+1}w_{i,k})}
+        {\lambda_n^t(\alpha_n w_{n,k}+\sum_{i\neq n} \alpha_i(\tfrac{\lambda_i}{\lambda_n})^tw_{i,k})} \\
+        &= \lambda_n + \mathcal{O}\left(\left|\dfrac{\lambda_{n-1}}{\lambda_n}\right|^t\right)\qquad 
+        \text{ für } t\rightarrow \infty
     \end{align*}
     \qed \\ \\
     Die Konvergenz der Potenzmethode ist umso besser, je mehr der betragsgrößte Eigenwert $\lambda_n$ von den übrigen 
     betragsmäßig separiert ist. Der Beweis ist verallgemeinerbar für betragsgrößte Eigenwerte, welche merhfach 
     auftreten, sofern die Matrix diagonalisierbar ist. \\ \\
-    \textbf{Weiterentwicklung der Potenzmethode:} Als nächstes wollen wir uns die \glqq{}Inverse Iteration\grqq{} nach
+    \subsubsection{Inverse Iteration} 
+    Als nächstes wollen wir uns die \glqq{}Inverse Iteration\grqq{} nach
     Wielandt anschauen. \\
     Wir nehmen an, man hat bereits eine Näherung $\tilde{\lambda}$ für einen Eigenwert $\lambda_k$ der regulären Matrix 
     $A$ (z.B. durch Einschließungssätze). Die Näherung sei gut in dem Sinne, 
@@ -931,7 +1067,6 @@ Orthogonalitätsbedingung aufgrund von Rundingsfehlern verloren gehen.
     $\mu_i = (\lambda_i-\tilde{\lambda})^{-1}$ für $i=1,\dotsc,n$ un des gilt 
     \[\left|\dfrac{1}{\lambda_k-\tilde{\lambda}}\right| \gg \left|\dfrac{1}{\lambda_i-\tilde{\lambda}}\right|\qquad 
     \text{für } i\neq k\]
-    \newpage
     \begin{defbox}
         Die inverse Iteration besteht in der Anwendung der Potenzmethode auf die Matrix $(A-\tilde{\lambda}I)^{-1}$
         mit einer a priori Schätzung $\tilde{\lambda}$ zum gesuchten Eigenwert $\lambda_k$. \\ 
