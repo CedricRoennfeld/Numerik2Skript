@@ -7,3 +7,6 @@
 *.fls
 *.bbl
 *.blg
+
+script/build/
+.vscode/
