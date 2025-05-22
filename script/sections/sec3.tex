@@ -22,7 +22,7 @@ Wir stellen folgende Zusammenhänge der Berechnung von Eigenwerten und Eigenvekt
     für jeden Eigenwert $\lambda$ von $A$, welcher nicht zugleich auch Eigenwert von $B$ ist, die Beziehung
     \[\|(\lambda I-B)^{-1}(A-B)\|\geq 1\]
 \end{thmbox}
-\textit{Beweis.} Ist $w$ ein Eigenwektor vom Eigenwert $\lambda$ von $A$, so folgt aus der Identität 
+\textit{Beweis.} Ist $w$ ein Eigenvektor vom Eigenwert $\lambda$ von $A$, so folgt aus der Identität 
 $(A-B)w = (I\lambda - B)w$, dass wenn $\lambda$ kein Eigenwert von $B$ ist, d.h. $\lambda I-B$ invertierbar: 
 \[(\lambda I-B)^{-1}(A-B)w=w\]
 Demnach ist also 
@@ -308,4 +308,131 @@ Da nach Lemma 3.10 die Matrix $A^n$ stoch. ist bildet dies einen Widerspruch.\qe
         0.72 \\ 0.24 \\ 0.54 \\ 0.36
     \end{pmatrix}\right\}\]
     Demnach hat die erste Website die höchste Bewertung. 
+\end{egbox}
+
+\subsubsection{Vorgehensweite für weitere Eigenwerte/Eigenvektoren}
+Wir betrachten die Diagonalmatrix
+\[A = \begin{pmatrix}
+    3 & 0 \\ 0 & 2
+\end{pmatrix}\]
+mit den Eigenwerten $\lambda_1=3$ und $\lambda_2=2$ zu den Eigenvektoren
+\[v^{(1)}=\begin{pmatrix}
+    1 \\ 0
+\end{pmatrix}, \quad v^{(2)}= \begin{pmatrix}
+    0 \\ 1
+\end{pmatrix}\]
+Wir führen folgende Transformation durch:
+\[B = \underbrace{\begin{pmatrix}
+    3 & 0 \\ 0 & 2
+\end{pmatrix}}_{=A} - \underbrace{\begin{pmatrix}
+    3 & 0 \\ 0 & 0
+\end{pmatrix}}_{=(1,0)^T(3,0)} = \begin{pmatrix}
+    0 & 0 \\ 0 & 2
+\end{pmatrix}\]
+\textbf{Idee:} Umwandlung der betrachteten Matrix in eine andere Matrix, wobei der betragsgrößte Eigenwert entfernt
+wird, d.h. durch $0$ ersetzt wird. \\
+Iterative Andwendung liefert dann alle Eigenwerte. \\ \\
+Sei $A\in\mathbb{R}^{n\times n}$ gegeben, der Eigenwert $\lambda^{(1)}$ sei der betragsgrößte Eigenwert, d.h.
+\[|\lambda^{(1)}| > |\lambda^{(2)}| > \dotsc > 0\]
+Der Eigenvektor zu $\lambda^{(1)}$ sei gegeben durch $u^{(1)}$. \\
+Wir wählen eine von Null verschiedene Komponente $u^{(1)}_p$ von $u^{(1)}$ und schreiben $a^T$ für die $p$-te Zeile
+von $A$, d.h. $a^T=(A_{p1},A_{p2},\dotsc,A_{pn})$. Betrachte nun die Matrix 
+\[B = A - \dfrac{1}{u_p^{(1)}} u^{(1)}\cdot a^T\quad\text{ mit }\quad B_{ij} = 
+A_{ij}-\dfrac{1}{u^{(1)}_p}u^{(1)}_i\underbrace{A_{pj}}_{(a^T)_j}\]
+Aus dem Eigenwertproblem $Au^{(k)} = \lambda^{(k)}u^{(k)}$ ergibt sich
+\[\lambda^{(k)}u^{(k)}_p = (Au^{(k)})_p = a^T\cdot u^{(k)}\]
+Für $k=1$ ergibt sich:
+\begin{align*}
+    Bu^{(1)} &= Au^{(1)} - \dfrac{1}{u^{(1)}_p} \cdot u^{(1)}\cdot a^T\cdot u^{(1)} \\
+    &=Au^{(1)} - \dfrac{1}{u^{(1)}_p} \cdot u^{(1)}\cdot \lambda^{(1)}u^{(1)}_p \\
+    &= \lambda^{(1)}u^{(1)} - \lambda^{(1)}u^{(1)} = 0
+\end{align*}
+d.h. $0$ ist ein Eigenwert von $B$  (statt vorher $\lambda^{(1)}$ von $A$).  \\
+Analoge Überlegung für $k=2,\dotsc,n$ liefert:
+\begin{align*}
+    Bu^{(k)} &= \lambda^{(k)}u^{(k)} - \dfrac{1}{u^{(k)}_p} \cdot u^{(k)}\cdot \lambda^{(k)}u^{(k)}_p \\
+    &= \lambda^{(k)}\cdot\left(u^{(k)} - \dfrac{u^{(k)}_p}{u^{(k)}_p} \cdot u^{(k)}\right) \tag{1}
+\end{align*}
+Die Eigenwerte bleiben beim Wechsel von $A$ zu $B$ erhalten, da 
+\begin{align*}
+    Bu^{(k)} + 0 &= Bu^{(k)} + \underbrace{Bu^{(1)}}_{=0} \\
+    &= B^{(k)} + B\cdot\dfrac{-u_p^{k}}{u_p^{(1)}}u^{(1)} \\
+    &= B\cdot\left(u^{(k)} - \dfrac{u^{(k)}_p}{u^{(k)}_p} \cdot u^{(k)}\right) 
+    \stackrel{(1)}{=} \lambda^{(k)}\cdot\left(u^{(k)} - \dfrac{u^{(k)}_p}{u^{(k)}_p} \cdot u^{(k)}\right) \tag{2}
+\end{align*}
+Die Gleichung (2) zeigt für $k=2,3,\dotsc,n$, dass $\lambda^{(k)}$ auch ein Eigenwert zu $B$ ist, 
+wenn auch mit anderem Eigenvektor. 
+\begin{thmbox}{Satz}[Deflation nach Wielandt]
+    Seien $\lambda_1,\dotsc,\lambda_n$ die Eigenwerte von $A$, betragsmäßig fallend, d.h. 
+    $|\lambda_1|>|\lambda_2|>\dotsc>|\lambda_n|$, und zugehörigen Eigenvektoren $u^{(1)},\dotsc,u^{(n)}$ Eigenvektoren.
+    Dann besitzt die Matrix 
+    \[B = A - \dfrac{1}{u_p^{(1)}} u^{(1)}\cdot a^T\quad\text{ mit }\quad u_p^{(1)}\neq 0 
+    \text{ und } a^T=(A_{p1},A_{p2},\dotsc,A_{pn})\]
+    die Eigenwerte $\lambda_1,\dotsc,\lambda_n$ mit den zugehörigen Eigenvektoren $u^{(1)},w^{(2)},\dotsc,w^{(n)}$,
+    wobei 
+    \[w^{(k)} = u^{(k)} - \dfrac{u_p^{(k)}}{u_p^{(1)}}\cdot u^{(1)}\tag{*}\]
+    Den betragsmäßig zweiten Eigenwert $\lambda_2$ zugehörigen Eigenvektor $w^{(2)}$ erhält man somit mit der 
+    Potenzmethode für die Matrix $B$ nach ihrer Definition. \\ 
+    Den Eigenvektor $u^{(2)}$ zum Eigenwert $\lambda_2$ der Matrix $A$ kann wie folgt rekonstruiert werden:
+    \begin{enumerate}
+        \item[a)] Lösen des linearen Gleichungssystems (*) bezüglich $u^{(2)}$ 
+        \item[b)] Lösen des LGS der EW-Gleichung  
+        \item[c)] Inverse Iteration nach Wielandt anwenden, um Eigenvektor von $A$ zum zugehörigen Eigenwert
+        $\lambda_2$ zu erhalten 
+    \end{enumerate}
+\end{thmbox}
+\begin{egbox}
+    \[A = \begin{pmatrix}
+        -4 & 14 & 0 \\ -5 & 13 & 0 \\ -1 & 0 & 2
+    \end{pmatrix}\]
+    Wir verwenden die Potenzmethode um betragsmäßig größten Eigenwert und zugehörigen Eigenvektor zu bestimmen. \\
+    Es sei bekannt, dass 
+    \begin{align*}
+        \lambda_1=6 \quad, u^{(1)}=\begin{pmatrix}
+            -4 \\ \tfrac{-20}{7} \\ 1
+        \end{pmatrix} \\
+        \lambda_2=3 \quad, u^{(2)}=\begin{pmatrix}
+            -1 \\ \tfrac{-1}{2} \\ 1
+        \end{pmatrix} \\
+        \lambda_3=2 \quad, u^{(3)}=\begin{pmatrix}
+            -0 \\ 0 \\ 1
+        \end{pmatrix}
+    \end{align*}
+    Deflation von $A$: \\
+    Wähle $p = 1$, d.h. $u_p^{(1)} = -4, a^T=(-4, 14, 0)$. Es folgt:
+    \[B = \begin{pmatrix}
+        -4 & 14 & 0 \\ -5 & 13 & 0 \\ -1 & 0 & 2
+    \end{pmatrix} - \dfrac{1}{-4}\cdot\underbrace{\begin{pmatrix}
+        -4 \\ -\tfrac{20}{7} \\ 1
+    \end{pmatrix}\cdot(-4, 14, 0)}_{\begin{pmatrix}
+        16 & -56 & 0 \\
+        \tfrac{80}{7} & -40 & 0 \\
+        -4 & 14 & 0
+    \end{pmatrix} } = \begin{pmatrix}
+        0 & 0 & 0 \\ -\tfrac{-15}{7} & 3 & 0 \\ -2 & \tfrac{7}{2} & 2
+    \end{pmatrix}\] 
+    Diese Matrix hat (ohne Nachweise) folgende Eigenwerte und Eigenvektoren:
+        \begin{align*}
+        \lambda_3=0 \quad, w^{(3)}=\begin{pmatrix}
+            -4 \\ \tfrac{-20}{7} \\ 1
+        \end{pmatrix} \\
+        \lambda_1=3 \quad, w^{(1)}=\begin{pmatrix}
+            0 \\ \tfrac{2}{7} \\ 1
+        \end{pmatrix} \\
+        \lambda_2=2 \quad, w^{(2)}=\begin{pmatrix}
+            -0 \\ 0 \\ 1
+        \end{pmatrix}
+    \end{align*}
+    Nochmalige Deflation mit $\lambda_1=3$ und $\tilde{u}^{(1)} = \begin{pmatrix}
+        0 \\ \tfrac{2}{7} \\ 1
+    \end{pmatrix}$ mit der Wahl $\tilde{p}=3$, $\tilde{u}_p^{(1)}, \tilde{a}^T = (-2,\tfrac{2}{7}, 2)$ liefert:
+    \[\tilde{B} = \begin{pmatrix}
+        0 & 0 & 0 \\ -\tfrac{15}{2} & 3 & 0 \\ -2 & \tfrac{7}{2} & 2
+    \end{pmatrix} - \dfrac{1}{1}\begin{pmatrix}
+        0 \\ \tfrac{2}{7} \\ 1
+    \end{pmatrix}\begin{pmatrix}
+    -2 & \tfrac{7}{2} & 2
+    \end{pmatrix} = \begin{pmatrix}
+        ...
+    \end{pmatrix}\]
 \end{egbox}
