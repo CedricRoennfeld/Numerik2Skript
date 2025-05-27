@@ -111,6 +111,17 @@
 ]{defboxEnv}
 
 \newmdenv[
+  backgroundcolor=myblue,
+  linewidth=1pt,
+  roundcorner=3pt,
+  innerleftmargin=10pt
+  innerrightmargin=10pt,
+  innertopmargin=.6\baselineskip,
+  innerbottommargin=.6\baselineskip,
+  splittopskip=2em
+]{sumboxEnv}
+
+\newmdenv[
   backgroundcolor=mygreen,
   linewidth=1pt,
   roundcorner=3pt,
@@ -159,6 +170,14 @@
     \IfValueT{#1}{{\bfseries\sffamily\ (#1)}}{\bfseries\sffamily.\ }%
 }{%
   \end{defboxEnv}%
+}
+
+\NewDocumentEnvironment{sumbox}{o}{%
+  \begin{sumboxEnv}%
+    {\bfseries\sffamily Übersicht}%
+    \IfValueT{#1}{{\bfseries\sffamily\ (#1)}}%
+}{%
+  \end{sumboxEnv}%
 }
 
 \NewDocumentEnvironment{thmbox}{m o}{%

@@ -1,0 +1,68 @@
+% !TeX root = ../script.tex
+
+\section{Krylov-Raum-Methoden für EW-Probleme}
+Wir verfolgen die gleiche Idee, wie auch schon bei linearen Gleichungssystemen, d.h. die ursprünglich hochdimensionalen
+Probleme, werden durch geeignete Unterräume (Krylov-Räume) in kleinere Probleme umgewandelt. \\
+Wir erhalten dabei ein iteratives Vorgehen, zu betrachtende Beispiele sind die Arnoldi-Methode und die 
+Lanczos-Methode.\\ \\
+Wir betrachten also die Eigenwertgleichung $Az=\lambda z$ mit $A\in\mathbb{C}^{n\times n}$, wobei $A$ eine sehr große
+Matrix, typischerweise $n\geq 10^4$, ist. \\ \\
+\subsection{Garlerkin-Approximation}
+Eigenwertprobleme können äquivalent in Variationsform (schwache Formulierung) geschrieben werden:\\
+Sei $z\in\mathbb{C}^n$ ein Eigenvektor von $A$ zum Eigenwert $\lambda\in\mathbb{C}$
+\[\langle Az,y\rangle_2 = \lambda\langle z,y\rangle_2 \quad\forall\,y\in\mathbb{C}\tag{1*}\]
+Sei $K_m=\Span{q^1,\dotsc,q^m}$ ein geeignet gewählter Unterrraum von $\mathbb{C}^n$ kleiner Dimension, d.h. 
+$\dim K_m=n\ll n$, dann wird das $n$-dimensionale Eigenwertproblem (1*) mit dem $m$-dimensionale Eigenwertproblem
+approximiert: 
+\[z\in K_m, \ \lambda\in\mathbb{C}: \quad \langle Az,y\rangle_2=\lambda\langle y,z\rangle_2 \quad\forall\,y\in K_m\]
+Wir entwickeln die Eigenvektoren $z\in K_m$ bzgl. der gegebenen Basis:
+\[z = \sum_{j=1}^{m} \alpha_j q^j\]
+und erhalten somit das Galverkin-System
+\[\sum_{j=1}^{k} \alpha_j \langle Aq^j,q^i\rangle_2 = \lambda\cdot\sum_{j=1}^{k} \alpha_j \langle q^j,q^i\rangle_2
+\quad\forall\,i=1,\dotsc,m\]
+Wir schreiben dieses System typischerweise in kompakter Form als Eigenwertproblem 
+$\mathcal{A}\alpha = \lambda\mathcal{M}\alpha$ mit Vektoren $\alpha=(\alpha_1,\dotsc,\alpha_n)$ und Matrix $\mathcal{A}=(\langle Aq^j, q^i\rangle_2)_{i,j=1}^n$, 
+$\mathcal{M} = (\langle q^j, q^i\rangle_2)_{i,j=1}^n$.\footnote{
+unsicher, warum der Wechsel von $m$ auf $n$} \\ \\
+Im folgenden betrachten wir immer die \textit{kartesischer Representation} der Basisvektoren $q^{i}=(q_j^i)_{j=1}^n$ 
+und somit schreibt man das Garlerkin-EW-Problem in der Form
+\[\sum_{j=1}^{m} \alpha_j \sum_{k,l=1}^{n} \alpha_{k,l} q_k^{j}q_l^{-i} = \lambda\cdot \sum_{j=1}^{m} \alpha_j
+\sum_{k,l=1}^{n} \alpha_{k,l} q_k^{j}q_l^{-i}\quad\forall\, i=1,\dotsc,m\]
+Mit $\mathcal{Q}^{(m)}=(q^,\dotsc,q^m)\in\mathbb{C}^{n\times m}$  und dem Vektor $\alpha=(\alpha_j)_{j=1}^m\in\mathbb{C}^m$ 
+kann dies in der kompakten Form 
+\[\overline{\mathcal{Q}}^{(m)}A\mathcal{Q}^{(m)}\alpha = \lambda \overline{\mathcal{Q}}^{(m)}\mathcal{Q}^{(m)}\alpha\]
+formuliert werden. \\ \\
+Wenn $\{q^1,\dotsc,q^m\}$ eine ONB vom Kern ist, reduziert sich dies zum normalen EW-Problem:
+\[\underbrace{\overline{\mathcal{Q}}^{(m)}A\mathcal{Q}^{(m)}}_{=: H^{(m)}\in\mathbb{C}^{m\times m}}\alpha = 
+\lambda \alpha \tag{2*}\]
+Fall $H^{(m)}$ eine spezielle Struktur hat (z.\,B. Hessenberg-Matrix oder symmetrische Tridiagonalgestalt), dann kann 
+das EW-Problem mit niedriger Dimension (2*) mit QR-Methode gelöst weden. \\ \\
+Seine Eigenwerte können als Approximationen der dominanten Eigenwerte der ursprünglichen Matrix $A$ betrachtet werden
+und werden \textit{Ritz-Eigenwerte} genannt. \\ \\
+\begin{sumbox}[Krylov-Methode] \ 
+    \begin{enumerate}
+        \item[1.] Wähle geeignete Unterräume $K_m\in\mathbb{C}^{m\times m}$, $m\ll n$ Krylov-Raum durch Verwendung der 
+        Matrix $A$ und deren Potenz.
+        \item[2.] Konstruiere eine ONB $\{q^1,\dotsc, q^m\}$ vom Kern mit der stabilisierten Version des 
+        Gram-Schmidt-Algorithmus und setze $\mathcal{Q}^{(m)}:=[q^1,\dotsc,q^m]$.
+        \item[3.] Berechne die Matrix $H^{(m)}:=\overline{\mathcal{Q}}^{(m)}A\mathcal{Q}^{(m)}$, welche 
+        konstruktionsbedingt eine Hessenberg-Matrix oder im hermitischen Fall hermitische Tridiagonalmatrix ist. 
+        \item[4.] Löse das Eigenwertproblem der reduzierten Matrix $H^{(m)}\in\mathbb{C}^{m\times m}$ durch die 
+        QR-Methode.
+        \item[5.] Nehme die Eigenwerte von $H^{(m)}$ als die Näherung der dominanten (betragsgrößten) Eigenwerte 
+        von $A$. Im Falle des kleinstgrößten Eigenwert, muss die Matrix $A^{-1}$ betrachtet werden (Konstruktion 
+        der Unterräume $K_m$ kann sehr aufwendig sein).
+    \end{enumerate}
+\end{sumbox}
+\subsection{Arnoldi-Methode}
+Die Potenzmethode verwendet nur die aktuelle Iterierte $A^mq$ mit $m\ll n$ für den normierten Startvektor 
+$q\in\mathbb{C}^n$ mit $\|q\|_2=1$, ignoriert aber die bereits berechneten Iterierten $\{q,Aq,A^2q,\dotsc,A^{m-1}q\}$. \\ \\
+\textbf{Idee:} Verwendung dieser Informationen und Erstellen einer sogenannten \textit{Krylov-Matrix}
+\[K_m = [q,Aq,A^2q,\dotsc,A^{m-1}q]\quad\text{mit }1\leq m\leq n\]
+Die Spalten dieser Matrix sind nicht orthogonal zueinander. $A^tq$ konvergiert gegen Eigenbektor zum betragsgrößten
+Eigenwert, d.h. $K_m$ ist schlecht konditionert (da sich die letzten Spalten kaum ändern). \\
+Die Konstruktion in eine orthogonale Basis mit dem Gram-Schmidt-Algorithmus ist instabil. \\
+Wir wählen als Alternative in der Arnoldi-Methode die Verwendung einer stabilisierten Variante des 
+Gram-Schmidt-Verfahrens um eine Folge orthonormaler Vektoren $\{q^1,q^2,\dotsc\}$ (bezeichnet als 
+Arnoldi-Vektoren) zu erzeugen, sodass für jedes $m$ die Vektoren $\{q^1,\dotsc,q^m\}$ den Krylov-Unterraum $K_m$ 
+aufspannen.
