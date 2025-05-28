@@ -382,57 +382,55 @@ wenn auch mit anderem Eigenvektor.
     \end{enumerate}
 \end{thmbox}
 \begin{egbox}
+    Gesucht seien die Eigenwerte und Eigenvektoren der Matrix
     \[A = \begin{pmatrix}
         -4 & 14 & 0 \\ -5 & 13 & 0 \\ -1 & 0 & 2
     \end{pmatrix}\]
-    Wir verwenden die Potenzmethode um betragsmäßig größten Eigenwert und zugehörigen Eigenvektor zu bestimmen. \\
-    Es sei bekannt, dass 
-    \begin{align*}
-        \lambda_1=6 \quad, u^{(1)}=\begin{pmatrix}
-            -4 \\ \tfrac{-20}{7} \\ 1
-        \end{pmatrix} \\
-        \lambda_2=3 \quad, u^{(2)}=\begin{pmatrix}
-            -1 \\ \tfrac{-1}{2} \\ 1
-        \end{pmatrix} \\
-        \lambda_3=2 \quad, u^{(3)}=\begin{pmatrix}
-            -0 \\ 0 \\ 1
+    Im ersten Schritt verwenden wir die Potenzmethode um den betragsmäßig größten Eigenwert und den zugehörigen
+    Eigenvektor zu bestimmen, wir erhalten:
+    \[
+    \lambda_1=6 \quad, u^{(1)}=\begin{pmatrix}
+            -4 \\ \nicefrac{-20}{7} \\ 1
         \end{pmatrix}
-    \end{align*}
-    Deflation von $A$: \\
-    Wähle $p = 1$, d.h. $u_p^{(1)} = -4, a^T=(-4, 14, 0)$. Es folgt:
-    \[B = \begin{pmatrix}
+    \]
+    Für die Deflation wählen wir nun $p=1$ mit $u_p^{(1)}\neq 0$ und $a^T=(-4, -5, -1)$, die resultierende Matrix $B$
+    ergibt sich dann durch:
+    \[
+    B = \begin{pmatrix}
         -4 & 14 & 0 \\ -5 & 13 & 0 \\ -1 & 0 & 2
-    \end{pmatrix} - \dfrac{1}{-4}\cdot\underbrace{\begin{pmatrix}
+    \end{pmatrix} - \dfrac{1}{-4}\cdot\begin{pmatrix}
         -4 \\ -\tfrac{20}{7} \\ 1
-    \end{pmatrix}\cdot(-4, 14, 0)}_{\begin{pmatrix}
-        16 & -56 & 0 \\
-        \tfrac{80}{7} & -40 & 0 \\
-        -4 & 14 & 0
-    \end{pmatrix} } = \begin{pmatrix}
-        0 & 0 & 0 \\ -\tfrac{-15}{7} & 3 & 0 \\ -2 & \tfrac{7}{2} & 2
-    \end{pmatrix}\] 
-    Diese Matrix hat (ohne Nachweise) folgende Eigenwerte und Eigenvektoren:
-        \begin{align*}
-        \lambda_3=0 \quad, w^{(3)}=\begin{pmatrix}
-            -4 \\ \tfrac{-20}{7} \\ 1
-        \end{pmatrix} \\
-        \lambda_1=3 \quad, w^{(1)}=\begin{pmatrix}
-            0 \\ \tfrac{2}{7} \\ 1
-        \end{pmatrix} \\
-        \lambda_2=2 \quad, w^{(2)}=\begin{pmatrix}
-            -0 \\ 0 \\ 1
+    \end{pmatrix}\cdot(-4, 14, 0) = \begin{pmatrix}
+        0 & 0 & 0 \\ \nicefrac{-15}{7} & 3 & 0 \\ -2 & \nicefrac{7}{2} & 2
+    \end{pmatrix}
+    \]
+    Erneutes Anwenden der Potenzmethode auf die neue Matrix $B$ liefert den zweigrößten Eigenwert und den
+    zugehörigen Eigenvektor von $B$:
+    \[
+        \lambda_2=3 \quad, w^{(2)}\begin{pmatrix}
+            0 \\ \nicefrac{2}{7} \\ 1
         \end{pmatrix}
-    \end{align*}
-    Nochmalige Deflation mit $\lambda_1=3$ und $\tilde{u}^{(1)} = \begin{pmatrix}
-        0 \\ \tfrac{2}{7} \\ 1
-    \end{pmatrix}$ mit der Wahl $\tilde{p}=3$, $\tilde{u}_p^{(1)}, \tilde{a}^T = (-2,\tfrac{2}{7}, 2)$ liefert:
-    \[\tilde{B} = \begin{pmatrix}
-        0 & 0 & 0 \\ -\tfrac{15}{2} & 3 & 0 \\ -2 & \tfrac{7}{2} & 2
-    \end{pmatrix} - \dfrac{1}{1}\begin{pmatrix}
-        0 \\ \tfrac{2}{7} \\ 1
-    \end{pmatrix}\begin{pmatrix}
-    -2 & \tfrac{7}{2} & 2
-    \end{pmatrix} = \begin{pmatrix}
-        ...
-    \end{pmatrix}\]
+    \]
+    Eine weitere Deflation mit dem neu gewonnen Eigenvektor und $p=3$ ergibt
+    \[
+        C = \begin{pmatrix}
+        0 & 0 & 0 \\ \nicefrac{-15}{7} & 3 & 0 \\ -2 & \nicefrac{7}{2} & 2
+    \end{pmatrix} - \dfrac{1}{1}\cdot \begin{pmatrix}
+            0 \\ \nicefrac{2}{7} \\ 1
+        \end{pmatrix} \cdot \begin{pmatrix}
+            -2 & \nicefrac{7}{2} & 2
+        \end{pmatrix} = \left(\begin{matrix}
+            0 & 0 & 0 \\
+            \nicefrac{-11}{7} & 2 & \nicefrac{-4}{7} \\
+            0 & 0 & 0
+        \end{matrix}\right)
+    \]
+    Hierbei ergibt sich der letzte Eigenwert und der zu $C$ zugehörige Eigenvektor
+    \[
+        \lambda_3=2 \quad, v^{(3)}=\begin{pmatrix}
+            0 \\ 1 \\ 0
+        \end{pmatrix}
+    \]
+    Nach beliebiger Methodik aus Satz 3.14 lassen sich nun aus $w^{(2)}$ und $v^{(3)}$ die Eigenvektoren  $u^{(2)}$
+    und $u^{(3)}$ von $A$ konstruieren.
 \end{egbox}
