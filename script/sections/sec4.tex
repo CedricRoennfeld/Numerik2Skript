@@ -67,9 +67,96 @@ $q\in\mathbb{C}^n$ mit $\|q\|_2=1$, ignoriert aber die bereits berechneten Iteri
 \textbf{Idee:} Verwendung dieser Informationen und Erstellen einer sogenannten \textit{Krylov-Matrix}
 \[K_m = [q,Aq,A^2q,\dotsc,A^{m-1}q]\quad\text{mit }1\leq m\leq n\]
 Die Spalten dieser Matrix sind nicht orthogonal zueinander. $A^tq$ konvergiert gegen den Eigenvektor zum betragsgrößten
-Eigenwert, d.h. $K_m$ ist schlecht konditionert (da sich die letzten Spalten kaum ändern). \\
+Eigenwert, d.h. $K_m$ ist schlecht konditionert \textcolor{red}{(Was heißt schlecht konditionert bei nicht quadratisch?)} (da sich die letzten Spalten kaum ändern). \\
 Die Konstruktion in eine orthogonale Basis mit dem Gram-Schmidt-Algorithmus ist instabil. \\
 Wir wählen als Alternative in der Arnoldi-Methode die Verwendung einer stabilisierten Variante des 
 Gram-Schmidt-Verfahrens um eine Folge orthonormaler Vektoren $\{q^1,q^2,\dotsc\}$ (bezeichnet als 
 Arnoldi-Vektoren) zu erzeugen, sodass für jedes $m$ die Vektoren $\{q^1,\dotsc,q^m\}$ den Krylov-Unterraum $K_m$ 
-aufspannen.
+aufspannen. 
+\newpage
+\begin{defbox}
+Wir definieren für das Folgende orthogonalen Projektionsoperator:
+\[\text{proj}_u(v) := \dfrac{\langle v,u\rangle_2}{\|u\|_2^2}\cdot u\]
+Dieser projeziert den Vektor $v$ auf $\Span{u}$.
+\end{defbox}
+Damit ergibt sich das klassische \textit{Gram-Schmidt-Orthogonalisierungs-Verfahren} als 
+\[q^{1} = \dfrac{q}{\|q\|_2},\quad\text{und}\quad\tilde{q}^{t} = A^{t-1}q - \sum_{j=1}^{t-1} \text{proj}_{q^j}(A^{t-1}q), 
+\qquad q^t = \dfrac{\tilde{q}^t}{\|\tilde{q}^t\|_2}\quad\text{für } t=2,\dotsc,m\]
+Der $t$-te Schritt projeziert die Komponente von $A^{t-1}q$ in Richtung der bereits bestimmten Orthogonal-Vektoren 
+$\{q^1,\dotsc,q^{t-1}\}$. \\
+Dies ist numerisch instabil durch Summieren der Rundungsfehler. \\ \\
+Wir betrachten daher \textit{das modifizierte Gram-Schmidt-Verfahren}, wobei der $t$-te Schritt projeziert die Komponenten
+von $Aq^t$ in Richtung $\{q^1,\dotsc,q^{t-1}\}$:
+\[q^{1} = \dfrac{q}{\|q\|_2},\quad\text{und}\quad\tilde{q}^{t} = Aq^{t-1} - \sum_{j=1}^{t-1} \text{proj}_{q^j}(Aq^{t-1}), 
+\qquad q^t = \dfrac{\tilde{q}^t}{\|\tilde{q}^t\|_2}\quad\text{für } t=2,\dotsc,m \tag{1}\]
+Da $q^t$, $\tilde{q}^t$ in die gleiche Richtung zeigen und $\tilde{q}^t\perp K_t$ erhält man 
+\[\langle q^t, \tilde{q}^t\rangle_2 = \|\tilde{q}^t\|_2 = 
+\left\langle q^t,Aq^{t-1} - \sum_{j=1}^{t-1} \text{proj}_{q^j}(Aq^{t-1})\right\rangle_2 = \langle q^t, Aq^{t-1}\rangle_2\]
+Mit $h_{i,t-1} := \langle Aq^{t-1},q^i \rangle_2$ ergibt sich mit dem modifizierte Gram-Schmidt-Algorithmus
+\[Aq^{t-1}=\sum_{i=1}^{t} h_{i,t-1 }q^i, \qquad t=2,\dotsc,m+1\]
+In der Praxis wird der modifizierte Gram-Schmidt-Alg. in der folgenden iterierten Form implementiert:
+\begin{align*}
+    q^1 &= \|q\|_2^{-1}q, \\
+    q^{t,1}&=Aq^{t-1}, \\
+    q^{t,j+1}&=q^{t,j}-\text{proj}_{q^j}(q^{t,j}), \tag{2}\\
+    q^t&=\|q^{t,t}\|_2^{-1}q^{t,t}
+\end{align*}
+Man erhält das gleiche Resultat, wie beim klassischen Gram-Schmidt-Verfahren, aber mit kleinerem numerischen Fehler. \\ \\
+\begin{defbox}[Arnoldi-Algorithmus] \ \\
+    Für eine beliebige Matrix $A\in\mathbb{C}^{n\times n}$ bestimmt die Arnoldi-Methode eine Folge orthonormaler 
+    Vektoren $q^t\in\mathbb{C}$ für $1\leq t \leq m \ll n$ (Arnoldi-Basis), durch Anwendung der modifizierten 
+    Gram-Schmidt-Methode (2) auf die Basis $\{q,Aq,A^{m-1}q\}$ des Krylov-Unterraums $K_m$.
+\end{defbox}
+\textcolor{red}{(Algobox)} \\
+Startvektor: $q^1=\|q\|^{-1}_2 q$ \\
+Iteriere für $2\leq t\leq m: q^{t,1}=Aq^{t-1}$ \\
+und für $j=1,\dotsc,t-1: h_{j,t} = \langle q^{t,j},q^j\rangle_2$ und $q^{t,j+1=q^{t,j}-h_{j,t}q^j}$ und $h_{t,t}=\|q^{t,t}\|_2$ 
+und $q^t = h_{t,t}^{-1}\cdot q^{t,t}$ \\ \\
+Bezeichne die $n\times m$-Matrix aus den ersten Arnoldi-Vektoren $\{q^1,q^2,\dotsc,q^m\}$ mit 
+\[\mathcal{Q}^{(m)}:=[q^1,q^2,\dotsc,q^m]\] und sei $H^{(m)}$ die obere Hessenberg Matrix ($m\times m)$ aus $h_{j,k}$:
+\[H^{(m)} = \begin{pmatrix}
+    h_{11} & h_{12} & h_{13} & \dotsc & h_{1m} \\
+    h_{21} & h_{22} & h_{23} & \dotsc & \vdots \\
+    0 & h_{32} & h_{33} & \dotsc & \vdots \\
+    \vdots & \ddots &  \ddots &   \ddots &  h_{m-1,m} \\
+    0 &\dotsc & 0 & h_{m,m-1} & h_{m,m}
+\end{pmatrix}\]
+Die Matrizen $\mathcal{Q}^{(m)}$ sind orthonormal und mit (1) ergibt sich die Arnoldi-Beziehung 
+\[A\mathcal{Q}^{(m)} = \mathcal{Q}^{(m)} H^{(m)} + h_{m,m+1}[0,\dotsc,0,q^{m+1}]\tag{3}\]
+Multiplikation mit ${\mathcal{Q}^{(m)}}^*$  und Verwendung von 
+\[{\mathcal{Q}^{(m)}}^* \mathcal{Q}^{(m)} = I \quad \text{und}\quad {\mathcal{Q}^{(m)}}^* q^{m+1}=0\]
+ergibt 
+\[H^{(m)} = {\mathcal{Q}^{(m)}}^* A \mathcal{Q}^{(m)}\]
+Im Grenzfall $m=n$ ist die Matrix $H^{(n)}$ ähnlich zu $A$ und hat die gleichen Eigenwerte. \\
+Dies legt nahe, dass auch für $m\ll n$ die Eigenwerte der reduzierten Matrix $H^{(m)}$ eine gute Approximation 
+einiger Eigenwerte von $A$ sind. Wenn der Algorithmus endet (in exakter Arithmetik) für $m<n$ mit $h_{m,m+1}$ dann
+ist der Krylov-Raum $K_m$ ein invarianter Unterraum der Matrix $A$ und die reduzierte Matrix $H^{(m)} = 
+{\mathcal{Q}^{(m)}}^* A \mathcal{Q}^{(m)}$ hat $m$ Eigenwerte gemeinsam mit $A$, d.h. $\sigma(H^{(m)})\subset \sigma(A)$\footnote{Beweis: Übungsblatt}
+Das folgende Lemma liefert a posteriori Abschätzungen der Genauigkeit für die Approximation der Eigenwerte von $A$ durch 
+$H^{(m)}$.
+\begin{thmbox}{Lemma}
+    Sei $\{\mu,w\}$ ein Eigenpaar der Hessenberg-Matrix $H^{(m)}$ und sei $v=\mathcal{Q}^{(m)}w$ sodass $\{\mu,v\}$ ein 
+    approximiertes Eigenpaar von $A$ ist. Dann gilt
+    \[\|Av-\mu w\|_2 = |h_{m+1,m}|\cdot |w_m|,\] 
+    wobei $w_m$ die letzte Komponente des Eigenvektors $w$ ist.
+\end{thmbox}
+\textit{Beweis.} Multiplikation von (3) mit $w$ ergibt 
+\begin{align*}
+Av &= A\mathcal{Q}^{(m)}w\\ 
+&= \mathcal{Q}^{(m)}H^{(m)}w + h_{m+1,m}\cdot[0,\dotsc,0,q^{m+1}]w \\
+&= \mu \mathcal{Q}^{(m)}w + h_{m+1,m}\cdot[0,\dotsc,0,q^{m+1}]w \\
+&= \mu v + h_{m+1,m}\cdot[0,\dotsc,0,q^{m+1}]w
+\end{align*}
+Daraus folgt mit $\|q_{m+1}\|_2 = 1$, dass
+\[\|Av-\mu v\|_2 = |h_{m+1,m}|\cdot |w_m|\]
+\qed \\ \\
+Dies liefert keine a priori-Information der Konvergenz der Eigenwerte von $H^{(m)}$ gegen die von $A$ für $m\to n$, aber
+liefert a posteriori-Prüfung basierend auf den berechneten Größen $h_{m+q,m}$ und $w_m$, ob das erhaltene Paar 
+$\{\mu,w\}$ eine gute Approximation ist.
+\begin{rembox}
+    Die Ritz-Eigenwerte konvergieren zu den betragsgrößten Eigenwerten von $A$. Falls die betragskleinsten Eigenwerte 
+    bestimmt werden sollen, muss das diskutierte Verfahren auf die inverse Matrix angewendet werden (Vgl. Inverse 
+    Iteration nach Wielandt). In diesem Fall hat man einen großen Aufwand die Krylov-Räume 
+    $K_m = \Span{q,A^{-1}q,\dotsc,A^{-m+1}q}$ zu bestimmen, da hierfür die linearen Systeme $v^0:=q, Av^1=v^0, 
+    \dotsc, Av^m=v^{m-1}$ gelöst werden müssen.
+\end{rembox}
