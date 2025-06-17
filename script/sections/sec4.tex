@@ -158,5 +158,159 @@ $\{\mu,w\}$ eine gute Approximation ist.
     bestimmt werden sollen, muss das diskutierte Verfahren auf die inverse Matrix angewendet werden (Vgl. Inverse 
     Iteration nach Wielandt). In diesem Fall hat man einen großen Aufwand die Krylov-Räume 
     $K_m = \Span{q,A^{-1}q,\dotsc,A^{-m+1}q}$ zu bestimmen, da hierfür die linearen Systeme $v^0:=q, Av^1=v^0, 
-    \dotsc, Av^m=v^{m-1}$ gelöst werden müssen.
+    \dotsc, Av^m=v^{m-1}$ sukzessiv gelöst werden müssen.
 \end{rembox}
+\begin{rembox}
+    Typische Implementierungen der Arnoldi-Methode werden nach einer bestimmten Anzahl von Iterationen neu begonnen.
+    Es kann untersucht werden, dass die Konvergenz sich mit einer größeren Krylov-Unterraum-Dimension $m$ verbessert.
+    Die Größe $m$, für die eine optimale Konvergenz erhalten wird, ist leider nicht im Voraus bekannt. \\
+    $\implies$\glqq{}Switching\grqq{}-Strategien um zu testen, ob ein Neustart sinnvoll ist, 
+    um die Konvergenz zu beschleunigen.
+\end{rembox}
+\begin{rembox}
+    Der Algorithmus der rekursiven Form des Gram-Schmidt-Verfahrens kann auch für die stabile Orthogonalisierung einer 
+    allgemeinen Basis $\{v_1,\dots,v_m\}\subset\mathbb{C}^n$ verwendet werden:\\
+    \textcolor{red}{Algobox} \\
+    $u^1=\|v^1\|_2^{-1}\cdot v^1$ \\
+    Für $t=2,...,m$:  \\
+    Für $j=1,...,t-1$: \\
+    $u^{t,1}=v^t, u^{t,j+1}=u^{t,j}-proj_{u^{j}}(u^{t,j})$ \\
+    $u^t=\|u^{t,t}\|_2^{-1}\cdot u^{t,t}$ \\
+    Dieser modifizierte Gram-Schmidt-Algorithmus (mit exakter Arithmetik) liefert das gleiche Resultat, 
+    wie der klassiche Gram-Schmidt-Algorithmus. \\
+    $u^1=\|v^1\|_2^{-1}\cdot v^1$ \\
+    Für $t=2,...,m$: \\
+    $\tilde{u}^t = v^t - \sum_{j=1}^{t-1} proj_{u^j}(v^t)$ \\
+    $u^t = \|\tilde{u}\|_2^{-1}\cdot\tilde{u}^t$
+    Beide Algorithmen haben die gleiche arithmetische Komplexität. \\
+    In jedem Schritt wird ein zu den vorherigen Vektoren orthogonaler Vektor bestimmt und dieser ist auch orthonormal
+    zu einem eventuellen Fehler, der bei den Berechnungen entstand, was die Stabilität angeht.\\
+    Für die Fehlerabschätzung der resultierenden orthonormalen Matrix $u=[u^1,\dots,u^m]$ gilt:
+    \[
+        \|u^Tu-I\|_2 \leq \dfrac{c_1\cdot \Cond_2(A)}{1-c_2\cdot\Cond_2(A)}
+    \]
+    (Vgl. Björk \& Paige)
+\end{rembox}
+\begin{rembox}
+    Andere Methoden zu Orthogonalisierung (wie z.B. Householder Transformation oder Givens-Rotation) sind zum Teil 
+    stabiler, als die stabilisierte Gram-Schmidt-Methode, aber aufgrund der iterativen Anwendungsmöglichkeit ist 
+    Gram-Schmidt beim Arnoldi-Verfahren vorteilhafter.
+\end{rembox}
+
+\subsection{Lanczos-Methode}
+Voraussetzung: $A$ sei hermitisch. Dann erhält man für die Rekursions-Formel der Arnoldi-Methode:
+\[
+    \tilde{q}^t = Aq^{t-1} - \sum_{j=1}^{t-1} \langle Aq^{t-1}, q^j\rangle_2 q^j, \quad \text{für } t=2,\dots,m+1
+\]
+da $\langle Aq^{t-1}, q^j\rangle_2 = \langle q^{t-1}, Aq^j\rangle_2 = 0$ für $j=1,\dots,t-3$. \\
+Die Vereinfachung zu 
+\[\tilde{q}^t = Aq^{t-1} - \underbrace{\langle Aq^{t-1}, q^{t-1}\rangle_2}_{=:\alpha_{t-1}} q^{t-1}
+- \underbrace{\langle Aq^{t-1}, q^{t-2}\rangle_2}_{=:\beta_{t-2}} q^{t-2} = Aq^{t-1}-\alpha_{t-1}q^{t-1}-\beta_{t-2}q^{t-2}\]
+Da $A$ hermitisch, ist $\alpha_{t-1}\in\mathbb{R}$. Multiplikation mit $q^t$ ergibt
+\[
+    \|\tilde{q}^t\|_2 = \langle q^t, \tilde{q}^t\rangle_2 = \langle q^t, Aq^{t-1}-\alpha_{t-1}q^{t-1}-\beta_{t-2}q^{t-2}\rangle_2 
+    = \langle q^t, Aq^{t-1}\rangle_2 = \langle Aq^t, q^{t-1}\rangle_2 = \beta_{t-1}
+\]
+Daraus folgt, dass auch $\beta_{t-1}\in\mathbb{R}$ und $\beta_{t-1}q^t = \tilde{q}^t$. Also erhält man 
+\[
+  Aq^{t-1} = \beta_{t-1}q^t + \alpha_{t-1}q^{t-1} + \beta_{t-2}q^{t-2},\quad\text{für } t=2,\dots,m+1
+\]
+In Matrix-Form:
+
+\[A\cdot \mathcal{Q}^{(m)} = \mathcal{Q}^{(m)}\cdot\underbrace{\begin{pmatrix}
+    \alpha_1 & \beta_2 & & & & \\
+    \beta_2 & \alpha_2 & \beta_3 & & & \\
+    & \beta_3 & \alpha_3 & \ddots & & \\
+    & & & \ddots & \beta_{m-1} & \\
+    & & & \beta_{m-1} & \alpha_{m-1} & \beta_m \\
+    & & & & \beta_m & \alpha_m
+\end{pmatrix}}_{=:T^{(m)}} + \beta_m\cdot[0,\dots,0,q^{m+1}]\]
+wobei die Matrix $T^{(m)}\in\mathbb{R}^{m\times m}$ ist reell und symmetrisch. Von dieser sogenannten Lanczos-Beziehung
+erhält man 
+\[(\mathcal{Q}^{(m)})^* A \mathcal{Q}^{(m)} = T^{(m)}\] 
+\begin{defbox}[Lanczos-Algorithmus]
+    Für eine hermitische Matrix $A\in\mathbb{C}^{n\times n}$ bestimmt die Lanczos-Methode eine Menge von orthogonalen 
+    Vektoren $\{q^1,\dots,q^m\}$, $m\ll n$ durch Anwendung der Gram-Schmidt-Methode auf die Basis 
+    $\{q,Aq,\dotsc,A^{m-1}q\}$ des Krylov-Raumes $K_m$:
+\end{defbox}
+\textcolor{red}{Algobox:} \\
+Startwerte: $q^1=\|q\|_2^{-1}q, q^0=0, \beta_1=0$ \\
+Iteriere für $1\leq t\leq m-1$:
+\begin{align*}
+    r^t = Aq^t, \quad \alpha_t = \langle r^t, q^t\rangle_2 \\
+    s^t = r^t - \alpha_t q^t - \beta-tq^{t-1} \\
+    \beta^{t+1} = \|s^t\|_2, q^{t+1} = \beta_{t+1}^{-1}s^t \\
+    r^m = Aq^m, \alpha_m = \langle r^m,q^m\rangle_2
+\end{align*}
+Nachdem die Matrix $T^{(m)}$ berechnet ist, kann ihr Eigenwert $\lambda_i$ und der zugehörige Eigenvektor $w^{i}$
+bestimmt werden, z.B. mit QR-Algorithmus. \\
+Die Eigenwert und Eigenvektoren von $T^{(m)}$ werden mit dem Aufwand $\mathcal{O}(m^2)$ berechnet. Die Eigenwerte 
+approximieren die der ursprünglichen Matrix. \\
+Die Ritz Eigenvektoren $v^i$ von $A$ können mit $v^i=\mathcal{Q}^{(m)}\cdot w^i$ berechnet werden.
+
+\subsection{Pseudospektren}
+Motivation:
+Mit Fußball spielen: \textcolor{red}{Bild einfügen} \\
+Bei dem einen stabil, weil Ball bleibt in Kuhle. Bei dem anderen instabil, da Ball wegrollt.
+\\
+Sauber: Fehler verschwinden / werden schlimmer. \\ \\
+Spezialfall: \textcolor{red}{Bild einfügen} \\
+Kleine Auslenkung ist kein Problem, wenn zu groß, dann schon. \\
+Frage ist, wie groß ist das Attraktorgebiet? \\ \\ \\
+
+Begriff der Pseudospektren geht auf Landau zurück. Viele Resultate von Trefethen etal. \\
+Konzept des Pseudo-Spektrums ist bei normalen Operatoren die Vereinigung der $\varepsilon$-Umgebungen seiner Eigenwerte
+
+\begin{defbox}
+    Für $\varepsilon\in\mathbb{R}_+$, ist das $\varepsilon$-Pseudospektrum $\sigma_\varepsilon(A)\subset\mathbb{C}$ 
+    einer Matrix $A\in\mathbb{K}^{n\times n}$ definiert als 
+    \[
+        \sigma_\varepsilon(A) := \{z\in\mathbb{C}\sigma(A)\,|\, \|(A-zI)^{-1}\|_2\geq \varepsilon^{-1}\} \cup \sigma(A)
+    \]
+\end{defbox}
+
+\begin{rembox}
+    Das Konzept des Pseudo-Spektrums kann in viel allgemeineren Situationen eingeführt werden. 
+    (z.B. Dunford \& Schwartz oder Kato)
+\end{rembox}
+
+\begin{rembox}
+    Krylov-Unterraum-Methoden, die bisher diskutiert wurden, lassen sich zur Berechnung des Pseudo-Spektrums einer 
+    Matrix verwenden. (z.B. bei Matrix von diskretisierten partiellen Differentialgleichungen)
+\end{rembox}
+
+\begin{thmbox}{Lemma}
+    \begin{enumerate}
+        \item Das $\varepsilon$-Pseudospektrum einer Matrix $T\in\mathbb{C}^{n\times n}$ kann definiert werden 
+            durch
+            \[\sigma_\varepsilon(T) := \{z\in\mathbb{C}\,|\,\sigma_{\min}(zI-T)\leq\varepsilon\}\]
+            wobei $\sigma_{\min}(B)$ den kleinsten Singulärwert der Matrix $B$ bezeichnet, d.h. 
+            \[\sigma_{\min(B)}:=\min\{\lambda^{1/2}\,|\,\lambda\in\sigma(B^*)\}\]
+            mit der adjungierten $B^*$ von $B$.
+        \item Das $\varepsilon$-Pseudospektrum $\sigma_\varepsilon(T)$ einer Matrix $T\in\mathbb{C}^{n\times n}$ ist 
+            invariant unter Orhtonormalen Transformationen, d.h. für eine unitäre Matrix $Q\in\mathbb{C}^{n\times n}$ 
+            gilt $\sigma_\varepsilon(Q^*TQ) = \sigma_\varepsilon(T)$
+    \end{enumerate}
+\end{thmbox}
+\textit{Beweis.} 
+\begin{enumerate}
+    \item Es gilt
+        \begin{align*}
+            \|(zI-T)^{-1}\|_2 
+            &= \max\{\mu{1/2}\,|\, \mu \text{ Singulärwert von } (zI-T)^{-1}\}  \\
+            &= \min\{\mu{1/2}\,|\, \mu \text{ Singulärwert von } (zI-T)\}^{-1} \\
+            &= \sigma_{\min}(zI-T)^{-1}
+        \end{align*}
+        Daraus folgt:
+        \begin{align*}
+            \sigma_\varepsilon(T) 
+            &= \left\{ z \in \mathbb{C} \;\middle|\; \|(zI-T)^{-1}\|_2 \geq \varepsilon^{-1} \right\} \\
+            &= \left\{ z \in \mathbb{C} \;\middle|\; \sigma_{\min}(zI-T)^{-1} \geq \varepsilon^{-1} \right\} \\
+            &= \left\{ z \in \mathbb{C} \;\middle|\; \sigma_{\min}(zI-T) \leq \varepsilon \right\}
+        \end{align*}
+    \item Übungsaufgabe
+\end{enumerate}
+
+Betrachtung einer Folge von Gitterpunkten $z_i\in D\subset \mathbb{C}$ für $i=1,2,3,\dots$ und in jedem Gitterpunkt
+wir das kleinste $\varepsilon$ bestimmt, für das $z_i\in\sigma_\varepsilon(T)$. \\
+Interpolation der erhaltenen Werte, bestimmt ob ein Punkte $z\in\mathbb{C}$ approxmativ zu $\sigma_\varepsilon(T)$ gehört.
