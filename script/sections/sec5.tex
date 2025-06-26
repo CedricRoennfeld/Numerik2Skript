@@ -140,10 +140,88 @@ Aus zwei aufeinanderfolgenden Stützwerten bildet man die $n=N\,/\,2$ komplexen 
     \[\omega_n := \exp\left(-i\cdot\dfrac{2\pi}{n}\right) = \cos\left(\dfrac{2\pi}{n}\right)+i\cdot\sin\left(\dfrac{2\pi}{n}\right)\]
     Dabei sind die $\omega_n$ die $n$-ten Einheitswurzeln.
 \end{defbox}
+\newpage
 \begin{thmbox}{Satz}[Zusammenhang zwischen reellwertigen und komplexen Fourier-Transformation]
     Die reellwertigen trigonometrischen Summen $a_k'$ und $b_k'$ sind gegeben durch die komplexen 
     Fourier-Transformierten $c_k$ durch:
-    \[a_k'-ib_k'=\tfrac{1}{2}(c_k+\overline{c_{n-k}}) + \tfrac{1}{2i}(c_k-\overline{c_{n-k}})e^{\tfrac{-ik\pi}{n}}\]
-    \[a_{n-k}'-ib_{n-k}'=\tfrac{1}{2}(\overline{c_k}+c_{n-k}) + \tfrac{1}{2i}(\overline{c_k}-c_{n-k})e^{\tfrac{ik\pi}{n}}\]
+    \begin{align*}
+    a_k'-ib_k'&=\tfrac{1}{2}(c_k+\overline{c_{n-k}}) + \tfrac{1}{2i}(c_k-\overline{c_{n-k}})e^{\tfrac{-ik\pi}{n}} \\
+    a_{n-k}'-ib_{n-k}'&=\tfrac{1}{2}(\overline{c_k}+c_{n-k}) + \tfrac{1}{2i}(\overline{c_k}-c_{n-k})e^{\tfrac{ik\pi}{n}}
+    \end{align*}
     für $k=0,\dots n$ falls $b_0'=b_n'=0$ und $c_n=c_0$
 \end{thmbox}
+\textit{Beweis.} 
+Für den ersten Summanden der oberen Formel erhält man 
+\begin{align*}
+    \dfrac{1}{2}\left(c_k+\overline{c_{n-k}}\right) 
+    &= \dfrac{1}{2}\cdot\sum_{j=0}^{n-1}\left\{y_j\cdot\omega_n^{jk} + \overline{y_j}\cdot\overline{\omega_n^{j(n-k)}}\right\} \\
+    &= \dfrac{1}{2}\cdot\sum_{j=0}^{n-1}\left(y_j+\overline{y_j}\right)\cdot\omega_n^{jk}
+\end{align*}
+Für den Ausdruck in Klammern des 2. Summanden \textcolor{red}{prüfen, glaube - statt +}
+\begin{align*}
+    \dfrac{1}{2i}\left(c_k+\overline{c_{n-k}}\right) 
+    &= \dfrac{1}{2i}\cdot\sum_{j=0}^{n-1}\left\{y_j\cdot\omega_n^{jk} + \overline{y_j}\cdot\overline{\omega_n^{j(n-k)}}\right\} \\
+    &= \dfrac{1}{2}\cdot\sum_{j=0}^{n-1}\left(y_j+\overline{y_j}\right)\cdot\omega_n^{jk}
+\end{align*}
+Mit Definition von $y_j$ folgt
+\begin{align*}
+    &\dfrac{1}{2}\left(c_k+\overline{c_{n-k}}\right) - \dfrac{1}{2i}\left(c_k+\overline{c_{n-k}}\right)e^{-\tfrac{ik\pi}{n}}\\
+    &= \sum_{j=0}^{n-1}\left\{f(x_{2j})e^{-ijk\tfrac{2\pi}{n}}+f(x_{2j+1})e^{-i(2j+1)k\tfrac{\pi}{n}}\right\} \\
+    &= \sum_{j=0}^{n-1}\left\{f(x_{2j})\left[\cos(kx_{2j})-i\sin(kx_{2j})\right]
+    + f(x_{2j+1})\left[\cos(kx_{2j+1})-i\sin(kx_{2j+1})\right]\right\} \\
+    &= a_k' - ib_k'
+\end{align*}
+Die zweite Formel des Satzes ergibt sich durch Substitution von $k$ durch $n-k$. 
+\qed\\ \\
+Die Reduktion einer komplexen Fouriertransformation von gerader Ordnung auf zwei Fouriertransformationen je der halben
+Ordnung ist möglich. \\
+Diese Reduktion der Ordnung wird iterativ durchgeführt: \\ \\
+Es sei $n=2m$, $m\in\mathbb{N}$. Dann gilt für die komplexe Fouriertransformierte $c_k$ mit geraden Indizes 
+$k=2l$, $l=0,1,\dots,m-1$:
+\begin{align*}
+    c_{2l} = \sum_{j=0}^{2m-1}y_j\omega_n^{2lj} = \sum_{j=0}^{m-1} (y_j+y_{m+j})\omega_n^{2lj}
+\end{align*}
+Dabei wurde die Identität 
+\[
+    \omega_n^{2l(m+j)} 
+    = \omega_n^{2lj}\cdot \omega_n^{2lm} 
+    = \omega^{2lj}\cdot \omega_n^{ln} = \omega_n^{2lj}\cdot \left(e^{-i\tfrac{2\pi}{n}}\right)^{2ln} 
+    = \omega_n^{2lj}\cdot \left(e^{-i\cdot2\pi}\right)^l 
+    = \omega_n^{2lj}
+\]
+Mit den $m$ Hilfswerten 
+\[
+    z_j := y_j + y_{m+j}, \quad j=0,\dots,m-1
+\]
+und wegen $\omega_n^2 = \omega_m$ sind die Koeffizienten 
+\[
+    c_{2l} = \sum_{j=0}^{m-1} z_jw_m^{jl}
+\]
+die Fouriertransformierten der Ordnung $m$ der Hilfswerte $z_j$. \\
+Für die $c_k$ mit ungeraden Indizes $k=2l+1$ mit $l=0,1,\dots,m-1$ gilt 
+\begin{align*}
+    c_{2l+1} &= \sum_{j=0}^{2m-1} y_j\omega_n^{(2l+1)j} \\
+    &= \sum_{j=0}^{m-1}\left\{ y_j\omega_n^{(2l+1)j}+y_{j+m}\omega_n^{(2l+1)(n+j)}\right\}\\
+    &= \sum_{j=0}^{m-1}(y_j-y_{m+j})\omega_n^{(2l+1)j} \\
+    &= \sum_{j=0}^{m-1}(y_j-y_{m+j})\omega_n^{j}\cdot\omega_n^{2lj}
+\end{align*}
+Mit den weiteren $m$ Hilfswerten
+\[
+    z_{m+j} := (y_j-y_{m+j})\omega_n^j,\quad j=0,1,\dots,m-1
+\]
+sind die Koeffizienten
+\[
+    c_{2l+1} = \sum_{j=0}^{m-1} z_{m+j} \omega_m^{jl}, \quad l=0,1,\dots,m-1
+\]
+die Fouriertransformierten der Ordnung $m$ der Hilfswerte $z_{m+j}$. \\
+Die Zurückführung einer komplexen Fouriertransformationen der Ordnung $n=2m$ auf $2$ komplexe Fouriertransformationen 
+der Ordnung $m$ erfordert nach den obigen Formeln als wesentlichen Rechenaufwand $m$ komplexe Multiplikationen. \\
+In die Ordnung $n=2^\gamma$, $\gamma\in\mathbb{N}$, so kann die Reduktion auf $2$ Fouriertransformationen halber Ordnung
+iterativ durchgeführt werden. \\
+\begin{egbox}
+    $FT_{32} \to 2FT_{16}\to 4FT_8 \to 8FT_4 \to 16FT_2\to 32FT_1$
+\end{egbox}
+Da jeder Schritt $n\,/\,2$ komplexe Multiplikationen fordert, beträgt der gesamte Rechenaufwand
+\[
+    z_{FT,n} = \tfrac{1}{2}n\gamma = \tfrac{1}{2}n\log_2\n
+\]
