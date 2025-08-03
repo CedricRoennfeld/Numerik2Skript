@@ -600,9 +600,9 @@ Die Eigenwerte bleiben beim Wechsel von $A$ zu $B$ erhalten, da
   Bw^{(k)} + 0 
   &= Bw^{(k)} + \underbrace{Bw^{(1)}}_{=0} \\
   &= Bw^{(k)} + Bw^{(1)}\cdot\dfrac{-w_p^{k}}{w_p^{(1)}} \\
-  &= B\cdot\left(w^{(k)} - \dfrac{w^{(k)}_p}{w^{(k)}_p} \cdot w^{(k)}\right) 
+  &= B\cdot\left(w^{(k)} - \dfrac{w^{(k)}_p}{w^{(1)}_p} \cdot w^{(1)}\right) 
   \stackrel{(\ref{eq:WielandtEQ1})}{=} 
-  \lambda_k\cdot\left(w^{(k)} - \dfrac{w^{(k)}_p}{w^{(k)}_p} \cdot w^{(k)}\right)
+  \lambda_k\cdot\left(w^{(k)} - \dfrac{w^{(k)}_p}{w^{(1)}_p} \cdot w^{(1)}\right)
   \tag{2}\label{eq:WielandtEQ2}
 \end{align*}
 Die Gleichung (\ref{eq:WielandtEQ2}) zeigt für $k=2,3,\dots,n$, dass $\lambda_k$ auch ein Eigenwert zu $B$ ist, 
@@ -610,36 +610,41 @@ wenn auch mit anderem Eigenvektor.
 
 \begin{colbox}{Satz}[Deflation nach Wielandt]
   Seien die Eigenwerte von $A$, betragsmäßig absteigend, d.h. 
-  $|\lambda_1|>|\lambda_2|>\dots>|\lambda_n|$, mit zugehörigen Eigenvektoren $u^{(1)},\dots,u^{(n)}$.
+  $|\lambda_1|>|\lambda_2|>\dots>|\lambda_n|$, mit zugehörigen Eigenvektoren $w^{(1)},\dots,w^{(n)}$.
   Dann besitzt die Matrix 
   %
   \begin{align*}
     B 
-    = A - \dfrac{1}{u_p^{(1)}} u^{(1)}\cdot a^T
+    = A - \dfrac{1}{w_p^{(1)}} w^{(1)}\cdot A_p^T
     \quad\text{ mit }\quad u_p^{(1)}
     \neq 0 
-    \text{ und } a^T=(A_{p1},A_{p2},\dots,A_{pn})
+    \text{ und } A_p=(A_{p1},A_{p2},\dots,A_{pn})^T
   \end{align*}
+  %
   die Eigenwerte $0,\lambda_2,\dots,\lambda_n$ mit den zugehörigen Eigenvektoren 
   $w^{(1)},\tilde{w}^{(2)},\dots,\tilde{w}^{(n)}$, wobei
   % 
   \begin{align*}
-    w^{(k)} 
-    = u^{(k)} - \dfrac{u_p^{(k)}}{u_p^{(1)}}\cdot u^{(1)}\tag{*}
+    \tilde{w}^{(k)} 
+    = w^{(k)} - \dfrac{w_p^{(k)}}{w_p^{(1)}}\cdot w^{(1)}
+    \tag{*}\label{eq:WielandtEQlgs}
   \end{align*}
   % 
-  Den betragsmäßig zweiten Eigenwert $\lambda_2$ zugehörigen Eigenvektor $w^{(2)}$ erhält man somit mit der 
-  Potenzmethode für die Matrix $B$ nach ihrer Definition. \\ 
-  Der Eigenvektor $u^{(2)}$ zum Eigenwert $\lambda_2$ der Matrix $A$ kann wie folgt rekonstruiert werden:
+  Den zum Eigenwert $\lambda_2$ zugehörigen Eigenvektor $\tilde{w}^{(2)}$ erhält man somit mit der 
+  Potenzmethode für die Matrix $B$ nach ihrer Definition. 
+
+  Der Eigenvektor $w^{(2)}$ zum Eigenwert $\lambda_2$ der Matrix $A$ kann dann wie folgt rekonstruiert werden:
+  %
   \begin{enumerate}
-    \item[a)] Lösen des linearen Gleichungssystems (*) bezüglich $u^{(2)}$ 
+    \item[a)] Lösen des linearen Gleichungssystems (\ref{eq:WielandtEQlgs}) bezüglich $w^{(2)}$ 
     \item[b)] Lösen des LGS der EW-Gleichung  
     \item[c)] Inverse Iteration nach Wielandt anwenden, um Eigenvektor von $A$ zum zugehörigen Eigenwert
     $\lambda_2$ zu erhalten 
   \end{enumerate}
+  %
 \end{colbox}
 
-\begin{egbox}
+\begin{colbox}
   Gesucht seien die Eigenwerte und Eigenvektoren der Matrix
   \begin{align*}A = \begin{pmatrix}
     -4 & 14 & 0 \\ -5 & 13 & 0 \\ -1 & 0 & 2
@@ -691,4 +696,4 @@ wenn auch mit anderem Eigenvektor.
   \end{align*}
   Nach beliebiger Methodik aus Satz 3.14 lassen sich nun aus $w^{(2)}$ und $v^{(3)}$ die Eigenvektoren  $u^{(2)}$
   und $u^{(3)}$ von $A$ konstruieren.
-\end{egbox}
+\end{colbox}
