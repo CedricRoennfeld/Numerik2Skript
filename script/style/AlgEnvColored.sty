@@ -1,0 +1,41 @@
+\ProvidesPackage{AlgEnvColored}
+
+% Define custom background color
+\usepackage[dvipsnames,svgnames]{xcolor}
+\definecolor{algBackground}{RGB}{242,242,242}
+
+% Counter
+\newcounter{algcounter}
+\renewcommand{\thealgcounter}{\arabic{algcounter}}
+
+\usepackage[linesnumbered,lined,commentsnumbered]{algorithm2e}
+
+\newcommand{\algorithmbox}[3][]{
+  \refstepcounter{algcounter}
+  \noindent
+  \colorbox{algBackground}{
+    \parbox{\dimexpr\linewidth-2\fboxsep\relax}{
+      \vspace*{.6\baselineskip}
+      \hspace*{20pt}
+      {\bfseries\sffamily Algorithmus \thealgcounter: #2}\\[.5\baselineskip]
+      \hspace*{20pt}
+      \begin{minipage}{\dimexpr\linewidth - 40pt\relax}
+        #3
+      \end{minipage}
+      \vspace*{.6\baselineskip}
+    }
+  }
+  \vspace{10pt}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% EXAMPLE USAGES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% \algobox{Name of algorithm}{
+% \begin{algorithm}[H]
+%   Lorem Ipsum
+% \end{algorithm}
+% }
+
+\endinput

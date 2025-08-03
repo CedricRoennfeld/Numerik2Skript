@@ -1,0 +1,33 @@
+\begin{tikzpicture}[scale=2, >={Latex}]
+
+  % Niveaulines as ellipses
+  \foreach \a in {1,1.5,...,3.5} {
+    \draw[gray!30] (0,0) ellipse ({\a} and {\a/4});
+  }
+
+  % ZigZag Course
+  \coordinate (x0) at (2.2,0.7);
+  \coordinate (x1) at (1.7,-0.5);
+  \coordinate (x2) at (1.2,0.5);
+  \coordinate (x3) at (0.8,-0.3);
+  \coordinate (x4) at (0.5,0.25);
+  \coordinate (x5) at (0.2,-0.15);
+
+  % Trajectory
+  \draw[thick, black] (x0) -- (x1) -- (x2) -- (x3) -- (x4) -- (x5);
+
+  % Points
+  \filldraw[black] (x0) circle (0.4pt) node[above right] {$x^{(0)}$};
+  \filldraw[black] (x1) circle (0.4pt) node[below right] {$x^{(1)}$};
+  \filldraw[black] (x2) circle (0.4pt) node[above right] {$x^{(2)}$};
+  \filldraw[black] (x3) circle (0.4pt) node[below] {$x^{(3)}$};
+  \filldraw[black] (x4) circle (0.4pt) node[above] {$x^{(4)}$};
+  \filldraw[black] (x5) circle (0.4pt) node[below] {$x^{(5)}$};
+
+  % arrow connecting x0 and Minimum
+  \draw[very thick, blue, ->] (x0) -- (0,0) node[pos=0.4, below right, blue] {direkter Weg};
+
+  % Minimum
+  \filldraw[red] (0,0) circle (0.7pt) node[below left, red] {Minimum};
+
+\end{tikzpicture}

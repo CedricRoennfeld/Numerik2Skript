@@ -1,0 +1,32 @@
+\begin{tikzpicture}[scale=0.5, thick, every node/.style={font=\large}]
+
+  % Gitter zeichnen
+  \draw[line width=1pt] (0,0) grid (6,6);
+
+  % Zentrum
+  \def\x{3}
+  \def\y{3}
+
+  % Nachbarn markieren (blau)
+  \foreach \dx/\dy in {1/0, -1/0, 0/1, 0/-1}
+  \fill[mydarkblue] (\x+\dx,\y+\dy) circle (4pt);
+
+  % Zentrumspunkt (rot)
+  \fill[mydarkred] (\x,\y) circle (4pt);
+
+  % Labels - rechts
+  \node (toplabel)   [mydarkblue] at (\x+5,\y+1.5) {$(x, y{+}h)$};
+  \node (centerlabel)[mydarkred]  at (\x+4.6,\y+0.5)   {$(x, y)$};
+  \node (rightlabel) [mydarkblue] at (\x+5,\y-0.5) {$(x{+}h, y)$};
+  % Labels - links
+  \node (leftlabel)  [mydarkblue]  at (\x-5,\y-0.5)   {$(x{-}h, y)$};
+  \node (bottomlabel)[mydarkblue] at (\x-5,\y-1.5) {$(x, y{-}h)$};
+
+  % Pfeile 
+  \draw[->, thick, mydarkblue] (toplabel.west)   to[out=180, in=45] (\x+0.2,\y+1+0.2);
+  \draw[->, thick, mydarkred]  (centerlabel.west)to[out=180, in=45]  (\x+0.2,\y+0.2);
+  \draw[->, thick, mydarkblue] (rightlabel.west) to[out=180, in=-45] (\x+1+0.2,\y-0.2);
+  \draw[->, thick, mydarkblue] (leftlabel.east) to[out=0, in=-135] (\x-1-0.2,\y-0.2);
+  \draw[->, thick, mydarkblue] (bottomlabel.east) to[out=0, in=-135] (\x-0.2,\y-1-0.2);
+
+\end{tikzpicture}

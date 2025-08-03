@@ -1,0 +1,216 @@
+\ProvidesPackage{scriptStyle}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Page layout
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[a4paper, left=2.75cm, right=2.75cm, top=3cm, bottom=3cm]{geometry}
+\setlength{\parindent}{0pt} % No indentation
+\setlength{\parskip}{0.5em} % Vertical space between paragraphs
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Font and input encoding
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+
+% No breaks in math mode
+\relpenalty=10000
+\binoppenalty=10000
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Language support
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[english, german]{babel}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Mathematics
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath, amssymb, amsfonts, amsthm}
+\usepackage{mathtools}
+\usepackage{centernot}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Color definitions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[dvipsnames,svgnames]{xcolor}
+\definecolor{myblue}{RGB}{230,255,255}
+\definecolor{mygreen}{RGB}{230,255,230}
+\definecolor{mygrey}{RGB}{242,242,242}
+\definecolor{myred}{RGB}{255,230,230}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Graphics and plots
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, calc, decorations.pathreplacing, positioning}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Headers and footers
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+% Define header/footer styles
+\fancypagestyle{fancy}{
+  \fancyhf{}
+  \fancyhead[C]{\nouppercase{\rightmark}} % Section title
+  \fancyfoot[C]{\thepage}                 % Page number
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+% Ensure each \section starts on a new page with plain style
+\usepackage{etoolbox}
+\preto\section{\clearpage\thispagestyle{plain}\vspace*{1cm}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\setcounter{section}{-1}  % starting at section 0
+
+% Section title formatting
+\usepackage{titlesec}
+\titleformat*{\section}{\Large\bfseries\sffamily}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hyperlinks
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{hyperref}
+
+\usepackage[framemethod=tikz]{mdframed}
+\usepackage{xparse}
+\usepackage{xstring}
+
+% Counter for boxes
+\newcounter{boxcounter}[section]
+\renewcommand{\theboxcounter}{\thesection.\arabic{boxcounter}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Colored boxes for theorems, definitions, examples
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \NewDocumentEnvironment{colbox}{m o}
+%   {
+%     % Increase Counter
+%     \refstepcounter{boxcounter}
+
+%     % Different Colors for different purposes 
+%     \IfStrEq{#1}{Satz}{\def\BackCol{mygreen}}{
+%     \IfStrEq{#1}{Lemma}{\def\BackCol{mygreen}}{
+%     \IfStrEq{#1}{Korollar}{\def\BackCol{mygreen}}{
+%     \IfStrEq{#1}{Definition}{\def\BackCol{myblue}}{
+%     \IfStrEq{#1}{Beispiel}{\def\BackCol{mygrey}}{
+%     \IfStrEq{#1}{Bemerkung}{\def\BackCol{mygreen}}{
+%     \def\BackCol{myred} 
+%     }}}}}}
+
+%     % MDFrame colored Box
+%     \begin{mdframed}[
+%       backgroundcolor=\BackCol,
+%       linewidth=1pt,
+%       roundcorner=3pt,
+%       innerleftmargin=10pt,
+%       innerrightmargin=10pt,
+%       innertopmargin=.6\baselineskip,
+%       innerbottommargin=.6\baselineskip,
+%       splittopskip=2em,
+%       nobreak=true
+%     ]
+%     \IfValueTF{#2}{
+%       % Show title if exists
+%       {\bfseries\sffamily #1 \theboxcounter\ (\sffamily\bfseries #2)\bfseries\sffamily.}
+%     }{
+%       % default
+%       {\bfseries\sffamily #1 \theboxcounter\bfseries\sffamily.}
+%     }
+%   }
+%   {
+%     \end{mdframed}
+%   }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Default bold title environments
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NewDocumentEnvironment{colbox}{m o} 
+{
+  % Increase Counter
+  \refstepcounter{boxcounter}
+  \par\medskip\noindent            % small vertical gap, no indent
+  \IfValueTF{#2}{
+  % Show title if exists
+  {\bfseries\sffamily #1 \theboxcounter\ (\sffamily\bfseries #2)\bfseries\sffamily.}
+  }{
+  % default
+  {\bfseries\sffamily #1 \theboxcounter\bfseries\sffamily.}
+  }
+  \quad       % a little space after “Definition 1.8.” 
+}
+{
+  \par\medskip                     % close out with a gap
+}
+
+\newcounter{aufgabe}[section]                                 % Zähler ‚aufgabe‘, zurückgesetzt bei jeder neuen section
+\renewcommand{\theaufgabe}{\thesection\Alph{aufgabe}}         % Nummerierung: <Sectionnummer><Großbuchstabe>
+\newenvironment{aufgabe}{%
+  \refstepcounter{aufgabe}%                                     % Zähler hochsetzen und Label-Target setzen
+  \par\noindent\textbf{Aufgabe \theaufgabe.}\\              % fette Beschriftung
+}{%
+  \par
+}
+
+\newcounter{loesung}[subsection]
+\renewcommand{\theloesung}{\arabic{subsection}\Alph{loesung}}
+\newenvironment{loesung}{%
+  \refstepcounter{loesung}% Zähler hochsetzen (\label setzt sich hier)
+  \par\noindent\textbf{Lösung \theloesung.}\\% fette Beschriftung
+}{%
+  \par
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Custom Commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Blackboard Bold Abbreviation 
+\newcommand{\N}{\mathbb N}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\R}{\mathbb R}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Var}{\mathbb V\mathrm{ar}}
+\newcommand{\Bias}{\mathbb B\mathrm{ias}}
+\renewcommand{\P}{\mathbb P}
+\newcommand{\One}{\text{\usefont{U}{bbm}{m}{n}1}}
+
+% Convergence
+\newcommand{\conP}{\xrightarrow{\P}}
+\newcommand{\conD}{\xrightarrow{d}}
+\newcommand{\conFS}{\xrightarrow{f.s.}}
+\newcommand{\nto}{\xrightarrow{n\to\infty}}
+
+% Math Operator
+%\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% Var Symbols
+\renewcommand{\epsilon}{\varepsilon}
+
+% Others
+\newcommand\diff{\mathop{}\!\mathrm{d}}
+\newcommand{\wedgeq}{\overset{\wedge}{=}}
+
+\endinput

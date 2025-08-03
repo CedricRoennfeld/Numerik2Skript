@@ -1,0 +1,137 @@
+\ProvidesPackage{ThmEnvColored}
+
+% Define custom colors
+\usepackage[dvipsnames,svgnames]{xcolor}
+\definecolor{myblue}{RGB}{230,255,255}
+\definecolor{mygreen}{RGB}{230,255,230}
+\definecolor{mygrey}{RGB}{242,242,242}
+\definecolor{myred}{RGB}{255,230,230}
+\definecolor{mypurple}{RGB}{245,230,255} % very light purple
+\definecolor{myyellow}{RGB}{255,255,230} % very light yellow
+\definecolor{myorange}{RGB}{255,240,230} % very light orange
+
+
+\usepackage[framemethod=tikz]{mdframed}   % custom boxes
+\usepackage{xparse}                       % simple if statements
+\usepackage{xstring}                      % If statements with strings
+
+
+
+% Counter
+\newcounter{boxcounter}[section]
+\renewcommand{\theboxcounter}{\thesection.\arabic{boxcounter}}
+
+\NewDocumentEnvironment{colbox}{m o}    % m: type, o: Name 
+{
+  % Increase Counter
+  \refstepcounter{boxcounter}
+
+  % % Different Colors for different purposes 
+  % \IfStrEq{#1}{Satz}{\def\BackCol{mygreen}}{
+  % \IfStrEq{#1}{Lemma}{\def\BackCol{mygreen}}{
+  % \IfStrEq{#1}{Korollar}{\def\BackCol{mygreen}}{
+  % \IfStrEq{#1}{Definition}{\def\BackCol{myblue}}{
+  % \IfStrEq{#1}{Beispiel}{\def\BackCol{mygrey}}{
+  % \IfStrEq{#1}{Bemerkung}{\def\BackCol{mygreen}}{
+  % \def\BackCol{myred} 
+  % }}}}}}      % '}' amount should match the amount of different types
+
+  % Different Colors for different purposes 
+  \IfStrEq{#1}{Satz}{\def\BackCol{mypurple}}{
+  \IfStrEq{#1}{Lemma}{\def\BackCol{mypurple}}{
+  \IfStrEq{#1}{Korollar}{\def\BackCol{mypurple}}{
+  \IfStrEq{#1}{Definition}{\def\BackCol{myorange}}{
+  \IfStrEq{#1}{Beispiel}{\def\BackCol{myblue}}{
+  \IfStrEq{#1}{Bemerkung}{\def\BackCol{myyellow}}{
+  \def\BackCol{myred} 
+  }}}}}}
+
+  % MDFrame colored Box
+  \begin{mdframed}[
+    backgroundcolor=\BackCol,             % Custom Background Color
+    linewidth=1pt,                        % Border width
+    roundcorner=3pt,                      % Rounded Corners
+    innerleftmargin=10pt,                 % Margin
+    innerrightmargin=10pt,                
+    innertopmargin=.6\baselineskip,       
+    innerbottommargin=.6\baselineskip,    
+    splittopskip=2em,                     % if 'nobreak = false', ensures top space after break
+    nobreak=true      % creates new page if content would have been split otherwise
+                      % set to true, if breaks are preferred 
+  ]
+  \IfValueTF{#2}{
+    % Show title if exists
+    {\bfseries\sffamily #1 \theboxcounter\ (\sffamily\bfseries #2)\bfseries\sffamily.}
+  }{
+    % default
+    {\bfseries\sffamily #1 \theboxcounter\bfseries\sffamily.}
+  }
+} {
+  \end{mdframed}
+}
+
+\NewDocumentEnvironment{colboxBreakable}{m o}    % m: type, o: Name 
+{
+  % Increase Counter
+  \refstepcounter{boxcounter}
+
+  % % Different Colors for different purposes 
+  % \IfStrEq{#1}{Satz}{\def\BackCol{mygreen}}{
+  % \IfStrEq{#1}{Lemma}{\def\BackCol{mygreen}}{
+  % \IfStrEq{#1}{Korollar}{\def\BackCol{mygreen}}{
+  % \IfStrEq{#1}{Definition}{\def\BackCol{myblue}}{
+  % \IfStrEq{#1}{Beispiel}{\def\BackCol{mygrey}}{
+  % \IfStrEq{#1}{Bemerkung}{\def\BackCol{mygreen}}{
+  % \def\BackCol{myred} 
+  % }}}}}}      % '}' amount should match the amount of different types
+
+  % Different Colors for different purposes 
+  \IfStrEq{#1}{Satz}{\def\BackCol{mypurple}}{
+  \IfStrEq{#1}{Lemma}{\def\BackCol{mypurple}}{
+  \IfStrEq{#1}{Korollar}{\def\BackCol{mypurple}}{
+  \IfStrEq{#1}{Definition}{\def\BackCol{myorange}}{
+  \IfStrEq{#1}{Beispiel}{\def\BackCol{myblue}}{
+  \IfStrEq{#1}{Bemerkung}{\def\BackCol{myyellow}}{
+  \def\BackCol{myred} 
+  }}}}}}
+
+  % MDFrame colored Box
+  \begin{mdframed}[
+    backgroundcolor=\BackCol,             % Custom Background Color
+    linewidth=1pt,                        % Border width
+    roundcorner=3pt,                      % Rounded Corners
+    innerleftmargin=10pt,                 % Margin
+    innerrightmargin=10pt,                
+    innertopmargin=.6\baselineskip,       
+    innerbottommargin=.6\baselineskip,    
+    splittopskip=2em,                     % if 'nobreak = false', ensures top space after break
+    nobreak=false     % creates new page if content would have been split otherwise
+                      % set to true, if breaks are preferred 
+  ]
+  \IfValueTF{#2}{
+    % Show title if exists
+    {\bfseries\sffamily #1 \theboxcounter\ (\sffamily\bfseries #2)\bfseries\sffamily.}
+  }{
+    % default
+    {\bfseries\sffamily #1 \theboxcounter\bfseries\sffamily.}
+  }
+} {
+  \end{mdframed}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% EXAMPLE USAGES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% % Example of type 'Theorem' with name
+% \begin{colbox}{Theorem}[Name of the Theorem]
+%   Lorem Ipsum
+% \end{colbox}
+% 
+% % Example of type 'Definition' without name
+% \begin{colbox}{Definition}
+%   Lorem Ipsum
+% \end{colbox}
+
+\endinput

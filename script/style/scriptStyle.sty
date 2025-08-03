@@ -1,0 +1,155 @@
+\ProvidesPackage{scriptStyle}
+
+
+\newcommand{\vertiii}[1]{{\left\vert\kern-0.25ex\left\vert\kern-0.25ex\left\vert #1 
+    \right\vert\kern-0.25ex\right\vert\kern-0.25ex\right\vert}}
+
+%\newcommand{\Span}[1]{\text{span}\{#1\}}
+\newcommand{\Cond}{\text{cond}}
+
+
+
+% Load required packages
+\usepackage[framemethod=tikz]{mdframed} % For boxed environments
+\usepackage[linesnumbered,lined,commentsnumbered]{algorithm2e}
+\usepackage[dvipsnames,svgnames]{xcolor}
+\usepackage{xparse}                    % For defining environments with optional arguments
+
+
+% Define a custom light yellow background color
+\definecolor{myblue}{RGB}{230,255,255}
+\definecolor{mygreen}{RGB}{230,255,230}
+\definecolor{mygrey}{RGB}{242,242,242}
+\definecolor{mydarkblue}{RGB}{20,60,150}
+\definecolor{mydarkred}{RGB}{130,10,10}
+
+\newmdenv[
+  backgroundcolor=myblue,
+  linewidth=1pt,
+  roundcorner=3pt,
+  innerleftmargin=10pt
+  innerrightmargin=10pt,
+  innertopmargin=.6\baselineskip,
+  innerbottommargin=.6\baselineskip,
+  splittopskip=2em
+]{defboxEnv}
+
+\newmdenv[
+  backgroundcolor=myblue,
+  linewidth=1pt,
+  roundcorner=3pt,
+  innerleftmargin=10pt
+  innerrightmargin=10pt,
+  innertopmargin=.6\baselineskip,
+  innerbottommargin=.6\baselineskip,
+  splittopskip=2em
+]{sumboxEnv}
+
+\newmdenv[
+  backgroundcolor=mygreen,
+  linewidth=1pt,
+  roundcorner=3pt,
+  innerleftmargin=10pt
+  innerrightmargin=10pt,
+  innertopmargin=.6\baselineskip,
+  innerbottommargin=.6\baselineskip,
+  splittopskip=2em
+]{thmboxEnv}
+
+\newmdenv[
+  backgroundcolor=mygrey,
+  linewidth=0pt,
+  innerleftmargin=10pt
+  innerrightmargin=10pt,
+  innertopmargin=.6\baselineskip,
+  innerbottommargin=.6\baselineskip,
+  splittopskip=2em
+]{remboxEnv}
+
+
+\newmdenv[
+  backgroundcolor=mygrey,
+  linewidth=0pt,
+  innerleftmargin=10pt
+  innerrightmargin=10pt,
+  innertopmargin=.6\baselineskip,
+  innerbottommargin=.6\baselineskip,
+  splittopskip=2em
+]{egboxEnv}
+
+% Create a single counter for all boxes, resetting at each new section
+\newcounter{oldBoxcounter}[section]
+\renewcommand{\theoldBoxcounter}{\thesection.\arabic{oldBoxcounter}}
+
+\newcounter{oldAlgcounter}
+\renewcommand{\theoldAlgcounter}{\arabic{oldAlgcounter}}
+
+% Define the environment "autobox"
+% Mandatory argument: type (e.g., Definition, Lemma)
+% Optional argument: an additional title (e.g., Important Concept)
+\NewDocumentEnvironment{defbox}{o}{%
+  \refstepcounter{oldBoxcounter}%
+  \begin{defboxEnv}%
+    {\bfseries\sffamily Definition \theoldBoxcounter}%
+    \IfValueT{#1}{{\bfseries\sffamily\ (#1)}}{\bfseries\sffamily.\ }%
+}{%
+  \end{defboxEnv}%
+}
+
+\NewDocumentEnvironment{sumbox}{o}{%
+  \begin{sumboxEnv}%
+    {\bfseries\sffamily Übersicht}%
+    \IfValueT{#1}{{\bfseries\sffamily\ (#1)}}%
+}{%
+  \end{sumboxEnv}%
+}
+
+\NewDocumentEnvironment{thmbox}{m o}{%
+  \refstepcounter{oldBoxcounter}%
+  \begin{thmboxEnv}%
+    {\bfseries\sffamily#1 \theoldBoxcounter}%
+    \IfValueT{#2}{{\bfseries\sffamily\ (#2)}}{\bfseries\sffamily.\ }%
+}{%
+  \end{thmboxEnv}%
+}
+
+\NewDocumentEnvironment{rembox}{o}{%
+  \refstepcounter{oldBoxcounter}%
+  \begin{remboxEnv}%
+    {\bfseries\sffamily Bemerkung \theoldBoxcounter}%
+    \IfValueT{#1}{{\bfseries\sffamily\ (#1)}}{\bfseries\sffamily.\ }%
+}{%
+  \end{remboxEnv}%
+}
+
+\NewDocumentEnvironment{egbox}{o}{%
+  \refstepcounter{oldBoxcounter}%
+  \begin{egboxEnv}%
+    {\bfseries\sffamily Beispiel \theoldBoxcounter}%
+    \IfValueT{#1}{{\bfseries\sffamily\ (#1)}}{\bfseries\sffamily.\ }%
+}{%
+  \end{egboxEnv}%
+}
+
+\newcommand{\algobox}[3][]{%
+  \refstepcounter{oldAlgcounter}%
+  \noindent
+  \colorbox{mygrey}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+      \vspace*{.6\baselineskip}%
+      \hspace*{10pt}%
+      {\bfseries\sffamily Algorithmus \theoldAlgcounter: #2}\\[.5\baselineskip]
+      \hspace*{10pt}%
+      \begin{minipage}{\dimexpr\linewidth - 20pt\relax}
+        #3
+      \end{minipage}
+      \vspace*{.6\baselineskip}%
+    }%
+  }%
+  \vspace{10pt}%
+}
+
+
+
+
+\endinput

@@ -1,0 +1,42 @@
+\ProvidesPackage{ThmEnvColored}
+
+\usepackage{xparse}     % simple if statements
+
+
+
+% Counter
+\newcounter{boxcounter}[section]
+\renewcommand{\theboxcounter}{\thesection.\arabic{boxcounter}}
+
+\NewDocumentEnvironment{colbox}{m o}    % m: type, o: Name 
+{
+  % Increase Counter
+  \refstepcounter{boxcounter}
+
+  \par\medskip\noindent                 % small vertical gap, no indent
+
+  \IfValueTF{#2}{
+    % Show title if exists
+    {\bfseries\sffamily #1 \theboxcounter\ (\sffamily\bfseries #2)\bfseries\sffamily.}
+  }{
+    % default
+    {\bfseries\sffamily #1 \theboxcounter\bfseries\sffamily.}
+  }
+  \quad       % a little space after 'Definition 1.8.'
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% EXAMPLE USAGES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% % Example of type 'Theorem' with name
+% \begin{colbox}{Theorem}[Name of the Theorem]
+%   Lorem Ipsum
+% \end{colbox}
+% 
+% % Example of type 'Definition' without name
+% \begin{colbox}{Definition}
+%   Lorem Ipsum
+% \end{colbox}
+
+\endinput

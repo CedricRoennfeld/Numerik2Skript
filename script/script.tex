@@ -1,7 +1,21 @@
 \documentclass{article}
 \hfuzz=1000pt
 \hbadness=10000
+
+\makeatletter
+\def\input@path{{style/}}
+\makeatother
+
+\usepackage{Main}
 \usepackage{scriptStyle}
+
+\usepackage{ThmEnvColored}
+%\usepackage{ThmEnvPlain}
+
+\usepackage{AlgEnvColored}
+\usepackage{AlgCommands}
+
+\usepackage{MathCommands}
 
 \begin{document}
 
@@ -23,22 +37,32 @@
 \newpage
 \vspace*{2cm}
 \begin{center}
-    \begin{minipage}{0.85\textwidth}
-        \small
-        Diese Mitschrift basiert auf der gleichnamigen Vorlesung \textit{Numerische Mathematik und 
-        Numerische Lineare Algebra in den Datenwissenschaften}, gehalten im Sommersemester 2025 
-        an der Universität Rostock.\\[0.5em]
-        Alle Rechte an Inhalt und Struktur der Lehrveranstaltung liegen bei dem Modulverantwortlichen, 
-        Prof.\ Dr.\ rer.\ nat.\ Jens Starke, sowie der Universität Rostock.\\[0.5em]
-        Diese Mitschrift dient ausschließlich zu Lern- und Dokumentationszwecken. Eine kommerzielle Nutzung oder 
-        Weiterverbreitung ohne Zustimmung ist nicht gestattet.
-    \end{minipage}
+  \begin{minipage}{0.85\textwidth}
+    \small
+    Diese Mitschrift basiert auf der gleichnamigen Vorlesung \textit{Numerische Mathematik und 
+    Numerische Lineare Algebra in den Datenwissenschaften}, gehalten im Sommersemester 2025 
+    an der Universität Rostock.\\[0.5em]
+    Alle Rechte an Inhalt und Struktur der Lehrveranstaltung liegen bei dem Modulverantwortlichen, 
+    Prof.\ Dr.\ rer.\ nat.\ Jens Starke, sowie der Universität Rostock.\\[0.5em]
+    Diese Mitschrift dient ausschließlich zu Lern- und Dokumentationszwecken. Eine kommerzielle Nutzung oder 
+    Weiterverbreitung ohne Zustimmung ist nicht gestattet.
+  \end{minipage}
 \end{center}
+\vspace*{5em}
+\begin{minipage}{0.85\textwidth}
+  \textbf{Literaturempfehlungen:}
+  \begin{enumerate}
+    \item  Martin Hanku-Bourgeois, Grundlagen der Numerik und des wissenschaftlichen Rechnens, Mathematische Leitfäden,
+    Vieweg + Teubner Verlag Wiesbaden, 2009, DOI: \href{https://doi.org/10.1007/978-3-8348-9309-3}{10.1007/978-3-8348-9309-3}
+    \item Eberhard Zeidler, Nichtlineare Funktionalanalysis und ihre Anwendung, Springer Spektrum Wiesbaden, 2012, DOI: 
+    \href{https://doi.org/10.1007/978-3-658-00289-3_3}{10.1007/978-3-658-00289-3\_3}
+  \end{enumerate}
+\end{minipage}
 
 \input{sections/sec1}
 \input{sections/sec2}
 \input{sections/sec3}
-\input{sections/sec4}
-\input{sections/sec5}
+%\input{sections/sec4}
+%\input{sections/sec5}
 
 \end{document} 

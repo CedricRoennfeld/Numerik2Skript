@@ -1,0 +1,42 @@
+\ProvidesPackage{AlgEnvColored}
+
+\usepackage{amsmath}
+
+% Math Operator
+\DeclareMathOperator*{\Span}{span}
+\DeclareMathOperator*{\cond}{cond}
+\DeclareMathOperator*{\diag}{diag}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\op}{op}
+
+% Blackboard Bold Abbreviation 
+\newcommand{\N}{\mathbb N}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\R}{\mathbb R}
+\newcommand{\C}{\mathbb C}
+\newcommand{\K}{\mathbb K}
+\newcommand{\One}{\text{\usefont{U}{bbm}{m}{n}1}}
+
+% Derivative d
+\newcommand\diff{\mathop{}\!\mathrm{d}}
+
+
+% Multiple vertical lines for norms 
+\newcommand{\vertn}[2]{%
+  \ifcase#1
+    \PackageError{vertn}{Zero bars not supported}{Specify 1, 2, or 3.}%
+  \or
+    {\left\vert #2 \right\vert}%
+  \or
+    {\left\Vert #2 \right\Vert}%
+  \or
+    {{\left\vert\kern-0.25ex\left\vert\kern-0.25ex\left\vert #2 
+      \right\vert\kern-0.25ex\right\vert\kern-0.25ex\right\vert}}%
+  \else
+    \PackageError{vertn}{Only 1 to 3 bars supported}{Extend the macro if needed.}%
+  \fi
+}
+
+\endinput

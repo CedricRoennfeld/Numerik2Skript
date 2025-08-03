@@ -1,0 +1,32 @@
+\begin{tikzpicture}
+\begin{axis}[
+  axis lines=middle,
+  xmin=0, xmax=2,
+  ymin=0, ymax=1.1,
+  xtick={1.5708},
+  xticklabels={$\frac{\pi}{2}$},
+  ytick=\empty,
+  grid=none,
+  width=9cm,
+  height=6cm,
+  domain=0:2,
+  samples=200,
+  clip=false,
+  xlabel=$x$,
+  ylabel=$y$,
+  every axis x label/.style={at={(axis description cs:1.05,0)},anchor=west},
+  every axis y label/.style={at={(axis description cs:0,1.05)},anchor=south},
+]
+  
+  % graphs
+  \addplot[thick, black, domain=0:2] {cos(deg(x))} node[pos=0.6, above right] {$f(x)=\cos x$};
+  \addplot[thick, black, domain=0:1.1] {x} node[pos=0.9, above left] {$g(x)=x$};
+  
+  % vertical at fixpoint
+  \addplot[dashed, black] coordinates {(0.739,0) (0.739,0.739)};
+  
+  % fixpoint 
+  \filldraw[black] (axis cs:0.739,0.739) circle (2pt);
+  \node at (axis cs:0.739,-0.06) {$\hat{x}$};
+\end{axis}
+\end{tikzpicture}

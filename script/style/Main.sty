@@ -1,0 +1,81 @@
+\ProvidesPackage{Main}
+
+% page sizes / margins
+\usepackage[a4paper, left=2.75cm, right=2.75cm, top=3cm, bottom=3cm]{geometry}
+
+
+\setlength{\parindent}{0pt} % No indentation
+\setlength{\parskip}{0.5em} % Vertical space between paragraphs
+
+% modern PDF rendering
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english, german]{babel}
+
+% Tikz Images
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{arrows.meta, calc, decorations.pathreplacing, positioning}
+\pgfplotsset{compat=1.18}
+
+% Hyperlinks
+\usepackage[
+    colorlinks=true,
+    linkcolor=magenta,
+    urlcolor=magenta,
+    citecolor=magenta,
+    filecolor=magenta,
+    pdfborder={0 0 0}
+]{hyperref}
+
+% other imports
+\usepackage{titlesec}
+\usepackage{amsmath, amsthm, amssymb, amsfonts} % AMS
+\usepackage{mathtools}
+\usepackage{units}                              % simple unit commands
+
+\usepackage{xcolor}
+
+% page style
+\usepackage{etoolbox}                           % allows sections hooks in headers
+\usepackage{fancyhdr}                           % page styles (footer, header)
+
+% fancy style: section title in header, page number at bottom center.
+\fancypagestyle{fancy}{%
+  \fancyhf{}                              % clear all header/footer
+  \fancyhead[C]{\nouppercase{\rightmark}} % center header = current section
+  \fancyfoot[C]{\thepage}                 % center footer = page number
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+% plain style: no header, page number at bottom center.
+\fancypagestyle{plain}{%
+  \fancyhf{}                              % clear all header/footer
+  \fancyfoot[C]{\thepage}                 % center footer = page number
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+% fancy style as default
+\pagestyle{fancy}
+
+
+% new section creates a new plain page automatically
+\preto\section{\clearpage\thispagestyle{plain}
+  \vspace*{1cm}}
+
+% new sections do not create new pages, instead current page gets plain
+%\preto\section{\thispagestyle{plain}}
+
+% hook section name
+\renewcommand{\sectionmark}[1]{%
+  \markright{\thesection\ #1}
+}
+
+% different title style
+\titleformat*{\section}{\Large\bfseries\sffamily}
+
+
+\newcommand{\highlight}[2]{\colorbox{#1}{$\displaystyle #2$}}
+\endinput
