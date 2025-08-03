@@ -29,22 +29,24 @@
   % % Different Colors for different purposes 
   % \IfStrEq{#1}{Satz}{\def\BackCol{mygreen}}{
   % \IfStrEq{#1}{Lemma}{\def\BackCol{mygreen}}{
+  % \IfStrEq{#1}{Hilfssatz}{\def\BackCol{mygreen}}{
   % \IfStrEq{#1}{Korollar}{\def\BackCol{mygreen}}{
   % \IfStrEq{#1}{Definition}{\def\BackCol{myblue}}{
   % \IfStrEq{#1}{Beispiel}{\def\BackCol{mygrey}}{
   % \IfStrEq{#1}{Bemerkung}{\def\BackCol{mygreen}}{
   % \def\BackCol{myred} 
-  % }}}}}}      % '}' amount should match the amount of different types
+  % }}}}}}}      % '}' amount should match the amount of different types
 
   % Different Colors for different purposes 
   \IfStrEq{#1}{Satz}{\def\BackCol{mypurple}}{
   \IfStrEq{#1}{Lemma}{\def\BackCol{mypurple}}{
+  \IfStrEq{#1}{Hilfssatz}{\def\BackCol{mypurple}}{
   \IfStrEq{#1}{Korollar}{\def\BackCol{mypurple}}{
   \IfStrEq{#1}{Definition}{\def\BackCol{myorange}}{
   \IfStrEq{#1}{Beispiel}{\def\BackCol{myblue}}{
   \IfStrEq{#1}{Bemerkung}{\def\BackCol{myyellow}}{
   \def\BackCol{myred} 
-  }}}}}}
+  }}}}}}}
 
   % MDFrame colored Box
   \begin{mdframed}[
