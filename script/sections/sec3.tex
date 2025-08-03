@@ -601,11 +601,15 @@ Die Eigenwerte bleiben beim Wechsel von $A$ zu $B$ erhalten, da
   &= Bw^{(k)} + \underbrace{Bw^{(1)}}_{=0} \\
   &= Bw^{(k)} + Bw^{(1)}\cdot\dfrac{-w_p^{k}}{w_p^{(1)}} \\
   &= B\cdot\left(w^{(k)} - \dfrac{w^{(k)}_p}{w^{(1)}_p} \cdot w^{(1)}\right) 
-  \stackrel{(\ref{eq:WielandtEQ1})}{=} 
-  \lambda_k\cdot\left(w^{(k)} - \dfrac{w^{(k)}_p}{w^{(1)}_p} \cdot w^{(1)}\right)
   \tag{2}\label{eq:WielandtEQ2}
 \end{align*}
-Die Gleichung (\ref{eq:WielandtEQ2}) zeigt für $k=2,3,\dots,n$, dass $\lambda_k$ auch ein Eigenwert zu $B$ ist, 
+Und damit 
+\begin{align*}
+  B\cdot\left(w^{(k)} - \dfrac{w^{(k)}_p}{w^{(1)}_p} \cdot w^{(1)}\right) 
+   \stackrel{(\ref{eq:WielandtEQ2})}{=} Bw^{(k)} \stackrel{(\ref{eq:WielandtEQ1})}{=}
+  \lambda_k\cdot\left(w^{(k)} - \dfrac{w^{(k)}_p}{w^{(1)}_p} \cdot w^{(1)}\right)
+\end{align*}
+Dies zeigt für $k=2,3,\dots,n$, dass $\lambda_k$ auch ein Eigenwert zu $B$ ist, 
 wenn auch mit anderem Eigenvektor. 
 
 \begin{colbox}{Satz}[Deflation nach Wielandt]
