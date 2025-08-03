@@ -4,68 +4,70 @@
 Wir verfolgen die gleiche Idee, wie auch schon bei linearen Gleichungssystemen, d.h. die ursprünglich hochdimensionalen
 Probleme, werden durch geeignete Unterräume (Krylov-Räume) in kleinere Probleme umgewandelt. \\
 Wir erhalten dabei ein iteratives Vorgehen, zu betrachtende Beispiele sind die Arnoldi-Methode und die 
-Lanczos-Methode.\\ \\
-Wir betrachten also die Eigenwertgleichung $Az=\lambda z$ mit $A\in\mathbb{C}^{n\times n}$, wobei $A$ eine sehr große
-Matrix, typischerweise $n\geq 10^4$, ist.
-\subsection{Galerkin-Approximation}
+Lanczos-Methode.
+
+Wir betrachten also die Eigenwertgleichung $Az=\lambda z$ mit $A\in\C  ^{n\times n}$ 
+(ab jetzt erlauben wir auch komplexe Matrizen), wobei $A$ eine sehr große
+Matrix ist, typischerweise $n\geq 10^4$.
+\subsection{Galerkin-Approximation} 
 Eigenwertprobleme können äquivalent in Variationsform (schwache Formulierung) geschrieben werden.\\
-Diese besagt: $z\in\mathbb{C}^n$ ist genau dann ein Eigenvektor von $A$ zum Eigenwert $\lambda\in\mathbb{C}$, wenn
-\[\langle Az,y\rangle_2 = \lambda\langle z,y\rangle_2 \quad\forall\,y\in\mathbb{C}^n\tag{1*}\]
-Diese Äquivalenz gilt, da aus $\langle r, y\rangle_2 = 0$ für alle $y\in\mathbb{C}^{n}$ folgt, dass $r=0$ sein muss, 
+Diese besagt: $z\in\C  ^n$ ist genau dann ein Eigenvektor von $A$ zum Eigenwert $\lambda\in\C  $, wenn
+\begin{align*}\langle Az,y\rangle_2 = \lambda\langle z,y\rangle_2 \quad\forall\,y\in\C  ^n\tag{1*}\end{align*}
+Diese Äquivalenz gilt, da aus $\langle r, y\rangle_2 = 0$ für alle $y\in\C  ^{n}$ folgt, dass $r=0$ sein muss, 
 in unserem Fall ist $r=Az-\lambda z$ das Residuum des Eigenwertproblems.\\ \\
-Sei $K_m=\Span{q^1,\dotsc,q^m}$ ein geeignet gewählter Unterrraum von $\mathbb{C}^n$ kleiner Dimension, d.h. 
+Sei $K_m=\Span{q^1,\dotsc,q^m}$ ein geeignet gewählter Unterrraum von $\C  ^n$ kleiner Dimension, d.h. 
 $\dim K_m=m\ll n$, dann wird das $n$-dimensionale Eigenwertproblem (1*) mit dem $m$-dimensionale Eigenwertproblem
 approximiert: 
-\[z\in K_m, \ \lambda\in\mathbb{C}: \quad \langle Az,y\rangle_2=\lambda\langle y,z\rangle_2 \quad\forall\,y\in K_m\]
+\begin{align*}z\in K_m, \ \lambda\in\C  : \quad \langle Az,y\rangle_2=\lambda\langle y,z\rangle_2 \quad\forall\,y\in K_m\end{align*}
 Statt alle $y\in K_m$ zu betrachten, reicht es auch, wenn wir nur die erzeugenden $q^i$ benutzen. 
 Wir entwickeln die Eigenvektoren $z\in K_m$ bzgl. der gegebenen Basis:
-\[z = \sum_{j=1}^{m} \alpha_j q^j\]
+\begin{align*}z = \sum_{j=1}^{m} \alpha_j q^j\end{align*}
 und erhalten somit das Galverkin-System
-\[\sum_{j=1}^{k} \alpha_j \langle Aq^j,q^i\rangle_2 = \lambda\cdot\sum_{j=1}^{k} \alpha_j \langle q^j,q^i\rangle_2
-\qquad\forall\,i=1,\dotsc,m\]
+\begin{align*}\sum_{j=1}^{k} \alpha_j \langle Aq^j,q^i\rangle_2 = \lambda\cdot\sum_{j=1}^{k} \alpha_j \langle q^j,q^i\rangle_2
+\qquad\forall\,i=1,\dotsc,m\end{align*}
 Wir schreiben dieses System typischerweise in kompakter Form als Eigenwertproblem 
 $\mathcal{A}\alpha = \lambda\mathcal{M}\alpha$ mit Vektoren $\alpha=(\alpha_1,\dotsc,\alpha_m)$ und Matrix 
 $\mathcal{A}=(\langle Aq^j, q^i\rangle_2)_{i,j=1}^m$, 
 $\mathcal{M} = (\langle q^j, q^i\rangle_2)_{i,j=1}^m$. \\ \\
 Im folgenden betrachten wir immer die \textit{kartesischer Representation} der Basisvektoren $q^{i}=(q_j^i)_{j=1}^n$ 
 und somit schreibt man das Galerkin-EW-Problem in der Form\footnote{
-    Als Erinnerung: Im Komplexen ist das Standardskalarprodukt definiert durch 
-    $\langle x,y\rangle_2 = \sum_i x_i\cdot\overline{y}_i$
+  Als Erinnerung: Im Komplexen ist das Standardskalarprodukt definiert durch 
+  $\langle x,y\rangle_2 = \sum_i x_i\cdot\overline{y}_i$
 }
-\[\sum_{j=1}^{m} \alpha_j\cdot \sum_{k,l=1}^{n} a_{k,l}\cdot q_k^{j}\cdot\overline{q^i}_l = 
+\begin{align*}\sum_{j=1}^{m} \alpha_j\cdot \sum_{k,l=1}^{n} a_{k,l}\cdot q_k^{j}\cdot\overline{q^i}_l = 
 \lambda\cdot \sum_{j=1}^{m} \alpha_j \cdot\sum_{k,l=1}^{n} a_{k,l}\cdot q_k^{j}\cdot\overline{q^i}_l
-\quad\forall\, i=1,\dotsc,m\]
-Mit $\mathcal{Q}^{(m)}=(q^,\dotsc,q^m)\in\mathbb{C}^{n\times m}$  und dem Vektor $\alpha=(\alpha_j)_{j=1}^m\in\mathbb{C}^m$ 
+\quad\forall\, i=1,\dotsc,m\end{align*}
+Mit $\mathcal{Q}^{(m)}=(q^,\dotsc,q^m)\in\C  ^{n\times m}$  und dem Vektor $\alpha=(\alpha_j)_{j=1}^m\in\C  ^m$ 
 kann dies in der kompakten Form 
-\[(\mathcal{Q}^{(m)})^*A\mathcal{Q}^{(m)}\alpha = \lambda (\mathcal{Q}^{(m)})^*\mathcal{Q}^{(m)}\alpha\]
+\begin{align*}(\mathcal{Q}^{(m)})^*A\mathcal{Q}^{(m)}\alpha = \lambda (\mathcal{Q}^{(m)})^*\mathcal{Q}^{(m)}\alpha\end{align*}
 formuliert werden. \\ \\
 Wenn $\{q^1,\dotsc,q^m\}$ eine ONB von $K_m$ ist, reduziert sich dies zum normalen EW-Problem:
-\[\underbrace{(\mathcal{Q}^{(m)})^*A\mathcal{Q}^{(m)}}_{=: H^{(m)}\in\mathbb{C}^{m\times m}}\alpha = 
-\lambda \alpha \tag{2*}\]
+\begin{align*}\underbrace{(\mathcal{Q}^{(m)})^*A\mathcal{Q}^{(m)}}_{=: H^{(m)}\in\C  ^{m\times m}}\alpha = 
+\lambda \alpha \tag{2*}\end{align*}
 Fall $H^{(m)}$ eine spezielle Struktur hat (z.\,B. Hessenberg-Matrix oder symmetrische Tridiagonalgestalt), dann kann 
 das EW-Problem mit niedriger Dimension (2*) mit QR-Methode gelöst weden. \\ \\
 Seine Eigenwerte können als Approximationen der dominanten Eigenwerte der ursprünglichen Matrix $A$ betrachtet werden
 und werden \textit{Ritz-Eigenwerte} genannt. \\ \\
 \begin{sumbox}[Krylov-Methode] \ 
-    \begin{enumerate}
-        \item[1.] Wähle geeignete Unterräume $K_m\in\mathbb{C}^{m\times m}$, $m\ll n$ Krylov-Raum durch Verwendung der 
-        Matrix $A$ und deren Potenz.
-        \item[2.] Konstruiere eine ONB $\{q^1,\dotsc, q^m\}$ von $K_m$ mit der stabilisierten Version des 
-        Gram-Schmidt-Algorithmus und setze $\mathcal{Q}^{(m)}:=[q^1,\dotsc,q^m]$.
-        \item[3.] Berechne die Matrix $H^{(m)}:=(\mathcal{Q}^{(m)})^*A\mathcal{Q}^{(m)}$, welche 
-        konstruktionsbedingt eine Hessenberg-Matrix oder im hermitischen Fall hermitische Tridiagonalmatrix ist. 
-        \item[4.] Löse das Eigenwertproblem der reduzierten Matrix $H^{(m)}\in\mathbb{C}^{m\times m}$ durch die 
-        QR-Methode.
-        \item[5.] Nehme die Eigenwerte von $H^{(m)}$ als die Näherung der dominanten (betragsgrößten) Eigenwerte 
-        von $A$. Im Falle des kleinstgrößten Eigenwert, muss die Matrix $A^{-1}$ betrachtet werden (Konstruktion 
-        der Unterräume $K_m$ kann sehr aufwendig sein).
-    \end{enumerate}
+  \begin{enumerate}
+    \item[1.] Wähle geeignete Unterräume $K_m\in\C  ^{m\times m}$, $m\ll n$ Krylov-Raum durch Verwendung der 
+    Matrix $A$ und deren Potenz.
+    \item[2.] Konstruiere eine ONB $\{q^1,\dotsc, q^m\}$ von $K_m$ mit der stabilisierten Version des 
+    Gram-Schmidt-Algorithmus und setze $\mathcal{Q}^{(m)}:=[q^1,\dotsc,q^m]$.
+    \item[3.] Berechne die Matrix $H^{(m)}:=(\mathcal{Q}^{(m)})^*A\mathcal{Q}^{(m)}$, welche 
+    konstruktionsbedingt eine Hessenberg-Matrix oder im hermitischen Fall hermitische Tridiagonalmatrix ist. 
+    \item[4.] Löse das Eigenwertproblem der reduzierten Matrix $H^{(m)}\in\C  ^{m\times m}$ durch die 
+    QR-Methode.
+    \item[5.] Nehme die Eigenwerte von $H^{(m)}$ als die Näherung der dominanten (betragsgrößten) Eigenwerte 
+    von $A$. Im Falle des kleinstgrößten Eigenwert, muss die Matrix $A^{-1}$ betrachtet werden (Konstruktion 
+    der Unterräume $K_m$ kann sehr aufwendig sein).
+  \end{enumerate}
 \end{sumbox}
 \subsection{Arnoldi-Methode}
 Die Potenzmethode verwendet nur die aktuelle Iterierte $A^mq$ mit $m\ll n$ für den normierten Startvektor 
-$q\in\mathbb{C}^n$ mit $\|q\|_2=1$, ignoriert aber die bereits berechneten Iterierten $\{q,Aq,A^2q,\dotsc,A^{m-1}q\}$. \\ \\
+$q\in\C  ^n$ mit $\vertn{2}{q}_2=1$, ignoriert aber die bereits berechneten Iterierten $\{q,Aq,A^2q,\dotsc,A^{m-1}q\}$. \\ \\
 \textbf{Idee:} Verwendung dieser Informationen und Erstellen einer sogenannten \textit{Krylov-Matrix}
-\[K_m = [q,Aq,A^2q,\dotsc,A^{m-1}q]\quad\text{mit }1\leq m\leq n\]
+\begin{align*}K_m = [q,Aq,A^2q,\dotsc,A^{m-1}q]\quad\text{mit }1\leq m\leq n\end{align*}
 Die Spalten dieser Matrix sind nicht orthogonal zueinander. $A^tq$ konvergiert gegen den Eigenvektor zum betragsgrößten
 Eigenwert, d.h. $K_m$ ist schlecht konditionert \textcolor{red}{(Was heißt schlecht konditionert bei nicht quadratisch?)} (da sich die letzten Spalten kaum ändern). \\
 Die Konstruktion in eine orthogonale Basis mit dem Gram-Schmidt-Algorithmus ist instabil. \\
@@ -76,57 +78,57 @@ aufspannen.
 \newpage
 \begin{defbox}
 Wir definieren für das Folgende orthogonalen Projektionsoperator:
-\[\text{proj}_u(v) := \dfrac{\langle v,u\rangle_2}{\|u\|_2^2}\cdot u\]
+\begin{align*}\text{proj}_u(v) := \dfrac{\langle v,u\rangle_2}{\vertn{2}{u}_2^2}\cdot u\end{align*}
 Dieser projeziert den Vektor $v$ auf $\Span{u}$.
 \end{defbox}
 Damit ergibt sich das klassische \textit{Gram-Schmidt-Orthogonalisierungs-Verfahren} als 
-\[q^{1} = \dfrac{q}{\|q\|_2},\quad\text{und}\quad\tilde{q}^{t} = A^{t-1}q - \sum_{j=1}^{t-1} \text{proj}_{q^j}(A^{t-1}q), 
-\qquad q^t = \dfrac{\tilde{q}^t}{\|\tilde{q}^t\|_2}\quad\text{für } t=2,\dotsc,m\]
+\begin{align*}q^{1} = \dfrac{q}{\vertn{2}{q}_2},\quad\text{und}\quad\tilde{q}^{t} = A^{t-1}q - \sum_{j=1}^{t-1} \text{proj}_{q^j}(A^{t-1}q), 
+\qquad q^t = \dfrac{\tilde{q}^t}{\vertn{2}{\tilde{q}^t}_2}\quad\text{für } t=2,\dotsc,m\end{align*}
 Der $t$-te Schritt projeziert die Komponente von $A^{t-1}q$ in Richtung der bereits bestimmten Orthogonal-Vektoren 
 $\{q^1,\dotsc,q^{t-1}\}$. \\
 Dies ist numerisch instabil durch Summieren der Rundungsfehler. \\ \\
 Wir betrachten daher \textit{das modifizierte Gram-Schmidt-Verfahren}, wobei der $t$-te Schritt projeziert die Komponenten
 von $Aq^t$ in Richtung $\{q^1,\dotsc,q^{t-1}\}$:
-\[q^{1} = \dfrac{q}{\|q\|_2},\quad\text{und}\quad\tilde{q}^{t} = Aq^{t-1} - \sum_{j=1}^{t-1} \text{proj}_{q^j}(Aq^{t-1}), 
-\qquad q^t = \dfrac{\tilde{q}^t}{\|\tilde{q}^t\|_2}\quad\text{für } t=2,\dotsc,m \tag{1}\]
+\begin{align*}q^{1} = \dfrac{q}{\vertn{2}{q}_2},\quad\text{und}\quad\tilde{q}^{t} = Aq^{t-1} - \sum_{j=1}^{t-1} \text{proj}_{q^j}(Aq^{t-1}), 
+\qquad q^t = \dfrac{\tilde{q}^t}{\vertn{2}{\tilde{q}^t}_2}\quad\text{für } t=2,\dotsc,m \tag{1}\end{align*}
 Da $q^t$, $\tilde{q}^t$ in die gleiche Richtung zeigen und $\tilde{q}^t\perp K_t$ erhält man 
-\[\langle q^t, \tilde{q}^t\rangle_2 = \|\tilde{q}^t\|_2 = 
-\left\langle q^t,Aq^{t-1} - \sum_{j=1}^{t-1} \text{proj}_{q^j}(Aq^{t-1})\right\rangle_2 = \langle q^t, Aq^{t-1}\rangle_2\]
+\begin{align*}\langle q^t, \tilde{q}^t\rangle_2 = \vertn{2}{\tilde{q}^t}_2 = 
+\left\langle q^t,Aq^{t-1} - \sum_{j=1}^{t-1} \text{proj}_{q^j}(Aq^{t-1})\right\rangle_2 = \langle q^t, Aq^{t-1}\rangle_2\end{align*}
 Mit $h_{i,t-1} := \langle Aq^{t-1},q^i \rangle_2$ ergibt sich mit dem modifizierte Gram-Schmidt-Algorithmus
-\[Aq^{t-1}=\sum_{i=1}^{t} h_{i,t-1 }q^i, \qquad t=2,\dotsc,m+1\]
+\begin{align*}Aq^{t-1}=\sum_{i=1}^{t} h_{i,t-1 }q^i, \qquad t=2,\dotsc,m+1\end{align*}
 In der Praxis wird der modifizierte Gram-Schmidt-Alg. in der folgenden iterierten Form implementiert:
 \begin{align*}
-    q^1 &= \|q\|_2^{-1}q, \\
-    q^{t,1}&=Aq^{t-1}, \\
-    q^{t,j+1}&=q^{t,j}-\text{proj}_{q^j}(q^{t,j}), \tag{2}\\
-    q^t&=\|q^{t,t}\|_2^{-1}q^{t,t}
+  q^1 &= \vertn{2}{q}_2^{-1}q, \\
+  q^{t,1}&=Aq^{t-1}, \\
+  q^{t,j+1}&=q^{t,j}-\text{proj}_{q^j}(q^{t,j}), \tag{2}\\
+  q^t&=\vertn{2}{q^{t,t}}_2^{-1}q^{t,t}
 \end{align*}
 Man erhält das gleiche Resultat, wie beim klassischen Gram-Schmidt-Verfahren, aber mit kleinerem numerischen Fehler. \\ \\
 \begin{defbox}[Arnoldi-Algorithmus] \ \\
-    Für eine beliebige Matrix $A\in\mathbb{C}^{n\times n}$ bestimmt die Arnoldi-Methode eine Folge orthonormaler 
-    Vektoren $q^t\in\mathbb{C}$ für $1\leq t \leq m \ll n$ (Arnoldi-Basis), durch Anwendung der modifizierten 
-    Gram-Schmidt-Methode (2) auf die Basis $\{q,Aq,A^{m-1}q\}$ des Krylov-Unterraums $K_m$.
+  Für eine beliebige Matrix $A\in\C  ^{n\times n}$ bestimmt die Arnoldi-Methode eine Folge orthonormaler 
+  Vektoren $q^t\in\C  $ für $1\leq t \leq m \ll n$ (Arnoldi-Basis), durch Anwendung der modifizierten 
+  Gram-Schmidt-Methode (2) auf die Basis $\{q,Aq,A^{m-1}q\}$ des Krylov-Unterraums $K_m$.
 \end{defbox}
 \textcolor{red}{(Algobox)} \\
-Startvektor: $q^1=\|q\|^{-1}_2 q$ \\
+Startvektor: $q^1=\vertn{2}{q}^{-1}_2 q$ \\
 Iteriere für $2\leq t\leq m: q^{t,1}=Aq^{t-1}$ \\
-und für $j=1,\dotsc,t-1: h_{j,t} = \langle q^{t,j},q^j\rangle_2$ und $q^{t,j+1=q^{t,j}-h_{j,t}q^j}$ und $h_{t,t}=\|q^{t,t}\|_2$ 
+und für $j=1,\dotsc,t-1: h_{j,t} = \langle q^{t,j},q^j\rangle_2$ und $q^{t,j+1=q^{t,j}-h_{j,t}q^j}$ und $h_{t,t}=\vertn{2}{q^{t,t}}_2$ 
 und $q^t = h_{t,t}^{-1}\cdot q^{t,t}$ \\ \\
 Bezeichne die $n\times m$-Matrix aus den ersten Arnoldi-Vektoren $\{q^1,q^2,\dotsc,q^m\}$ mit 
-\[\mathcal{Q}^{(m)}:=[q^1,q^2,\dotsc,q^m]\] und sei $H^{(m)}$ die obere Hessenberg Matrix ($m\times m)$ aus $h_{j,k}$:
-\[H^{(m)} = \begin{pmatrix}
-    h_{11} & h_{12} & h_{13} & \dotsc & h_{1m} \\
-    h_{21} & h_{22} & h_{23} & \dotsc & \vdots \\
-    0 & h_{32} & h_{33} & \dotsc & \vdots \\
-    \vdots & \ddots &  \ddots &   \ddots &  h_{m-1,m} \\
-    0 &\dotsc & 0 & h_{m,m-1} & h_{m,m}
-\end{pmatrix}\]
+\begin{align*}\mathcal{Q}^{(m)}:=[q^1,q^2,\dotsc,q^m]\end{align*} und sei $H^{(m)}$ die obere Hessenberg Matrix ($m\times m)$ aus $h_{j,k}$:
+\begin{align*}H^{(m)} = \begin{pmatrix}
+  h_{11} & h_{12} & h_{13} & \dotsc & h_{1m} \\
+  h_{21} & h_{22} & h_{23} & \dotsc & \vdots \\
+  0 & h_{32} & h_{33} & \dotsc & \vdots \\
+  \vdots & \ddots &  \ddots &   \ddots &  h_{m-1,m} \\
+  0 &\dotsc & 0 & h_{m,m-1} & h_{m,m}
+\end{pmatrix}\end{align*}
 Die Matrizen $\mathcal{Q}^{(m)}$ sind orthonormal und mit (1) ergibt sich die Arnoldi-Beziehung 
-\[A\mathcal{Q}^{(m)} = \mathcal{Q}^{(m)} H^{(m)} + h_{m,m+1}[0,\dotsc,0,q^{m+1}]\tag{3}\]
+\begin{align*}A\mathcal{Q}^{(m)} = \mathcal{Q}^{(m)} H^{(m)} + h_{m,m+1}[0,\dotsc,0,q^{m+1}]\tag{3}\end{align*}
 Multiplikation mit ${\mathcal{Q}^{(m)}}^*$  und Verwendung von 
-\[{\mathcal{Q}^{(m)}}^* \mathcal{Q}^{(m)} = I \quad \text{und}\quad {\mathcal{Q}^{(m)}}^* q^{m+1}=0\]
+\begin{align*}{\mathcal{Q}^{(m)}}^* \mathcal{Q}^{(m)} = I \quad \text{und}\quad {\mathcal{Q}^{(m)}}^* q^{m+1}=0\end{align*}
 ergibt 
-\[H^{(m)} = {\mathcal{Q}^{(m)}}^* A \mathcal{Q}^{(m)}\]
+\begin{align*}H^{(m)} = {\mathcal{Q}^{(m)}}^* A \mathcal{Q}^{(m)}\end{align*}
 Im Grenzfall $m=n$ ist die Matrix $H^{(n)}$ ähnlich zu $A$ und hat die gleichen Eigenwerte. \\
 Dies legt nahe, dass auch für $m\ll n$ die Eigenwerte der reduzierten Matrix $H^{(m)}$ eine gute Approximation 
 einiger Eigenwerte von $A$ sind. Wenn der Algorithmus endet (in exakter Arithmetik) für $m<n$ mit $h_{m,m+1}$ dann
@@ -135,10 +137,10 @@ ist der Krylov-Raum $K_m$ ein invarianter Unterraum der Matrix $A$ und die reduz
 Das folgende Lemma liefert a posteriori Abschätzungen der Genauigkeit für die Approximation der Eigenwerte von $A$ durch 
 $H^{(m)}$.
 \begin{thmbox}{Lemma}
-    Sei $\{\mu,w\}$ ein Eigenpaar der Hessenberg-Matrix $H^{(m)}$ und sei $v=\mathcal{Q}^{(m)}w$ sodass $\{\mu,v\}$ ein 
-    approximiertes Eigenpaar von $A$ ist. Dann gilt
-    \[\|Av-\mu w\|_2 = |h_{m+1,m}|\cdot |w_m|,\] 
-    wobei $w_m$ die letzte Komponente des Eigenvektors $w$ ist.
+  Sei $\{\mu,w\}$ ein Eigenpaar der Hessenberg-Matrix $H^{(m)}$ und sei $v=\mathcal{Q}^{(m)}w$ sodass $\{\mu,v\}$ ein 
+  approximiertes Eigenpaar von $A$ ist. Dann gilt
+  \begin{align*}\vertn{2}{Av-\mu w}_2 = |h_{m+1,m}|\cdot |w_m|,\end{align*} 
+  wobei $w_m$ die letzte Komponente des Eigenvektors $w$ ist.
 \end{thmbox}
 \textit{Beweis.} Multiplikation von (3) mit $w$ ergibt 
 \begin{align*}
@@ -147,100 +149,100 @@ Av &= A\mathcal{Q}^{(m)}w\\
 &= \mu \mathcal{Q}^{(m)}w + h_{m+1,m}\cdot[0,\dotsc,0,q^{m+1}]w \\
 &= \mu v + h_{m+1,m}\cdot[0,\dotsc,0,q^{m+1}]w
 \end{align*}
-Daraus folgt mit $\|q_{m+1}\|_2 = 1$, dass
-\[\|Av-\mu v\|_2 = |h_{m+1,m}|\cdot |w_m|\]
+Daraus folgt mit $\vertn{2}{q_{m+1}}_2 = 1$, dass
+\begin{align*}\vertn{2}{Av-\mu v}_2 = |h_{m+1,m}|\cdot |w_m|\end{align*}
 \qed \\ \\
 Dies liefert keine a priori-Information der Konvergenz der Eigenwerte von $H^{(m)}$ gegen die von $A$ für $m\to n$, aber
 liefert a posteriori-Prüfung basierend auf den berechneten Größen $h_{m+q,m}$ und $w_m$, ob das erhaltene Paar 
 $\{\mu,w\}$ eine gute Approximation ist.
 \begin{rembox}
-    Die Ritz-Eigenwerte konvergieren zu den betragsgrößten Eigenwerten von $A$. Falls die betragskleinsten Eigenwerte 
-    bestimmt werden sollen, muss das diskutierte Verfahren auf die inverse Matrix angewendet werden (Vgl. Inverse 
-    Iteration nach Wielandt). In diesem Fall hat man einen großen Aufwand die Krylov-Räume 
-    $K_m = \Span{q,A^{-1}q,\dotsc,A^{-m+1}q}$ zu bestimmen, da hierfür die linearen Systeme $v^0:=q, Av^1=v^0, 
-    \dotsc, Av^m=v^{m-1}$ sukzessiv gelöst werden müssen.
+  Die Ritz-Eigenwerte konvergieren zu den betragsgrößten Eigenwerten von $A$. Falls die betragskleinsten Eigenwerte 
+  bestimmt werden sollen, muss das diskutierte Verfahren auf die inverse Matrix angewendet werden (Vgl. Inverse 
+  Iteration nach Wielandt). In diesem Fall hat man einen großen Aufwand die Krylov-Räume 
+  $K_m = \Span{q,A^{-1}q,\dotsc,A^{-m+1}q}$ zu bestimmen, da hierfür die linearen Systeme $v^0:=q, Av^1=v^0, 
+  \dotsc, Av^m=v^{m-1}$ sukzessiv gelöst werden müssen.
 \end{rembox}
 \begin{rembox}
-    Typische Implementierungen der Arnoldi-Methode werden nach einer bestimmten Anzahl von Iterationen neu begonnen.
-    Es kann untersucht werden, dass die Konvergenz sich mit einer größeren Krylov-Unterraum-Dimension $m$ verbessert.
-    Die Größe $m$, für die eine optimale Konvergenz erhalten wird, ist leider nicht im Voraus bekannt. \\
-    $\implies$\glqq{}Switching\grqq{}-Strategien um zu testen, ob ein Neustart sinnvoll ist, 
-    um die Konvergenz zu beschleunigen.
+  Typische Implementierungen der Arnoldi-Methode werden nach einer bestimmten Anzahl von Iterationen neu begonnen.
+  Es kann untersucht werden, dass die Konvergenz sich mit einer größeren Krylov-Unterraum-Dimension $m$ verbessert.
+  Die Größe $m$, für die eine optimale Konvergenz erhalten wird, ist leider nicht im Voraus bekannt. \\
+  $\implies$\glqq{}Switching\grqq{}-Strategien um zu testen, ob ein Neustart sinnvoll ist, 
+  um die Konvergenz zu beschleunigen.
 \end{rembox}
 \begin{rembox}
-    Der Algorithmus der rekursiven Form des Gram-Schmidt-Verfahrens kann auch für die stabile Orthogonalisierung einer 
-    allgemeinen Basis $\{v_1,\dots,v_m\}\subset\mathbb{C}^n$ verwendet werden:\\
-    \textcolor{red}{Algobox} \\
-    $u^1=\|v^1\|_2^{-1}\cdot v^1$ \\
-    Für $t=2,...,m$:  \\
-    Für $j=1,...,t-1$: \\
-    $u^{t,1}=v^t, u^{t,j+1}=u^{t,j}-proj_{u^{j}}(u^{t,j})$ \\
-    $u^t=\|u^{t,t}\|_2^{-1}\cdot u^{t,t}$ \\
-    Dieser modifizierte Gram-Schmidt-Algorithmus (mit exakter Arithmetik) liefert das gleiche Resultat, 
-    wie der klassiche Gram-Schmidt-Algorithmus. \\
-    $u^1=\|v^1\|_2^{-1}\cdot v^1$ \\
-    Für $t=2,...,m$: \\
-    $\tilde{u}^t = v^t - \sum_{j=1}^{t-1} proj_{u^j}(v^t)$ \\
-    $u^t = \|\tilde{u}\|_2^{-1}\cdot\tilde{u}^t$
-    Beide Algorithmen haben die gleiche arithmetische Komplexität. \\
-    In jedem Schritt wird ein zu den vorherigen Vektoren orthogonaler Vektor bestimmt und dieser ist auch orthonormal
-    zu einem eventuellen Fehler, der bei den Berechnungen entstand, was die Stabilität angeht.\\
-    Für die Fehlerabschätzung der resultierenden orthonormalen Matrix $u=[u^1,\dots,u^m]$ gilt:
-    \[
-        \|u^Tu-I\|_2 \leq \dfrac{c_1\cdot \Cond_2(A)}{1-c_2\cdot\Cond_2(A)}
-    \]
-    (Vgl. Björk \& Paige)
+  Der Algorithmus der rekursiven Form des Gram-Schmidt-Verfahrens kann auch für die stabile Orthogonalisierung einer 
+  allgemeinen Basis $\{v_1,\dots,v_m\}\subset\C  ^n$ verwendet werden:\\
+  \textcolor{red}{Algobox} \\
+  $u^1=\vertn{2}{v^1}_2^{-1}\cdot v^1$ \\
+  Für $t=2,...,m$:  \\
+  Für $j=1,...,t-1$: \\
+  $u^{t,1}=v^t, u^{t,j+1}=u^{t,j}-proj_{u^{j}}(u^{t,j})$ \\
+  $u^t=\vertn{2}{u^{t,t}}_2^{-1}\cdot u^{t,t}$ \\
+  Dieser modifizierte Gram-Schmidt-Algorithmus (mit exakter Arithmetik) liefert das gleiche Resultat, 
+  wie der klassiche Gram-Schmidt-Algorithmus. \\
+  $u^1=\vertn{2}{v^1}_2^{-1}\cdot v^1$ \\
+  Für $t=2,...,m$: \\
+  $\tilde{u}^t = v^t - \sum_{j=1}^{t-1} proj_{u^j}(v^t)$ \\
+  $u^t = \vertn{2}{\tilde{u}}_2^{-1}\cdot\tilde{u}^t$
+  Beide Algorithmen haben die gleiche arithmetische Komplexität. \\
+  In jedem Schritt wird ein zu den vorherigen Vektoren orthogonaler Vektor bestimmt und dieser ist auch orthonormal
+  zu einem eventuellen Fehler, der bei den Berechnungen entstand, was die Stabilität angeht.\\
+  Für die Fehlerabschätzung der resultierenden orthonormalen Matrix $u=[u^1,\dots,u^m]$ gilt:
+  \begin{align*}
+    \vertn{2}{u^Tu-I}_2 \leq \dfrac{c_1\cdot \Cond_2(A)}{1-c_2\cdot\Cond_2(A)}
+  \end{align*}
+  (Vgl. Björk \& Paige)
 \end{rembox}
 \begin{rembox}
-    Andere Methoden zu Orthogonalisierung (wie z.B. Householder Transformation oder Givens-Rotation) sind zum Teil 
-    stabiler, als die stabilisierte Gram-Schmidt-Methode, aber aufgrund der iterativen Anwendungsmöglichkeit ist 
-    Gram-Schmidt beim Arnoldi-Verfahren vorteilhafter.
+  Andere Methoden zu Orthogonalisierung (wie z.B. Householder Transformation oder Givens-Rotation) sind zum Teil 
+  stabiler, als die stabilisierte Gram-Schmidt-Methode, aber aufgrund der iterativen Anwendungsmöglichkeit ist 
+  Gram-Schmidt beim Arnoldi-Verfahren vorteilhafter.
 \end{rembox}
 
 \subsection{Lanczos-Methode}
 Voraussetzung: $A$ sei hermitisch. Dann erhält man für die Rekursions-Formel der Arnoldi-Methode:
-\[
-    \tilde{q}^t = Aq^{t-1} - \sum_{j=1}^{t-1} \langle Aq^{t-1}, q^j\rangle_2 q^j, \quad \text{für } t=2,\dots,m+1
-\]
+\begin{align*}
+  \tilde{q}^t = Aq^{t-1} - \sum_{j=1}^{t-1} \langle Aq^{t-1}, q^j\rangle_2 q^j, \quad \text{für } t=2,\dots,m+1
+\end{align*}
 da $\langle Aq^{t-1}, q^j\rangle_2 = \langle q^{t-1}, Aq^j\rangle_2 = 0$ für $j=1,\dots,t-3$. \\
 Die Vereinfachung zu 
-\[\tilde{q}^t = Aq^{t-1} - \underbrace{\langle Aq^{t-1}, q^{t-1}\rangle_2}_{=:\alpha_{t-1}} q^{t-1}
-- \underbrace{\langle Aq^{t-1}, q^{t-2}\rangle_2}_{=:\beta_{t-2}} q^{t-2} = Aq^{t-1}-\alpha_{t-1}q^{t-1}-\beta_{t-2}q^{t-2}\]
-Da $A$ hermitisch, ist $\alpha_{t-1}\in\mathbb{R}$. Multiplikation mit $q^t$ ergibt
-\[
-    \|\tilde{q}^t\|_2 = \langle q^t, \tilde{q}^t\rangle_2 = \langle q^t, Aq^{t-1}-\alpha_{t-1}q^{t-1}-\beta_{t-2}q^{t-2}\rangle_2 
-    = \langle q^t, Aq^{t-1}\rangle_2 = \langle Aq^t, q^{t-1}\rangle_2 = \beta_{t-1}
-\]
-Daraus folgt, dass auch $\beta_{t-1}\in\mathbb{R}$ und $\beta_{t-1}q^t = \tilde{q}^t$. Also erhält man 
-\[
+\begin{align*}\tilde{q}^t = Aq^{t-1} - \underbrace{\langle Aq^{t-1}, q^{t-1}\rangle_2}_{=:\alpha_{t-1}} q^{t-1}
+- \underbrace{\langle Aq^{t-1}, q^{t-2}\rangle_2}_{=:\beta_{t-2}} q^{t-2} = Aq^{t-1}-\alpha_{t-1}q^{t-1}-\beta_{t-2}q^{t-2}\end{align*}
+Da $A$ hermitisch, ist $\alpha_{t-1}\in\R$. Multiplikation mit $q^t$ ergibt
+\begin{align*}
+  \vertn{2}{\tilde{q}^t}_2 = \langle q^t, \tilde{q}^t\rangle_2 = \langle q^t, Aq^{t-1}-\alpha_{t-1}q^{t-1}-\beta_{t-2}q^{t-2}\rangle_2 
+  = \langle q^t, Aq^{t-1}\rangle_2 = \langle Aq^t, q^{t-1}\rangle_2 = \beta_{t-1}
+\end{align*}
+Daraus folgt, dass auch $\beta_{t-1}\in\R$ und $\beta_{t-1}q^t = \tilde{q}^t$. Also erhält man 
+\begin{align*}
   Aq^{t-1} = \beta_{t-1}q^t + \alpha_{t-1}q^{t-1} + \beta_{t-2}q^{t-2},\quad\text{für } t=2,\dots,m+1
-\]
+\end{align*}
 In Matrix-Form:
 
-\[A\cdot \mathcal{Q}^{(m)} = \mathcal{Q}^{(m)}\cdot\underbrace{\begin{pmatrix}
-    \alpha_1 & \beta_2 & & & & \\
-    \beta_2 & \alpha_2 & \beta_3 & & & \\
-    & \beta_3 & \alpha_3 & \ddots & & \\
-    & & & \ddots & \beta_{m-1} & \\
-    & & & \beta_{m-1} & \alpha_{m-1} & \beta_m \\
-    & & & & \beta_m & \alpha_m
-\end{pmatrix}}_{=:T^{(m)}} + \beta_m\cdot[0,\dots,0,q^{m+1}]\]
-wobei die Matrix $T^{(m)}\in\mathbb{R}^{m\times m}$ ist reell und symmetrisch. Von dieser sogenannten Lanczos-Beziehung
+\begin{align*}A\cdot \mathcal{Q}^{(m)} = \mathcal{Q}^{(m)}\cdot\underbrace{\begin{pmatrix}
+  \alpha_1 & \beta_2 & & & & \\
+  \beta_2 & \alpha_2 & \beta_3 & & & \\
+  & \beta_3 & \alpha_3 & \ddots & & \\
+  & & & \ddots & \beta_{m-1} & \\
+  & & & \beta_{m-1} & \alpha_{m-1} & \beta_m \\
+  & & & & \beta_m & \alpha_m
+\end{pmatrix}}_{=:T^{(m)}} + \beta_m\cdot[0,\dots,0,q^{m+1}]\end{align*}
+wobei die Matrix $T^{(m)}\in\R^{m\times m}$ ist reell und symmetrisch. Von dieser sogenannten Lanczos-Beziehung
 erhält man 
-\[(\mathcal{Q}^{(m)})^* A \mathcal{Q}^{(m)} = T^{(m)}\] 
+\begin{align*}(\mathcal{Q}^{(m)})^* A \mathcal{Q}^{(m)} = T^{(m)}\end{align*} 
 \begin{defbox}[Lanczos-Algorithmus]
-    Für eine hermitische Matrix $A\in\mathbb{C}^{n\times n}$ bestimmt die Lanczos-Methode eine Menge von orthogonalen 
-    Vektoren $\{q^1,\dots,q^m\}$, $m\ll n$ durch Anwendung der Gram-Schmidt-Methode auf die Basis 
-    $\{q,Aq,\dotsc,A^{m-1}q\}$ des Krylov-Raumes $K_m$:
+  Für eine hermitische Matrix $A\in\C  ^{n\times n}$ bestimmt die Lanczos-Methode eine Menge von orthogonalen 
+  Vektoren $\{q^1,\dots,q^m\}$, $m\ll n$ durch Anwendung der Gram-Schmidt-Methode auf die Basis 
+  $\{q,Aq,\dotsc,A^{m-1}q\}$ des Krylov-Raumes $K_m$:
 \end{defbox}
 \textcolor{red}{Algobox:} \\
-Startwerte: $q^1=\|q\|_2^{-1}q, q^0=0, \beta_1=0$ \\
+Startwerte: $q^1=\vertn{2}{q}_2^{-1}q, q^0=0, \beta_1=0$ \\
 Iteriere für $1\leq t\leq m-1$:
 \begin{align*}
-    r^t = Aq^t, \quad \alpha_t = \langle r^t, q^t\rangle_2 \\
-    s^t = r^t - \alpha_t q^t - \beta-tq^{t-1} \\
-    \beta^{t+1} = \|s^t\|_2, q^{t+1} = \beta_{t+1}^{-1}s^t \\
-    r^m = Aq^m, \alpha_m = \langle r^m,q^m\rangle_2
+  r^t = Aq^t, \quad \alpha_t = \langle r^t, q^t\rangle_2 \\
+  s^t = r^t - \alpha_t q^t - \beta-tq^{t-1} \\
+  \beta^{t+1} = \vertn{2}{s^t}_2, q^{t+1} = \beta_{t+1}^{-1}s^t \\
+  r^m = Aq^m, \alpha_m = \langle r^m,q^m\rangle_2
 \end{align*}
 Nachdem die Matrix $T^{(m)}$ berechnet ist, kann ihr Eigenwert $\lambda_i$ und der zugehörige Eigenvektor $w^{i}$
 bestimmt werden, z.B. mit QR-Algorithmus. \\
@@ -262,55 +264,55 @@ Begriff der Pseudospektren geht auf Landau zurück. Viele Resultate von Trefethe
 Konzept des Pseudo-Spektrums ist bei normalen Operatoren die Vereinigung der $\varepsilon$-Umgebungen seiner Eigenwerte
 
 \begin{defbox}
-    Für $\varepsilon\in\mathbb{R}_+$, ist das $\varepsilon$-Pseudospektrum $\sigma_\varepsilon(A)\subset\mathbb{C}$ 
-    einer Matrix $A\in\mathbb{K}^{n\times n}$ definiert als 
-    \[
-        \sigma_\varepsilon(A) := \{z\in\mathbb{C}\sigma(A)\,|\, \|(A-zI)^{-1}\|_2\geq \varepsilon^{-1}\} \cup \sigma(A)
-    \]
+  Für $\varepsilon\in\R_+$, ist das $\varepsilon$-Pseudospektrum $\sigma_\varepsilon(A)\subset\C  $ 
+  einer Matrix $A\in\K^{n\times n}$ definiert als 
+  \begin{align*}
+    \sigma_\varepsilon(A) := \{z\in\C  \sigma(A)\,|\, \vertn{2}{(A-zI)^{-1}}_2\geq \varepsilon^{-1}\} \cup \sigma(A)
+  \end{align*}
 \end{defbox}
 
 \begin{rembox}
-    Das Konzept des Pseudo-Spektrums kann in viel allgemeineren Situationen eingeführt werden. 
-    (z.B. Dunford \& Schwartz oder Kato)
+  Das Konzept des Pseudo-Spektrums kann in viel allgemeineren Situationen eingeführt werden. 
+  (z.B. Dunford \& Schwartz oder Kato)
 \end{rembox}
 
 \begin{rembox}
-    Krylov-Unterraum-Methoden, die bisher diskutiert wurden, lassen sich zur Berechnung des Pseudo-Spektrums einer 
-    Matrix verwenden. (z.B. bei Matrix von diskretisierten partiellen Differentialgleichungen)
+  Krylov-Unterraum-Methoden, die bisher diskutiert wurden, lassen sich zur Berechnung des Pseudo-Spektrums einer 
+  Matrix verwenden. (z.B. bei Matrix von diskretisierten partiellen Differentialgleichungen)
 \end{rembox}
 
 \begin{thmbox}{Lemma}
-    \begin{enumerate}
-        \item Das $\varepsilon$-Pseudospektrum einer Matrix $T\in\mathbb{C}^{n\times n}$ kann definiert werden 
-            durch
-            \[\sigma_\varepsilon(T) := \{z\in\mathbb{C}\,|\,\sigma_{\min}(zI-T)\leq\varepsilon\}\]
-            wobei $\sigma_{\min}(B)$ den kleinsten Singulärwert der Matrix $B$ bezeichnet, d.h. 
-            \[\sigma_{\min(B)}:=\min\{\lambda^{1/2}\,|\,\lambda\in\sigma(B^*)\}\]
-            mit der adjungierten $B^*$ von $B$.
-        \item Das $\varepsilon$-Pseudospektrum $\sigma_\varepsilon(T)$ einer Matrix $T\in\mathbb{C}^{n\times n}$ ist 
-            invariant unter Orhtonormalen Transformationen, d.h. für eine unitäre Matrix $Q\in\mathbb{C}^{n\times n}$ 
-            gilt $\sigma_\varepsilon(Q^*TQ) = \sigma_\varepsilon(T)$
-    \end{enumerate}
+  \begin{enumerate}
+    \item Das $\varepsilon$-Pseudospektrum einer Matrix $T\in\C  ^{n\times n}$ kann definiert werden 
+      durch
+      \begin{align*}\sigma_\varepsilon(T) := \{z\in\C  \,|\,\sigma_{\min}(zI-T)\leq\varepsilon\}\end{align*}
+      wobei $\sigma_{\min}(B)$ den kleinsten Singulärwert der Matrix $B$ bezeichnet, d.h. 
+      \begin{align*}\sigma_{\min(B)}:=\min\{\lambda^{1/2}\,|\,\lambda\in\sigma(B^*)\}\end{align*}
+      mit der adjungierten $B^*$ von $B$.
+    \item Das $\varepsilon$-Pseudospektrum $\sigma_\varepsilon(T)$ einer Matrix $T\in\C  ^{n\times n}$ ist 
+      invariant unter Orhtonormalen Transformationen, d.h. für eine unitäre Matrix $Q\in\C  ^{n\times n}$ 
+      gilt $\sigma_\varepsilon(Q^*TQ) = \sigma_\varepsilon(T)$
+  \end{enumerate}
 \end{thmbox}
 \textit{Beweis.} 
 \begin{enumerate}
-    \item Es gilt
-        \begin{align*}
-            \|(zI-T)^{-1}\|_2 
-            &= \max\{\mu{1/2}\,|\, \mu \text{ Singulärwert von } (zI-T)^{-1}\}  \\
-            &= \min\{\mu{1/2}\,|\, \mu \text{ Singulärwert von } (zI-T)\}^{-1} \\
-            &= \sigma_{\min}(zI-T)^{-1}
-        \end{align*}
-        Daraus folgt:
-        \begin{align*}
-            \sigma_\varepsilon(T) 
-            &= \left\{ z \in \mathbb{C} \;\middle|\; \|(zI-T)^{-1}\|_2 \geq \varepsilon^{-1} \right\} \\
-            &= \left\{ z \in \mathbb{C} \;\middle|\; \sigma_{\min}(zI-T)^{-1} \geq \varepsilon^{-1} \right\} \\
-            &= \left\{ z \in \mathbb{C} \;\middle|\; \sigma_{\min}(zI-T) \leq \varepsilon \right\}
-        \end{align*}
-    \item Übungsaufgabe
+  \item Es gilt
+    \begin{align*}
+      \vertn{2}{(zI-T)^{-1}}_2 
+      &= \max\{\mu{1/2}\,|\, \mu \text{ Singulärwert von } (zI-T)^{-1}\}  \\
+      &= \min\{\mu{1/2}\,|\, \mu \text{ Singulärwert von } (zI-T)\}^{-1} \\
+      &= \sigma_{\min}(zI-T)^{-1}
+    \end{align*}
+    Daraus folgt:
+    \begin{align*}
+      \sigma_\varepsilon(T) 
+      &= \left\{ z \in \C   \;\middle|\; \vertn{2}{(zI-T)^{-1}}_2 \geq \varepsilon^{-1} \right\} \\
+      &= \left\{ z \in \C   \;\middle|\; \sigma_{\min}(zI-T)^{-1} \geq \varepsilon^{-1} \right\} \\
+      &= \left\{ z \in \C   \;\middle|\; \sigma_{\min}(zI-T) \leq \varepsilon \right\}
+    \end{align*}
+  \item Übungsaufgabe
 \end{enumerate}
 
-Betrachtung einer Folge von Gitterpunkten $z_i\in D\subset \mathbb{C}$ für $i=1,2,3,\dots$ und in jedem Gitterpunkt
+Betrachtung einer Folge von Gitterpunkten $z_i\in D\subset \C  $ für $i=1,2,3,\dots$ und in jedem Gitterpunkt
 wir das kleinste $\varepsilon$ bestimmt, für das $z_i\in\sigma_\varepsilon(T)$. \\
-Interpolation der erhaltenen Werte, bestimmt ob ein Punkte $z\in\mathbb{C}$ approxmativ zu $\sigma_\varepsilon(T)$ gehört.
+Interpolation der erhaltenen Werte, bestimmt ob ein Punkte $z\in\C  $ approxmativ zu $\sigma_\varepsilon(T)$ gehört.
