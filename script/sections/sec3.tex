@@ -2,436 +2,693 @@
 \section{Eigenwertprobleme}
 
 \subsection{Einleitung}
-Aus der linearen Algebra ist das klassische Eigenwertproblem bekannt. Gegeben sei eine Matrix 
-$A\in\mathbb{K}^{n\times n}$ und gesucht sind $\lambda\in\mathbb{K}$ und $v\in\mathbb{K}^n$, $v\neq 0$ 
-sodass $Av=\lambda v$. Das Umstellen des Eigenwertproblems ergibt das System $(A-\lambda I)v=0$ (*). Hierbei muss 
-$A-\lambda I$ singulär sein, sonst ist die einedeuige Lösung des Systems gegeben durch $v=0$.\\
-Per Hand würden wir hier nun das charakteristische Poylnom $\chi_A(\lambda)=\det(A-\lambda I)$ aufstellen und 
-dessen Nullstellen bestimmen, da dies genau die Werte für $\lambda$ sind, für welche das obige System nicht-triviale
-Lösungen hat. \\
-Für die nuerische Berechung der Eigenwerte ist dies nicht ratsam, da Nullstellenbestimmung bei Polynomen 
-hochgradig schlecht konditioniert ist. \\
-Wir stellen folgende Zusammenhänge der Berechnung von Eigenwerten und Eigenvektoren fest:
-\begin{enumerate}
-    \item[a)] Eigenwert-Bestimmung: Eigenvektor über LGS (*).
-    \item[b)] Eigenvektor-Bestimmung: 
-        Eigenwert über Rayleigh-Quotient $\lambda=\dfrac{\langle Av,v\rangle}{\|v\|_2^2}$ 
-\end{enumerate}
-\subsection{Einschließungssätze und Stabilität}
-\begin{thmbox}{Hilfssatz}
-    Seien $A,B\in\mathbb{K}^{n\times n}$ beliebige Matrizen und $\|\cdot\|$ eine natürliche Matrixnorm. Dann gilt 
-    für jeden Eigenwert $\lambda$ von $A$, welcher nicht zugleich auch Eigenwert von $B$ ist, die Beziehung
-    \[\|(\lambda I-B)^{-1}(A-B)\|\geq 1\]
-\end{thmbox}
-\textit{Beweis.} Ist $w$ ein Eigenvektor vom Eigenwert $\lambda$ von $A$, so folgt aus der Identität 
-$(A-B)w = (I\lambda - B)w$, dass wenn $\lambda$ kein Eigenwert von $B$ ist, d.h. $\lambda I-B$ invertierbar: 
-\[(\lambda I-B)^{-1}(A-B)w=w\]
-Demnach ist also 
-\[1\leq \sup_{x\in\mathbb{K}^n\backslash\{0\}} \dfrac{\|(\lambda I-B)^{-1}(A-B)x\|}{\|x\|}
-=\|(\lambda I-B)^{-1}(A-B)\|\]
-\subsubsection{Gerschgorin-Kreise}
-\begin{thmbox}{Satz}[Satz von Gerschgorin]
-    Alle Eigenwerte eine Matrix $A\in\mathbb{K}^{n\times n}$ liegen in der Vereinigung der sogenannten 
-    Gerschgorin-Kreise
-    \[K_j := \left\{z\in\mathbb{C} : |z-a_{jj}|\leq \sum_{k\neq j} |a_{jk}|\right\},
-    \qquad \text{für } j=1,\dotsc,n.\]
-    Für eine Teilmenge $I\subset\{1,\dotsc,n\}$ gilt, sind die Mengen $U=\displaystyle \bigcup_{j\in I} K_j$ 
-    und $V=\displaystyle \bigcup_{j\notin I} K_j$ disjunkt, so liegen in $U$ genau $m:=|I|$ und in $V$ genau $n-m$ 
-    Eigenwerte von $A$ (mehrfache Eigenwerte werden entsprechend ihrer algebraischen Vielfachheit gezählt).
-\end{thmbox}
-\textit{Beweis.} Zur ersten Behauptung: Wir setzen $B=diag(a_{jj})$ in dem Hilfssatz 3.1 und nehmen 
-$\|\cdot\|_\infty$ als natürliche Matrixnorm. Für $\lambda\neq a_{jj}$ folgt dann 
-\[\|(\lambda I -D)^{-1}(A-D)\|_\infty = \max_{j=1,\dotsc,n}\dfrac{1}{\lambda-a_{jj}}\sum_{k\neq j} |a_{jk}|\geq 1,\]
-d.h. $\lambda$ liegt in einem der Gerschgorin-Kreise. \\
-Für den zweiten Teil sei o.B.d.A. $I=\{1,\dotsc,m\}$. \\
-Setzen wir $A_t = D + t(A-D)$, dann liegen genau $m$ Eigenwerte von $A_0=D$ in $U$ und $n-m$ 
-Eigenwerte in $V$. Das selbe folgt auch für $A_1=A$, da die Eigenwerte von $A_t$ stetige Funktionen in $t$ sind. 
-\qed \\ \\
-Ein Alternativer Beweis zur ersten Behauptung liefert eine Betrachtung des 
-Eigenwertproblems $Ax=\lambda x$ mit $x\neq 0$. Offensichtlich existiert ein $x_i$ mit $|x_j|\leq |x_i|$ für alle 
-$j\neq i$. Die $i$-te Komponente von $Ax$ ist gegeben durch 
-\[\lambda x_i = (Ax)_i = \sum_{j=1}^{m} a_{jj}x_j \]
-Somit folgt 
-\[|\lambda-a_{ii}| = \left|\sum_{j\neq i} a_{ij} \dfrac{x_j}{x_i}\right|\leq \sum_{j\neq i}|a_{ij}|\]
-Demnach liegt $\lambda\in K_i$.\qed
-\begin{egbox}
-    Gegeben sei die Matrix 
-    \[A = \begin{pmatrix}
-        1 & 0.1 & -0.2 \\ 0 & 2 & 0.4 \\ -0.2 & 0 & 3
-    \end{pmatrix}\]
-    Es ergeben sich die folgenden Gerschgori-Kreise:
-    \begin{align*}
-        K_1 = \{z\in\mathbb{C} : |z-1|\leq 0.3\} \\
-        K_2 = \{z\in\mathbb{C} : |z-2|\leq 0.4\} \\
-        K_3 = \{z\in\mathbb{C} : |z-3|\leq 0.2\} \\
-    \end{align*}
-    \begin{center}
-        \begin{tikzpicture}[scale=3]
-        % Axes
-        \draw[->] (-0.2,0) -- (4,0) node[right] {Re\((z)\)};
-        \draw[->] (0,-1) -- (0,1) node[above] {Im\((z)\)};
-        
-        % Circle 1
-        \draw[thick] (1,0) circle (0.3);
-        \filldraw (1,0) circle (0.02) node[below] {\(1\)};
-        \draw[thick] (1,0) -- ++(70:0.3);
-        \node at ($(1,0)+(70:0.4)$) {\(r = 0.3\)};
-        
-        % Circle 2
-        \draw[thick] (2,0) circle (0.4);
-        \filldraw (2,0) circle (0.02) node[below] {\(2\)};
-        \draw[thick] (2,0) -- ++(70:0.4);
-        \node at ($(2,0)+(70:0.5)$) {\(r = 0.4\)};
-        
-        % Circle 3
-        \draw[thick] (3,0) circle (0.2);
-        \filldraw (3,0) circle (0.02) node[below] {\(3\)};
-        \draw[thick] (3,0) -- ++(70:0.2);
-        \node at ($(3,0)+(70:0.3)$) {\(r = 0.2\)};
+Aus der linearen Algebra ist bereits das klassische Eigenwertproblem bekannt:
 
-        \end{tikzpicture}
-    \end{center}
-\end{egbox}
-\newpage
+Gegeben sei eine Matrix $A\in\K^{n\times n}$ und gesucht sind 
+$\lambda\in\K$ und $v\in\K^n$, $v\neq 0$ 
+sodass 
+%
+\begin{align*}
+  Av=\lambda v
+\end{align*}
+
+Das Umstellen des Eigenwertproblems ergibt das System 
+%
+\begin{align*}
+  (A-\lambda I)v=0
+  \tag{*}\label{eq:EWPlgs}
+\end{align*}
+Hierbei muss $A-\lambda I$ singulär sein, sonst ist die eindeutige Lösung des Systems gegeben durch $v=0$.
+
+Per Hand würden wir hier nun das charakteristische Polynom $\chi_A(\lambda)=\det(A-\lambda I)$ aufstellen und 
+dessen Nullstellen bestimmen, da dies genau die Werte für $\lambda$ sind, für welche das System (\ref{eq:EWPlgs}) 
+nicht-triviale Lösungen hat. 
+
+Für die numerische Berechnung der Eigenwerte ist dies nicht ratsam, da Nullstellenbestimmung bei Polynomen 
+hochgradig schlecht konditioniert ist. 
+
+Wir stellen folgende Zusammenhänge der Berechnung von Eigenwerten und Eigenvektoren fest:
+
+\begin{enumerate}
+  \item[a)] 
+    Eigenwert bekannt $\implies$ Eigenvektor als Lösung eines LGS (*).
+  \item[b)] 
+    Eigenvektor bekannt $\implies$ Eigenwert über Rayleigh-Quotient 
+    $\lambda=\dfrac{\langle Av,v\rangle}{\vertn{2}{v}_2^2}$ 
+\end{enumerate}
+
+\subsection{Einschließungssätze und Stabilität}
+
+\begin{colbox}{Hilfssatz}\label{hsatz:normIneq}
+  Seien $A,B\in\K^{n\times n}$ beliebige Matrizen und $\vertn{2}{\cdot}_{\op}$ eine durch $\vertn{2}{\cdot}$
+  induzierte Operatornorm. 
+  Dann gilt für jeden Eigenwert $\lambda$ von $A$, welcher nicht zugleich auch Eigenwert von $B$ ist, die Beziehung
+  %
+  \begin{align*}
+    \vertn{2}{(\lambda I-B)^{-1}(A-B)}_{\op}\geq 1
+  \end{align*}
+  %
+\end{colbox}
+
+\textit{Beweis.} \\
+Ist $w$ ein Eigenvektor vom Eigenwert $\lambda$ von $A$, so folgt aus der Identität 
+$(A-B)w = (I\lambda - B)w$, wenn $\lambda$ kein Eigenwert von $B$ ist, d.h. $\lambda I-B$ invertierbar, dass:
+% 
+\begin{align*}
+  (\lambda I-B)^{-1}(A-B)w = w
+\end{align*}
+%
+Demnach ist also 
+%
+\begin{align*}
+  1\leq \sup_{x\in\K^n\backslash\{0\}} \dfrac{\vertn{2}{(\lambda I-B)^{-1}(A-B)x}}{\vertn{2}{x}}
+  =\vertn{2}{(\lambda I-B)^{-1}(A-B)}_{\op}
+\end{align*}
+%
+\subsubsection{Gerschgorin-Kreise}
+%
+\begin{colbox}{Satz}[Satz von Gerschgorin]\label{satz:gerschgorin}
+  Alle Eigenwerte eine Matrix $A\in\K^{n\times n}$ liegen in der Vereinigung der sogenannten 
+  Gerschgorin-Kreise
+  %
+  \begin{align*}
+    K_j := \left\{z\in\C : |z-a_{jj}|\leq \sum_{k\neq j} |a_{jk}|\right\},
+    \qquad \text{für } j=1,\dots,n
+  \end{align*}
+  %
+  Für eine Teilmenge $I\subset\{1,\dots,n\}$ gilt, sind die Mengen $U=\displaystyle \bigcup_{j\in I} K_j$ 
+  und $V=\displaystyle \bigcup_{j\notin I} K_j$ disjunkt, so liegen in $U$ genau $m:=|I|$ und in $V$ genau $n-m$ 
+  Eigenwerte von $A$ (mehrfache Eigenwerte werden entsprechend ihrer algebraischen Vielfachheit gezählt).
+\end{colbox}
+
+\textit{Beweis.} \\
+Zur ersten Behauptung: \\
+Wir setzen $B=D:=\diag(a_{jj})$ in dem Hilfssatz \ref{hsatz:normIneq} und nehmen 
+$\vertn{2}{\cdot}_\infty$ als natürliche Matrixnorm. 
+
+Für $\lambda\neq a_{jj}$ folgt dann 
+%
+\begin{align*}
+  \vertn{2}{(\lambda I -D)^{-1}(A-D)}_\infty 
+  = \max_{j=1,\dots,n}\dfrac{1}{|\lambda-a_{jj}|}\sum_{k\neq j} |a_{jk}|
+  \geq 1,
+\end{align*}
+%
+d.h. $\lambda$ liegt in einem der Gerschgorin-Kreise. 
+
+Für den zweiten Teil setzen wir $A_t = D + t(A-D)$, 
+dann hat $A_0 = D$ als Eigenwerte $a_{11},\dots,a_{nn}$ die Mittelpunkte von $K_1,\dots,K_n$ 
+und damit liegen genau $m$ dieser Eigenwerte in $U$ und die restlichen $n-m$ in $V$. 
+
+Die Abbildung $t\mapsto D + t(A-D)$ 
+ist stetig in $t$ und da Eigenwerte einer Matrix selbst stetig sind(d.h. ändert sich die Matrix leicht ab, dann ändern 
+sich auch die Eigenwerte nur leicht ab), folgt, dass beim Wandern von $t=0$ zu $t=1$ und damit von $A_0=D$ zu $A_1=A$ sich 
+die Eigenwerte stetig durch den Raum $\K$ bewegen. Da die Mengen $U$ und $V$ abgeschlossen und disjunkt sind haben sie einen 
+positiven Abstand, welcher durch die stetige Bewegung der Eigenwerte nicht überschritten werden kann.
+\qed 
+
+Ein Alternativer Beweis zur ersten Behauptung liefert eine Betrachtung des 
+Eigenwertproblems $Ax=\lambda x$ mit Eigenvektor $x\neq 0$. 
+Offensichtlich existiert ein $x_i$ mit $|x_j|\leq |x_i|$ für alle 
+$j\neq i$. 
+
+Die $i$-te Komponente von $Ax$ ist dann gegeben durch 
+%
+\begin{align*}
+  \lambda x_i 
+  = (Ax)_i = \sum_{j=1}^{n} a_{jj}x_j = a_{ii}x_i + \sum_{j\neq i} a_{jj}x_j 
+\end{align*}
+%
+Somit folgt 
+%
+\begin{align*}
+  |\lambda-a_{ii}| 
+  = \Big|\dfrac{1}{x_i}\sum_{j\neq i} a_{ij} x_j\Big|
+  = \Big|\sum_{j\neq i} a_{ij} \dfrac{x_j}{x_i}\Big|
+  \leq \sum_{j\neq i}|a_{ij}|
+\end{align*}
+%
+Demnach liegt $\lambda\in K_i$.
+\qed
+
+\begin{colbox}{Korollar}
+  Aus Satz \ref{satz:gerschgorin} folgt insbesondere für $m=1$, dass wenn ein Gerschgorin-Kreis keinen anderen schneidet,
+  dass dieser genau einen Eigenwert enthält. Und wenn alle Gerschgorin-Kreise disjunkt sind, dann ist die Matrix 
+  diagonalisierbar. 
+
+  Weiter ist eine Matrix genau dann invertierbar, wenn keiner der Gerschgorin-Kreise die 0 enthält.
+\end{colbox}
+
+\begin{colbox}{Beispiel}
+  Gegeben sei die Matrix 
+  \begin{align*}A = \begin{pmatrix}
+    1 & 0.1 & -0.2 \\ 0 & 2 & 0.4 \\ -0.2 & 0 & 3
+  \end{pmatrix}\end{align*}
+  Es ergeben sich die folgenden Gerschgorin-Kreise:
+  \begin{align*}
+    K_1 = \{z\in\C : |z-1|\leq 0.3\} \\
+    K_2 = \{z\in\C : |z-2|\leq 0.4\} \\
+    K_3 = \{z\in\C : |z-3|\leq 0.2\} \\
+  \end{align*}
+  \begin{center}
+    \input{figures/gerschgorinCircles.tikz}
+  \end{center}
+\end{colbox}
+
 \subsubsection{Stabilität von Eigenwerten}
-\begin{thmbox}{Satz}[Stabilitätssatz]
-    Sei $A\in\mathbb{K}^{n\times n}$ eine Matrix, zu der es $n$ linear unabhängige Eigenvektoren gibt 
-    $\{w^{(1)},\dotsc,w^{(n)}\}$ und sei $B\in\mathbb{K}^{n\times n}$ eine zweite Matrix. Dann gibt es zu 
-    jedem Eigenwert$\lambda(B)$ von $B$ einen Eigenwert $\lambda(A)$ von $A$, sodass mit der Matrix 
-    $W=(w^{(1)}|\dotsc|w^{(n)})$ gilt
-    \[|\lambda(A)-\lambda(B)|\leq\Cond_2(W)\cdot\|A-B\|_2\]
-\end{thmbox}
-\textit{Bewies.} Die Eigenwertgleichungen $Aw^{(i)}=\lambda_i(A)w^{(i)}$ lassen sich in der Form 
-$AW=W\cdot\diag(\lambda_i(A))$ schreiben, d.h. $A=W\cdot\diag(\lambda_i(A))\cdot W^{-1}$ ist ähnlich zu der 
-Diagonalmatrix $\Lambda = \diag(\lambda_i(A))$. Wenn nun $\lambda=\lambda(B)$ kein Eigenwert von $A$ ist, so gilt 
-\[\|(\lambda I - A)^{-1}\|_2 = \|W(\lambda I - \Lambda)^{-1}W^{-1}\|_2 
-\leq \|W\|_2\cdot\|W^{-1}\|_2\cdot\|(\lambda I-\Lambda)^{-1}\| 
-= \Cond_2(W)\cdot \max_{i=1,\dotsc,n} |\lambda-\lambda_i(A)|^{-1}\]
-Mit dem Hilfssatz 3.1 folgt dann die Behauptung. \qed \\ \\
-Für hermitische Matrizen $A\in\mathbb{K}^{n\times n}$ existiert bekannterweise eine Orthonormalbasis des 
-$\mathbb{K}^{n\times n}$ aus Eigenvektoren, sodass die Matrix $W$ als unität angenommen werden kann, 
-d.h. $ww^{-*}=I$. In diesem Fall gilt $\Cond_2(W)=\|W^{-*}\|_2\cdot\|W\|_2 = 1$. \\ \\
-\textbf{Regel:} Allgemein kann man sagen, dass das Eigenwertproblem für hermtische Matrizen gut konditioniert
+
+\begin{colbox}{Satz}[Stabilitätssatz]
+  Sei $A\in\K^{n\times n}$ eine diagonalisierbare Matrix, d.h. es gibt eine invertierbare Matrix 
+  $W=(W^{(1)}|\dots|W^{(2)})$ aus Eigenvektoren mit $A=W\Lambda W^{-1}$ und $\Lambda=\diag(\lambda_i(A))$.
+  
+  Für eine zweite Matrix $B\in\K^{n\times n}$ gibt es zu 
+  jedem Eigenwert $\lambda(B)$ von $B$ einen Eigenwert $\lambda(A)$ von $A$, sodass
+  %
+  \begin{align*}
+    |\lambda(A)-\lambda(B)|\leq\Cond_2(W)\cdot\vertn{2}{A-B}_2
+  \end{align*}
+  %
+\end{colbox}
+
+\textit{Beweis.} \\
+Sei $\lambda=\lambda(B)$ kein Eigenwert von $A$, so gilt 
+%
+\begin{align*}
+  \vertn{2}{(\lambda I - A)^{-1}}_2 
+  &= \vertn{2}{(\lambda I - W\Lambda W^{-1})^{-1}}_2 \\
+  &= \vertn{2}{W(\lambda I - \Lambda)^{-1}W^{-1}}_2 \\
+  &\leq \vertn{2}{W}_2\cdot\vertn{2}{W^{-1}}_2\cdot\vertn{2}{(\lambda I-\Lambda)^{-1}}_2\\
+  &= \Cond_2(W)\cdot \max_{i=1,\dots,n} |\lambda-\lambda_i(A)|^{-1}
+\end{align*}
+%
+Mit dem Hilfssatz \ref{hsatz:normIneq} folgt dann die Behauptung. 
+\qed 
+
+Für hermitische Matrizen $A\in\K^{n\times n}$ existiert bekannterweise eine Orthonormalbasis des 
+$\K^{n\times n}$ aus Eigenvektoren, sodass die Matrix $W$ als unitär angenommen werden kann, 
+d.h. $W^{-1}=W^H$. In diesem Fall gilt $\vertn{2}{W} = \sqrt{\lambda_{\max}(W^HW)} = \sqrt{\lambda_{\max}(I)}=1$
+und analog $\vertn{2}{W^H} = 1$, also 
+%
+\begin{align*}
+  \Cond_2(W)=\vertn{2}{W^{-1}}_2\cdot\vertn{2}{W}_2 = 1
+\end{align*}
+%
+\textbf{Regel:} Allgemein kann man sagen, dass das Eigenwertproblem für hermitische Matrizen gut konditioniert
 ist, während das allgemeine Eigenwertproblem je nach Größe von $\Cond_2(W)$ beliebig schlecht konditioniert 
 sein kann.
+
 \subsection{Iterative Verfahren}
+
 Im folgenden wollen wir ein iteratives Verfahren zu Lösung des partiellen Eigenwertproblems einer 
-Matrix $A\in\mathbb{K}^{n\times n}$ betrachten.
+Matrix $A\in\K^{n\times n}$ betrachten.
+
 \subsubsection{Potenz-Methode}
-\begin{defbox}
-    Die Potenzmethode (Von-Mises-Iteration) erzeugt ausgehend von einem Startvektor $z^{(0)}\in\mathbb{C}^n$ mit
-    $\|z^0\|=1$ eine Folge von Iterationen $z^{(t)}\in\mathbb{C}^n, t=1,2,\dotsc$ durch 
-    \[\tilde{z}^{(t)}=Az^{(t-1)} \quad\text{und}\quad z^{(t)} = \tfrac{\tilde{z}^{(t)}}{\|\tilde{z}^{(t)}\|}.\]
-    Für einen beliebigen  Index $k\in\{1,\dotsc,n\}$, (z.B. maximale Komponente von $z^k$) wird gesetzt:
-    \[\lambda^{(t)} = \dfrac{(Az^{(t)})_k}{(z^{(t)})_k}\]
-    \textit{Zur Normierung wird üblicherweise $\|\cdot\|=\|\cdot\|_2$ oder $\|\cdot\|_\infty$ verwendet.} 
-\end{defbox}
-Zur Analyse des Verfahrens nehmen wir an, dass die Matrix $A$ diagonalisierbar ist, d.h. ähnlich zu einer 
-Diagonalmatrix ist. Dies ist äquivalent zu der Tatsache, dass $A$ eine Basis von Eigenvektoren 
-$\{w^{(1)},\dotsc,w^{(n)}\}$ besitzt. Weiter seien diese Eigenvektoren $w^{(i)}$ normiert. \\
-Wir nehmen an, dass $z^{(0)}$ eine nicht-triviale Komponente bezüglich $w^{(n)}$ besitzt. 
-(Dies ist keine wesentliche Einschränkung, da aufgrund des unvermeidbaren Rundungsfhlers dieser Fall der 
-Iteration sicher einmal auftritt)
-\newpage
-\begin{thmbox}{Satz}[Potenz-Methode]
-    Die Matrix $A$ sei diagonalisierbar und ihr betragsgrößter Eigenwert sei separiert von den anderen 
-    Eigenwerten, d.h. $|\lambda_n|>|\lambda_{n-1}|\geq|\lambda_{n-2}|\geq\dotsc\geq|\lambda_1|$. \\ 
-    Der Startvektor $z^{(0)}$ habe eine nicht-triviale Komponente bezüglich des zugehörigen Eigenvektors $w^{(n)}$.
-    Dann gibt es Zahlen $\delta_t\in\mathbb{C}, |\delta_t|=1$, 
-    sodass $\|z^{(t)}-\delta_t\cdot w^{(n)}\|\rightarrow 0$ für $t\rightarrow\infty$ und es gilt
-    \[\lambda^{(t)}-\lambda_n = \mathcal{O}\left(\left|\dfrac{\lambda_{n-1}}{\lambda_n}\right|^t\right)\qquad 
-    \text{ für } t\rightarrow \infty\]
-\end{thmbox}
-\textit{Beweis.} Sei $z^{(0)}=\sum_i \alpha_i\cdot w^{(i)}$ die Basisdarstellung des Startvektors 
+
+\begin{colbox}{Definition}
+  Die Potenzmethode (Von-Mises-Iteration) erzeugt ausgehend von einem Startvektor $z^{(0)}\in\C^n$ mit
+  $\vertn{2}{z^0}=1$ eine Folge von Iterationen $z^{(t)}\in\C^n, t=1,2,\dots$ durch 
+  %
+  \begin{align*}
+    \tilde{z}^{(t)} 
+    = Az^{(t-1)} 
+    \quad\text{und}\quad 
+    z^{(t)} 
+    = \tfrac{\tilde{z}^{(t)}}{\vertn{2}{\tilde{z}^{(t)}}}
+  \end{align*}
+  Für einen beliebigen  Index $k\in\{1,\dots,n\}$, (z.B. maximale Komponente von $z^{(k)}$) setzen wir:
+  %
+  \begin{align*}
+    \lambda^{(t)} 
+    = \dfrac{(Az^{(t)})_k}{(z^{(t)})_k}
+  \end{align*}
+  %
+  \textit{Zur Normierung wird üblicherweise $\vertn{2}{\cdot}=\vertn{2}{\cdot}_2$ oder $\vertn{2}{\cdot}_\infty$ verwendet.} 
+\end{colbox}
+
+Zur Analyse des Verfahrens nehmen wir an, dass die Matrix $A$ diagonalisierbar ist. 
+Dies ist äquivalent zu der Tatsache, dass $A$ eine Basis von normierten Eigenvektoren 
+$\{w^{(1)},\dots,w^{(n)}\}$ besitzt. 
+
+zusätzlich nehmen wir an, dass $z^{(0)}$ eine nicht-triviale Komponente bezüglich $w^{(n)}$ besitzt. 
+\textit{(Dies ist keine wesentliche Einschränkung, da aufgrund des unvermeidbaren Rundungsfehlers dieser Fall der 
+Iteration sicher einmal auftritt)}
+
+\begin{colbox}{Satz}[Potenz-Methode]
+  Die Matrix $A$ sei diagonalisierbar und ihr betragsgrößter Eigenwert sei separiert von den anderen 
+  Eigenwerten, also oBdA $|\lambda_n|>|\lambda_{n-1}|\geq|\lambda_{n-2}|\geq\dots\geq|\lambda_1|$. 
+
+  Der Startvektor $z^{(0)}$ habe eine nicht-triviale Komponente bezüglich des zugehörigen Eigenvektors $w^{(n)}$,
+  dann gibt es Zahlen $\delta_t\in\C, |\delta_t|=1$, 
+  sodass 
+  \begin{align*}
+    \vertn{2}{z^{(t)}-\delta_t\cdot w^{(n)}}\rightarrow 0
+    \quad \text{und}\quad 
+    \lambda^{(t)}-\lambda_n = \mathcal{O}\left(\left|\dfrac{\lambda_{n-1}}{\lambda_n}\right|^t\right)
+    \qquad 
+    \text{ für } t\rightarrow \infty\end{align*}
+\end{colbox}
+
+\textit{Beweis.} \\
+Sei $z^{(0)}=\displaystyle\sum_{i=1}^n \alpha_i\cdot w^{(i)}$ die Basisdarstellung des Startvektors 
 (mit $\alpha_n\neq 0$). Für die Iterierten gilt:
-\[z^{(t)} = \dfrac{\tilde{z}^{(t)}}{\|\tilde{z}^{(t-1)}\|} = \dfrac{Az^{(t-1)}}{\|Az^{(t-1)}\|} 
-= \dotsc = \dfrac{A^tz^{(0)}}{\|A^tz^{(0)}\|}\]
-Dabei gilt:
-\[A^tz^{(0)} = \sum_{i=1}^{n}\alpha_i\lambda_i^tw^{(i)} = \lambda_n^t \alpha_n\cdot\left(w^{(n)} + 
-\sum_{i\neq n} \dfrac{\alpha_i}{\alpha_n}\left(\dfrac{\lambda_i}{\lambda_n}\right)^t w^{(i)}\right)\]
-Wegen $|\tfrac{\lambda_i}{\lambda_n}|\leq \rho:=|\tfrac{\lambda_{n-1}}{\lambda_n}|<1$ für $i=1,\dotsc,n-1$ folgt
-\[A^tz^{(0)} = \lambda_n^t\alpha_n(w^{(n)}+\mathcal{O}(\rho^t))
-\qquad \text{ für } t\rightarrow \infty\]
-Dies ergibt:
-\[z^{(t)} = \dfrac{\lambda_n^t\alpha_n(w^{(n)}+
-\mathcal{O}(1))}{|\lambda_n^t\alpha_n|\cdot\|w^{(n)}+\mathcal{O}(\rho^t)\|}
-= \underbrace{\dfrac{\lambda_n^t\alpha_n}{|\lambda_n^t\alpha_n|}}_{=:\delta_k}\cdot (w^{(n)}+\mathcal{O}(\rho^t))\]
-Dabei ist $\delta_t\in\mathbb{C}$ und $|\delta_t|=1$, daher folgt die erste Aussage.\\
-Weiter gilt 
+%
 \begin{align*}
-    \lambda^{(t)} &= \dfrac{(Az^{(t)})_k}{(z^{(t)})_k} \\
-    &= \dfrac{(A^{t+1}z^{(0)})_k}{\|(A^{t+1}z^{(0)})_k\|}\cdot\dfrac{{\|(A^{t+1}z^{(0)})_k\|}}{(A^tz^{(0)})_k} \\
-    &= \dfrac{\lambda_n^{t+1}(\alpha_n w_{n,k}+\sum_{i\neq n} \alpha_i(\tfrac{\lambda_i}{\lambda_n})^{t+1}w_{i,k})}
-    {\lambda_n^t(\alpha_n w_{n,k}+\sum_{i\neq n} \alpha_i(\tfrac{\lambda_i}{\lambda_n})^tw_{i,k})} \\
-    &= \lambda_n + \mathcal{O}\left(\left|\dfrac{\lambda_{n-1}}{\lambda_n}\right|^t\right)\qquad 
-    \text{ für } t\rightarrow \infty
+  z^{(t)} 
+  = \dfrac{\tilde{z}^{(t)}}{\vertn{2}{\tilde{z}^{(t)}}} 
+  = \dfrac{Az^{(t-1)}}{\vertn{2}{Az^{(t-1)}}} 
+  = \dots 
+  = \dfrac{A^tz^{(0)}}{\vertn{2}{A^tz^{(0)}}}
+  \tag{1}\label{eq:PowerEQ1}
 \end{align*}
-\qed \\ \\
+%
+Dabei gilt:
+%
+\begin{align*}
+  A^tz^{(0)} 
+  = \sum_{i=1}^{n}\alpha_i\lambda_i^tw^{(i)} 
+  = \lambda_n^t \alpha_n\cdot\left(w^{(n)} + 
+  \sum_{i=1}^{n-1} \dfrac{\alpha_i}{\alpha_n}\left(\dfrac{\lambda_i}{\lambda_n}\right)^t w^{(i)}\right)
+  \tag{2}\label{eq:PowerEQ2}
+\end{align*}
+%
+Wegen $|\tfrac{\lambda_i}{\lambda_n}|\leq \rho:=|\tfrac{\lambda_{n-1}}{\lambda_n}|<1$ für $i=1,\dots,n-1$ folgt
+\begin{align*}
+  A^tz^{(0)} 
+  = \lambda_n^t\alpha_n(w^{(n)}+\mathcal{O}(\rho^t))
+  \qquad \text{ für } t\rightarrow \infty
+\end{align*}
+%
+Dies ergibt nach (\ref{eq:PowerEQ1}):
+%
+\begin{align*}
+  z^{(t)} 
+  = \dfrac{A^tz^{(0)}}{\vertn{2}{A^tz^{(0)}}}
+  = \dfrac{\lambda_n^t\alpha_n(w^{(n)}+\mathcal{O}(\rho^t))}
+  {|\lambda_n^t\alpha_n|\cdot\vertn{2}{w^{(n)}+\mathcal{O}(\rho)}}
+  = \underbrace{\dfrac{\lambda_n^t\alpha_n}{|\lambda_n^t\alpha_n|}}_{=:\delta_k}\cdot w^{(n)}+\mathcal{O}(\rho)
+\end{align*}
+%
+Dabei ist $\delta_t\in\C$ und $|\delta_t|=1$, daher folgt die erste Aussage.
+
+Weiter gilt 
+%
+\begin{align*}
+  \lambda^{(t)} 
+  &= \dfrac{(Az^{(t)})_k}{(z^{(t)})_k} \\
+  &\stackrel{(\ref{eq:PowerEQ1})}{=} 
+  \dfrac{(A^{t+1}z^{(0)})_k}{\vertn{2}{(A^{t+1}z^{(0)})_k}}\cdot\dfrac{{\vertn{2}{(A^{t+1}z^{(0)})_k}}}{(A^tz^{(0)})_k} \\
+  &\stackrel{(\ref{eq:PowerEQ2})}{=} 
+  \dfrac{\lambda_n^{t+1}\Big(\alpha_n w_{n,k} 
+  + \displaystyle\sum_{i=1}^{n-1} \alpha_i(\tfrac{\lambda_i}{\lambda_n})^{t+1}w_{i,k}\Big)}
+  {\lambda_n^t\Big(\alpha_n w_{n,k} 
+  + \displaystyle\sum_{i=1}^{n-1} \alpha_i(\tfrac{\lambda_i}{\lambda_n})^{t}w_{i,k}\Big)} \\
+  &= \lambda_n + \mathcal{O}\left(\left|\dfrac{\lambda_{n-1}}{\lambda_n}\right|^t\right)\qquad 
+  \text{ für } t\rightarrow \infty
+\end{align*}
+%
+\qed
+
 Die Konvergenz der Potenzmethode ist umso besser, je mehr der betragsgrößte Eigenwert $\lambda_n$ von den übrigen 
-betragsmäßig separiert ist. Der Beweis ist verallgemeinerbar für betragsgrößte Eigenwerte, welche merhfach 
-auftreten, sofern die Matrix diagonalisierbar ist. \\ \\
+separiert ist. Der Beweis ist verallgemeinerbar für betragsgrößte Eigenwerte, welche mehrfach 
+auftreten, sofern die Matrix diagonalisierbar ist. 
+
 \subsubsection{Inverse Iteration} 
 Als nächstes wollen wir uns die \glqq{}Inverse Iteration\grqq{} nach
-Wielandt anschauen. \\
-Wir nehmen an, man hat bereits eine Näherung $\tilde{\lambda}$ für einen Eigenwert $\lambda_k$ der regulären Matrix 
+Wielandt anschauen. 
+
+Wir nehmen an, wir haben bereits eine Näherung $\tilde{\lambda}$ für einen Eigenwert $\lambda_k$ der regulären Matrix 
 $A$ (z.B. durch Einschließungssätze). Die Näherung sei gut in dem Sinne, 
-dass $|\lambda_k-\tilde{\lambda}|\ll |\lambda_i-\tilde{\lambda}|$ für $i\neq k$.\\
-Sei $\lambda$ ein Eigenwert von $A$, dann ist $\lambda^{-1}$ ein Eigenwert von $A^{-1}$. 
+dass $|\lambda_k-\tilde{\lambda}|\ll |\lambda_i-\tilde{\lambda}|$ für $i\neq k$.
+
 Wir betrachten das Eigenwertproblem, welches sich für die Matrix $A-\tilde{\lambda}I$ ergibt:
-\[(A-\tilde{\lambda}I)v=\xi v \iff (A-\tilde{\lambda}I-\xi I)v = 0 \iff (A-(\tilde{\lambda}+\xi)I)v=0\]
-Also ist $\xi=\lambda_k-\tilde{\lambda}$ ein Eigenwert von $A-\tilde{\lambda}I$ und folglich ist 
-$\mu=\tfrac{1}{\xi}=(\lambda_k-\tilde{\lambda})^{-1}$ ein Eigenwert von $(A-\tilde{\lambda}I)^{-1}$. \\
+%
+\begin{align*}
+  (A-\tilde{\lambda}I)v
+  = \xi v 
+  \iff 
+  (A-\tilde{\lambda}I-\xi I)v 
+  = 0 
+  \iff (A-(\tilde{\lambda}+\xi)I)v
+  = 0
+\end{align*}
+%
+Wegen $(A-\lambda_kI)=0$, ist $\xi=\lambda_k-\tilde{\lambda}$ ein Eigenwert von $A-\tilde{\lambda}I$ und damit 
+$\mu=\tfrac{1}{\xi}=(\lambda_k-\tilde{\lambda})^{-1}$ ein Eigenwert von $(A-\tilde{\lambda}I)^{-1}$.
+\footnote{
+    $Av=\lambda v \implies v = A^{-1}\lambda v \implies \lambda^{-1}v = A^{-1}v$
+  } 
+
 Allgemeiner hat im Falle $\tilde{\lambda}\neq\lambda_k$ die Matrix $(A-\tilde{\lambda}I)^{-1}$ die Eigenwerte 
-$\mu_i = (\lambda_i-\tilde{\lambda})^{-1}$ für $i=1,\dotsc,n$ un des gilt 
-\[\left|\dfrac{1}{\lambda_k-\tilde{\lambda}}\right| \gg \left|\dfrac{1}{\lambda_i-\tilde{\lambda}}\right|\qquad 
-\text{für } i\neq k\]
-\begin{defbox}
-    Die inverse Iteration besteht in der Anwendung der Potenzmethode auf die Matrix $(A-\tilde{\lambda}I)^{-1}$
-    mit einer a priori Schätzung $\tilde{\lambda}$ zum gesuchten Eigenwert $\lambda_k$. \\ 
-    Ausgehend von einem Startwert $z^{(0)}$ werden Iterierte $z^{(t)}$ bestimmt als Lsg. der Gleichungssysteme
-    \[(A-\tilde{\lambda}I)z^{(t)} = \tilde{z}^{(t-1)},
-    \qquad z^{(t)} = \dfrac{\tilde{z}^{(t)}}{\|\tilde{z}^{(t)}\|}\]
-    Die zugehörige Eigenwertnäherung wird bestimmt durch 
-    \[\mu^{(t)}=\dfrac{(z^{(t)})_k}{((A-\tilde{\lambda}I)z^{(t)})_k}\]
-    mit Nenner $\neq 0$ (oder im symmetrischen Fall mit Hilfe der Rayleigh-Quotienten).
-\end{defbox}
+$\mu_i = (\lambda_i-\tilde{\lambda})^{-1}$ für $i=1,\dots,n$ und es gilt 
+%
+\begin{align*}
+  \left|\dfrac{1}{\lambda_k-\tilde{\lambda}}\right| 
+  \gg \left|\dfrac{1}{\lambda_i-\tilde{\lambda}}\right|
+  \qquad \text{für } i\neq k
+\end{align*}
+
+\begin{colbox}{Definition}
+  Die inverse Iteration beruht auf der Anwendung der Potenzmethode auf die Matrix $(A-\tilde{\lambda}I)^{-1}$
+  mit einer a priori Schätzung $\tilde{\lambda}$ zum gesuchten Eigenwert $\lambda_k$. 
+
+  Ausgehend von einem Startwert $z^{(0)}$ werden Iterierte $z^{(t)}$ als Lösung der Gleichungssysteme
+  %
+  \begin{align*}
+    (A-\tilde{\lambda}I)\tilde{z}^{(t)} 
+    = \tilde{z}^{(t-1)},
+    \qquad 
+    z^{(t)} 
+    = \dfrac{\tilde{z}^{(t)}}{\vertn{2}{\tilde{z}^{(t)}}}
+  \end{align*}
+  %
+  bestimmt.
+
+  Die zugehörige Eigenwertnäherung wird bestimmt durch 
+  %
+  \begin{align*}
+    \mu^{(t)}=\dfrac{(z^{(t)})_k}{((A-\tilde{\lambda}I)z^{(t)})_k}
+  \end{align*}
+  %
+  mit Nenner $\neq 0$ (oder im symmetrischen Fall einfach mit Hilfe der Rayleigh-Quotienten).
+\end{colbox}
+
 Aufgrund der Aussagen über Potenzmethoden liefert die inverse Iteration also für eine diagonalisierbare Matrix
-jeden Eigenwert, zu dem bereits eien hinreichend gute Näherung bekannt ist.
+jeden Eigenwert, zu dem bereits eine hinreichend gute Näherung bekannt ist.
+
 \subsection{Page-Rank-Algorithmus}
 Das Ziel des Page-Rank-Algorithmus ist die Bestimmung der Ausgabereihenfolge bei Suchergebnissen. Dabei berufen 
 wir uns auf folgende Regeln:
+
 \begin{enumerate}
-    \item[(1)] Eine Website erhält eine umso höhere Bewertung, je mehr Links auf sie zeigen.
-    \item[(2)] Links von höher bewerteten Websites soll relevanter sein, als solceh von unbedeutenden
-    \item[(3)] Ein Link von einer Website, die wenig Links nach außen hat, soll höher gewichtet werden als der
-        von einer Website mit vielen Links nach außen. 
+  \item[(1)] Eine Website erhält eine umso höhere Bewertung, je mehr Links auf sie zeigen.
+  \item[(2)] Links von höher bewerteten Websites soll relevanter sein, als solche von unbedeutenden Websites
+  \item[(3)] Ein Link von einer Website, die wenig Links nach außen hat, soll höher gewichtet werden als der
+    von einer Website mit vielen Links nach außen. 
 \end{enumerate}
-Wir beschreiben unser Model als ein Netz mit $n$ Seiten, wobei ein Index $k$ immer für eine Seite steht. \\
-Gesucht ist die Bedeutung einer Seite $x_k\in\mathbb{R}$ \\
-$L_k$ sei die Menge der Seiten, die auf $k$ verlinken, Links auf Seiten von sich selbst werden dabei nicht
-berücksichtigt. \\
-$n_k$ sei die Anzahl der Links, der Webite $k$ nach außen.\\
+
+Wir beschreiben unser Model als ein Netz mit $n$ Websites, wobei ein Index $k$ immer für eine Website steht und suchen 
+die Bewertung $x_k\in\R$ der Website $k$. 
+
+Weiter sei $L_k$ die Menge der Websites, welche auf $k$ verlinken, 
+Links auf Websites von sich selbst werden dabei nicht berücksichtigt und 
+$n_k$ sei die Anzahl Websites, auf welche $k$ verlinkt.
+
 Wir modellieren mittels folgendem LGS
-\[x_k = \sum_{j\in L_k}\tfrac{1}{n_j}\cdot x_j\]
-Die Gleichung $x=Ax$ entspricht hierbei der Eigenwertgleichung für den Eigenwert $\lambda=1$. \\
-Der historische Ansatz von Google ist die Potenzmethode:
-\[x = \begin{pmatrix}
-    x_1 \\ \vdots \\ x_n
-\end{pmatrix}, \qquad A_{ij} = a_{ij} = \begin{cases}
-    \tfrac{1}{n_j}, & \text{falls die Seite } j \text{ auf die Seite } i \text{ verlinkt} \\
-    0, & \text{sonst}
-\end{cases}\]
-\newpage
-\subsubsection{Stochastische Vektoren/Matrizen}
-\begin{defbox}
-    Ein Vektor $p\in\mathbb{R}^n$ heißt stochastischer Vektor, wenn alle Elemente $p_i$ nicht-negativ sind und die 
-    Summe der Elemente des Vektors gleich 1 ist, d.h. $\sum_{i} p_i = 1$. \\
-    Eine Matrix $A\in\mathbb{R}^{n\times n}$ heißt stochastische Matrix, wenn ale Spalten der Matrix stochastische 
-    Vektoren sind, d.h.
-    \[a_{ij}\geq 0\ \forall i,j \quad \text{und } \quad \sum_{i=1}^n a_{ij}=1\ \forall j\]
-\end{defbox}
-\begin{thmbox}{Lemma}
-    Sei $A\in\mathbb{R}^{n\times n}$ eine stoch. Matrix und $p\in\mathbb{R}^{n}$ ein stoch. Vektor, dann ist 
-    das Produkt $Ap\in\mathbb{R}^{n\times n}$ wieder ein stoch. Vektor.
-\end{thmbox}
-\textit{Beweis.} Es sei $a_i$ die $i$-te Spalte der Matrix $a_i$, d.h. $a_i$ ist ein stoch. Vektor
+%
 \begin{align*}
-    A\cdot p = A\cdot \begin{pmatrix}
-    p_1 \\ \vdots \\ p_n
-\end{pmatrix} &= p_1\cdot a_1 + \dotsc + p_n\cdot a_n \\
-&= \sum_{i} (p_1a_{i1} + \dotsc + p_na_{in}) \\
-&= p_1\sum_{i}a_{i1} + \dotsc +  p_n\sum_{i}a_{in} \\
-&= p_1\cdot 1 + \dotsc + p_n\cdot n = 1
+  x_k = \sum_{j\in L_k}\tfrac{1}{n_j}\cdot x_j
 \end{align*}
-Weiter gilt offensichtlich $(Ap)_{ij}\geq 0$.\qed
-\begin{thmbox}{Lemma}
-    Seien $A,B\in\mathbb{R}^{n\times n}$ stoch. Matrizen, dann ist das Produkt $A\cdot B$ wieder eine stoch. Matrix.
-\end{thmbox}
+%
+Die Gleichung $x=Ax$ mit 
+\begin{align*}x = \begin{pmatrix}
+  x_1 \\ \vdots \\ x_n
+\end{pmatrix}, \qquad A_{ij} = a_{ij} = \begin{cases}
+  \tfrac{1}{n_j}, & \text{falls die Seite } j \text{ auf die Seite } i \text{ verlinkt} \\
+  0, & \text{sonst}
+\end{cases}\end{align*}
+entspricht hierbei der Eigenwertgleichung für den Eigenwert $\lambda=1$. \\
+
+Der historische Ansatz von Google ist die Potenzmethode:
+
+\subsubsection{Stochastische Vektoren/Matrizen}
+\begin{colbox}{Definition}
+  Ein Vektor $p\in\R^n$ heißt stochastischer Vektor, wenn alle Elemente $p_i$ nicht-negativ sind und die 
+  Summe der Elemente des Vektors gleich 1 ist, d.h. $\sum_{i} p_i = 1$. 
+
+  Eine Matrix $A\in\R^{n\times n}$ heißt stochastische Matrix, wenn alle Spalten der Matrix stochastische 
+  Vektoren sind, d.h.
+  %
+  \begin{align*}
+    a_{ij}\geq 0\ \forall i,j \quad \text{und } \quad \sum_{i=1}^n a_{ij}=1\ \forall j
+  \end{align*}
+
+  %Wir schreiben im folgenden auch $\stochM{n}$ und $\stochV{n}$ für die Menge der stochastischen Matrizen und Vektoren.
+\end{colbox}
+
+\begin{colbox}{Lemma}
+  Sei $A\in\R^{n\times n}$ eine stochastische Matrix und $p\in\R^{n}$ ein stochastischer Vektor, dann ist 
+  das Produkt $Ap\in\R^{n\times n}$ wieder ein stochastischer Vektor.
+\end{colbox}
+
+\textit{Beweis.} \\
+Offensichtlich $(Ap)_{ij}\geq 0$, weiter es sei $a_i$ die $i$-te Spalte der Matrix $A$, d.h. $a_i$ ist ein stochastischer Vektor
+\begin{align*}
+  A\cdot p = A\cdot \begin{pmatrix}
+  p_1 \\ \vdots \\ p_n
+\end{pmatrix} &= p_1\cdot a_1 + \dots + p_n\cdot a_n \\
+&= \sum_{i=1}^n (p_1a_{i1} + \dots + p_na_{in}) \\
+&= p_1\sum_{i=1}^n a_{i1} + \dots +  p_n\sum_{i=1}^na_{in} \\
+&= p_1\cdot 1 + \dots + p_n\cdot 1 = 1
+\end{align*}
+\qed
+
+\begin{colbox}{Korollar}\label{cor:stochMatProd}
+  Seien $A,B\in\R^{n\times n}$ stoch. Matrizen, dann ist das Produkt $A\cdot B$ wieder eine stoch. Matrix.
+\end{colbox}
+
 \textit{Beweis.} Folgt direkt aus Lemma 3.9.
-\begin{thmbox}{Satz}
-    Eine stochastische Matrix $A$ hat immer den Eigenwert $1$. Der Betrag aller anderen Eigenwerte ist
-     kleiner oder gleich 1.
-\end{thmbox}
-\textit{Beweis.} Für den ersten Teil nutzen wir aus, dass $A$ und $A^T$ die gleichen Eigenwerte, da $A$ und $A^T$ die 
-gleiche Determinante besitzten und damit die charakteristischen Polynome $\chi_A(\lambda) = \det(A-\lambda I) 
-= \det(A^T-\lambda I) = \chi_{A^T}(\lambda)$. \\
-Weiter ist die Summe der Elemente jedes Zeilenvektors von $A^T$ ist gleich 1 (da $A$ stoch.), 
-somit ist $e=(1,\dotsc,1)^T$ ein Eigenvektor von $A^T$ mit Eigenwert $1$. Somit besitzt auch die Matrix $A$ den 
-Eigenwert $\lambda = 1$. \\
-Angenommen es existiert ein Eigenvektor $v$ zum Eigenwert $\lambda$ mit $|\lambda|>1$, dann gilt
-\[A^n v = A^{n-1}(Av) = A^{n-1}\lambda v = \lambda A^{n-1}v = \dotsc = \lambda^n v\]
-Für die Länge dieses Vektors gilt $\|\lambda^n v\| = |\lambda^n|\cdot \|v\|$ ein exponentieller Wachstum in $n$, da 
-$|\lambda|>1$. \\
-Daraus folgt, dass für große $n$ ein Element $(A^n)_{ij}$ exisitert, welches größer als $1$ ist.\\
-Da nach Lemma 3.10 die Matrix $A^n$ stoch. ist bildet dies einen Widerspruch.\qed
-\begin{thmbox}{Lemma}
-    Die Bewertungsmatrix $A$ des Page-Rank-Algorithmus ist eine stoch. Matrix.
-\end{thmbox}
+
+\begin{colbox}{Satz}
+  Eine stochastische Matrix $A$ hat immer den Eigenwert $1$. Der Betrag aller anderen Eigenwerte ist
+  kleiner oder gleich 1.
+\end{colbox}
+\textit{Beweis.} \\
+Für den ersten Teil nutzen wir aus, dass $A$ und $A^T$ die gleichen Eigenwerte, da $A$ und $A^T$ die 
+gleiche Determinante besitzen und damit die charakteristischen Polynome $\chi_A(\lambda) = \det(A-\lambda I) 
+= \det(A^T-\lambda I) = \chi_{A^T}(\lambda)$ übereinstimmen. 
+
+Weiter ist nach Definition einer stochastischen Matrix die Summe jedes Zeilenvektors von $A^T$ ist gleich 1,
+also ist $e=(1,\dots,1)^T$ ein Eigenvektor von $A^T$ mit Eigenwert $1$, also besitzt auch die Matrix $A$ den 
+Eigenwert $\lambda = 1$. 
+
+Für den zweiten Teil nehmen wir an es existiert ein Eigenvektor $v$ zum Eigenwert $\lambda$ mit $|\lambda|>1$, 
+denn dann gilt 
+%
+\begin{align*}
+  A^n v = A^{n-1}(Av) = A^{n-1}\lambda v = \lambda A^{n-1}v = \dots = \lambda^n v
+\end{align*}
+%
+Für die Länge dieses Vektors gilt $\vertn{2}{\lambda^n v} = |\lambda^n|\cdot \vertn{2}{v}$ ein 
+exponentielles Wachstum in $n$, da $|\lambda|>1$. 
+
+Daraus folgt, dass für große $n$ ein Element $(A^n)_{ij}$ existiert, welches größer als $1$ ist.
+
+Da nach Korollar \ref{cor:stochMatProd} die Matrix $A^n$ stochastisch ist bildet dies einen Widerspruch.
+\qed
+
+\begin{colbox}{Lemma}
+  Die Bewertungsmatrix $A$ des Page-Rank-Algorithmus ist eine stochastische Matrix.
+\end{colbox}
 \textit{Beweis.} Offensichtlich gilt $a_{ij}\geq 0$, weiter gilt
-\[\sum_{i=1}^n a_{ij} = n_j\cdot \dfrac{1}{n_j} + (n-n_j)\cdot 0 = 1\]
+\begin{align*}\sum_{i=1}^n a_{ij} = n_j\cdot \dfrac{1}{n_j} + (n-n_j)\cdot 0 = 1\end{align*}
 \qed
 \begin{egbox}
-    Wir betrachten ein einfaches Netz mit $4$ Knoten:  \\
-    \begin{center}
-        \begin{tikzpicture}[>=Stealth, node distance=2.5cm, every node/.style={circle, draw, minimum size=1cm}, auto]
+  Wir betrachten folgendes einfaches Netz mit $4$ Knoten: 
 
-        % Knoten
-        \node (1) at (0,2.5) {1};
-        \node (2) at (0,0) {2};
-        \node (3) at (2.5,2.5) {3};
-        \node (4) at (2.5,0) {4};
+  \begin{center}
+    \input{figures/pageRankNetwork.tikz}
+  \end{center}
 
-        % Kanten
-        \draw[->, bend left=15] (1) to (3);
-        \draw[->, bend left=15] (3) to (1); 
-        \draw[->, bend left=15] (1) to (4); 
-        \draw[->, bend left=15] (4) to (1); 
-        \draw[->] (1) -- (2);
-        \draw[->] (2) -- (4);
-        \draw[->] (4) -- (3);
-        \draw[->] (2) -- (3);
-
-        \end{tikzpicture}
-    \end{center}
-    Es ergibt sich folgendes Gleichungssystem:
-    \[\begin{pmatrix}
-        x_1\\ x_2\\ x_3\\ x_4
-    \end{pmatrix} = \begin{pmatrix}
-        0 & 0 & 1 & 1/2 \\ 
-        1/3 & 0 & 0 & 0 \\
-        1/3 & 1/2 & 0 & 1/2 \\
-        1/3 & 1/2 & 0 & 0
-    \end{pmatrix}\cdot \begin{pmatrix}
-        x_1\\ x_2\\ x_3\\ x_4
-    \end{pmatrix}\]
-    Lösen dieses linearen Gleichungssystems liefert:
-    \[x \in \text{span}\left\{\begin{pmatrix}
-        0.72 \\ 0.24 \\ 0.54 \\ 0.36
-    \end{pmatrix}\right\}\]
-    Demnach hat die erste Website die höchste Bewertung. 
+  Es ergibt sich folgendes Gleichungssystem:
+  %
+  \begin{align*}
+    \begin{pmatrix}
+      x_1\\ x_2\\ x_3\\ x_4
+    \end{pmatrix} 
+    = \begin{pmatrix}
+      0 & 0 & 1 & 1/2 \\ 
+      1/3 & 0 & 0 & 0 \\
+      1/3 & 1/2 & 0 & 1/2 \\
+      1/3 & 1/2 & 0 & 0
+    \end{pmatrix}\cdot 
+    \begin{pmatrix}
+      x_1\\ x_2\\ x_3\\ x_4
+    \end{pmatrix}
+  \end{align*}
+  %
+  Lösen dieses linearen Gleichungssystems liefert:
+  %
+  \begin{align*}
+    x \in \text{span}\left\{\begin{pmatrix}
+    0.72 \\ 0.24 \\ 0.54 \\ 0.36
+    \end{pmatrix}\right\}
+  \end{align*}
+  %
+  Demnach hat die erste Website die höchste Bewertung. 
 \end{egbox}
 
 \subsubsection{Vorgehensweite für weitere Eigenwerte/Eigenvektoren}
 Wir betrachten die Diagonalmatrix
-\[A = \begin{pmatrix}
+%
+\begin{align*}
+  A = \begin{pmatrix}
     3 & 0 \\ 0 & 2
-\end{pmatrix}\]
+  \end{pmatrix}
+\end{align*}
+%
 mit den Eigenwerten $\lambda_1=3$ und $\lambda_2=2$ zu den Eigenvektoren
-\[v^{(1)}=\begin{pmatrix}
-    1 \\ 0
-\end{pmatrix}, \quad v^{(2)}= \begin{pmatrix}
+%
+\begin{align*}
+  w^{(1)}=\begin{pmatrix}
     0 \\ 1
-\end{pmatrix}\]
+  \end{pmatrix}, \quad w^{(2)}= \begin{pmatrix}
+    1 \\ 0
+  \end{pmatrix}
+\end{align*}
+%
 Wir führen folgende Transformation durch:
-\[B = \underbrace{\begin{pmatrix}
+%
+\begin{align*}
+  B = \underbrace{\begin{pmatrix}
     3 & 0 \\ 0 & 2
-\end{pmatrix}}_{=A} - \underbrace{\begin{pmatrix}
+  \end{pmatrix}}_{=A} - \underbrace{\begin{pmatrix}
     3 & 0 \\ 0 & 0
-\end{pmatrix}}_{=(1,0)^T(3,0)} = \begin{pmatrix}
+  \end{pmatrix}}_{=(1,0)^T(3,0)} 
+  = \begin{pmatrix}
     0 & 0 \\ 0 & 2
-\end{pmatrix}\]
+  \end{pmatrix}
+\end{align*}
+
 \textbf{Idee:} Umwandlung der betrachteten Matrix in eine andere Matrix, wobei der betragsgrößte Eigenwert entfernt
-wird, d.h. durch $0$ ersetzt wird. \\
-Iterative Andwendung liefert dann alle Eigenwerte. \\ \\
-Sei $A\in\mathbb{R}^{n\times n}$ gegeben, der Eigenwert $\lambda^{(1)}$ sei der betragsgrößte Eigenwert, d.h.
-\[|\lambda^{(1)}| > |\lambda^{(2)}| > \dotsc > 0\]
-Der Eigenvektor zu $\lambda^{(1)}$ sei gegeben durch $u^{(1)}$. \\
-Wir wählen eine von Null verschiedene Komponente $u^{(1)}_p$ von $u^{(1)}$ und schreiben $a^T$ für die $p$-te Zeile
-von $A$, d.h. $a^T=(A_{p1},A_{p2},\dotsc,A_{pn})$. Betrachte nun die Matrix 
-\[B = A - \dfrac{1}{u_p^{(1)}} u^{(1)}\cdot a^T\quad\text{ mit }\quad B_{ij} = 
-A_{ij}-\dfrac{1}{u^{(1)}_p}u^{(1)}_i\underbrace{A_{pj}}_{(a^T)_j}\]
-Aus dem Eigenwertproblem $Au^{(k)} = \lambda^{(k)}u^{(k)}$ ergibt sich
-\[\lambda^{(k)}u^{(k)}_p = (Au^{(k)})_p = a^T\cdot u^{(k)}\]
+wird, d.h. durch $0$ ersetzt wird. Eine Iterative Anwendung liefert dann alle Eigenwerte. 
+
+Sei $A\in\R^{n\times n}$ gegeben mit betragsmäßig absteigenden Eigenwerten, d.h. 
+%
+\begin{align*}
+  |\lambda_1| > |\lambda_2| > \dots > 0
+\end{align*}
+%
+Der Eigenvektor zu $\lambda_1$ sei gegeben durch $u^{(1)}$. \\
+Wir wählen eine von Null verschiedene Komponente $u^{(1)}_p$ von $u^{(1)}$ und schreiben $A_p$ für die $p$-te Zeile
+von $A$, d.h. $A_p=(A_{p1},A_{p2},\dots,A_{pn})^T$. Betrachte nun die Matrix 
+%
+\begin{align*}
+  B 
+  = A - \dfrac{1}{w_p^{(1)}} w^{(1)}\cdot A_p^T\quad\text{ mit }\quad B_{ij} = 
+  A_{ij}-\dfrac{1}{w^{(1)}_p}w^{(1)}_i\underbrace{A_{pj}}_{A_{pj}}
+\end{align*}
+%
+Aus dem Eigenwertproblem $Aw^{(k)} = \lambda_k w^{(k)}$ ergibt sich
+%
+\begin{align*}
+  \lambda^{(k)}w^{(k)}_p = (Aw^{(k)})_p = \langle A_p, w^{(k)}\rangle
+\end{align*}
+%
 Für $k=1$ ergibt sich:
+%
 \begin{align*}
-    Bu^{(1)} &= Au^{(1)} - \dfrac{1}{u^{(1)}_p} \cdot u^{(1)}\cdot a^T\cdot u^{(1)} \\
-    &=Au^{(1)} - \dfrac{1}{u^{(1)}_p} \cdot u^{(1)}\cdot \lambda^{(1)}u^{(1)}_p \\
-    &= \lambda^{(1)}u^{(1)} - \lambda^{(1)}u^{(1)} = 0
+  Bw^{(1)} 
+  &= Aw^{(1)} - \dfrac{1}{w^{(1)}_p} \cdot w^{(1)}\cdot \langle A_p, w^{(1)}\rangle \\
+  &= Aw^{(1)} - \dfrac{1}{w^{(1)}_p} \cdot w^{(1)}\cdot \lambda_1 w^{(1)}_p \\
+  &= \lambda_1 w^{(1)} - \lambda_1w^{(1)} \\
+  &= 0
 \end{align*}
-d.h. $0$ ist ein Eigenwert von $B$  (statt vorher $\lambda^{(1)}$ von $A$).  \\
-Analoge Überlegung für $k=2,\dotsc,n$ liefert:
+%
+d.h. $0$ ist ein Eigenwert von $B$  (statt vorher $\lambda^{(1)}$ von $A$).  
+
+Analoge Überlegung für $k=2,\dots,n$ liefert:
+%
 \begin{align*}
-    Bu^{(k)} &= \lambda^{(k)}u^{(k)} - \dfrac{1}{u^{(k)}_p} \cdot u^{(k)}\cdot \lambda^{(k)}u^{(k)}_p \\
-    &= \lambda^{(k)}\cdot\left(u^{(k)} - \dfrac{u^{(k)}_p}{u^{(k)}_p} \cdot u^{(k)}\right) \tag{1}
+  Bw^{(k)} 
+  &= \lambda_k w^{(k)} - \dfrac{1}{w^{(1)}_p} \cdot w^{(1)}\cdot \lambda_kw^{(k)}_p \\
+  &= \lambda_k\cdot\left(w^{(k)} - \dfrac{w^{(k)}_p}{w^{(1)}_p} \cdot w^{(1)}\right) 
+  \tag{1}\label{eq:WielandtEQ1}
 \end{align*}
+%
 Die Eigenwerte bleiben beim Wechsel von $A$ zu $B$ erhalten, da 
 \begin{align*}
-    Bu^{(k)} + 0 &= Bu^{(k)} + \underbrace{Bu^{(1)}}_{=0} \\
-    &= B^{(k)} + B\cdot\dfrac{-u_p^{k}}{u_p^{(1)}}u^{(1)} \\
-    &= B\cdot\left(u^{(k)} - \dfrac{u^{(k)}_p}{u^{(k)}_p} \cdot u^{(k)}\right) 
-    \stackrel{(1)}{=} \lambda^{(k)}\cdot\left(u^{(k)} - \dfrac{u^{(k)}_p}{u^{(k)}_p} \cdot u^{(k)}\right) \tag{2}
+  Bw^{(k)} + 0 
+  &= Bw^{(k)} + \underbrace{Bw^{(1)}}_{=0} \\
+  &= Bw^{(k)} + Bw^{(1)}\cdot\dfrac{-w_p^{k}}{w_p^{(1)}} \\
+  &= B\cdot\left(w^{(k)} - \dfrac{w^{(k)}_p}{w^{(k)}_p} \cdot w^{(k)}\right) 
+  \stackrel{(\ref{eq:WielandtEQ1})}{=} 
+  \lambda_k\cdot\left(w^{(k)} - \dfrac{w^{(k)}_p}{w^{(k)}_p} \cdot w^{(k)}\right)
+  \tag{2}\label{eq:WielandtEQ2}
 \end{align*}
-Die Gleichung (2) zeigt für $k=2,3,\dotsc,n$, dass $\lambda^{(k)}$ auch ein Eigenwert zu $B$ ist, 
+Die Gleichung (\ref{eq:WielandtEQ2}) zeigt für $k=2,3,\dots,n$, dass $\lambda_k$ auch ein Eigenwert zu $B$ ist, 
 wenn auch mit anderem Eigenvektor. 
-\begin{thmbox}{Satz}[Deflation nach Wielandt]
-    Seien $\lambda_1,\dotsc,\lambda_n$ die Eigenwerte von $A$, betragsmäßig fallend, d.h. 
-    $|\lambda_1|>|\lambda_2|>\dotsc>|\lambda_n|$, und zugehörigen Eigenvektoren $u^{(1)},\dotsc,u^{(n)}$ Eigenvektoren.
-    Dann besitzt die Matrix 
-    \[B = A - \dfrac{1}{u_p^{(1)}} u^{(1)}\cdot a^T\quad\text{ mit }\quad u_p^{(1)}\neq 0 
-    \text{ und } a^T=(A_{p1},A_{p2},\dotsc,A_{pn})\]
-    die Eigenwerte $\lambda_1,\dotsc,\lambda_n$ mit den zugehörigen Eigenvektoren $u^{(1)},w^{(2)},\dotsc,w^{(n)}$,
-    wobei 
-    \[w^{(k)} = u^{(k)} - \dfrac{u_p^{(k)}}{u_p^{(1)}}\cdot u^{(1)}\tag{*}\]
-    Den betragsmäßig zweiten Eigenwert $\lambda_2$ zugehörigen Eigenvektor $w^{(2)}$ erhält man somit mit der 
-    Potenzmethode für die Matrix $B$ nach ihrer Definition. \\ 
-    Der Eigenvektor $u^{(2)}$ zum Eigenwert $\lambda_2$ der Matrix $A$ kann wie folgt rekonstruiert werden:
-    \begin{enumerate}
-        \item[a)] Lösen des linearen Gleichungssystems (*) bezüglich $u^{(2)}$ 
-        \item[b)] Lösen des LGS der EW-Gleichung  
-        \item[c)] Inverse Iteration nach Wielandt anwenden, um Eigenvektor von $A$ zum zugehörigen Eigenwert
-        $\lambda_2$ zu erhalten 
-    \end{enumerate}
-\end{thmbox}
+
+\begin{colbox}{Satz}[Deflation nach Wielandt]
+  Seien die Eigenwerte von $A$, betragsmäßig absteigend, d.h. 
+  $|\lambda_1|>|\lambda_2|>\dots>|\lambda_n|$, mit zugehörigen Eigenvektoren $u^{(1)},\dots,u^{(n)}$.
+  Dann besitzt die Matrix 
+  %
+  \begin{align*}
+    B 
+    = A - \dfrac{1}{u_p^{(1)}} u^{(1)}\cdot a^T
+    \quad\text{ mit }\quad u_p^{(1)}
+    \neq 0 
+    \text{ und } a^T=(A_{p1},A_{p2},\dots,A_{pn})
+  \end{align*}
+  die Eigenwerte $0,\lambda_2,\dots,\lambda_n$ mit den zugehörigen Eigenvektoren 
+  $w^{(1)},\tilde{w}^{(2)},\dots,\tilde{w}^{(n)}$, wobei
+  % 
+  \begin{align*}
+    w^{(k)} 
+    = u^{(k)} - \dfrac{u_p^{(k)}}{u_p^{(1)}}\cdot u^{(1)}\tag{*}
+  \end{align*}
+  % 
+  Den betragsmäßig zweiten Eigenwert $\lambda_2$ zugehörigen Eigenvektor $w^{(2)}$ erhält man somit mit der 
+  Potenzmethode für die Matrix $B$ nach ihrer Definition. \\ 
+  Der Eigenvektor $u^{(2)}$ zum Eigenwert $\lambda_2$ der Matrix $A$ kann wie folgt rekonstruiert werden:
+  \begin{enumerate}
+    \item[a)] Lösen des linearen Gleichungssystems (*) bezüglich $u^{(2)}$ 
+    \item[b)] Lösen des LGS der EW-Gleichung  
+    \item[c)] Inverse Iteration nach Wielandt anwenden, um Eigenvektor von $A$ zum zugehörigen Eigenwert
+    $\lambda_2$ zu erhalten 
+  \end{enumerate}
+\end{colbox}
+
 \begin{egbox}
-    Gesucht seien die Eigenwerte und Eigenvektoren der Matrix
-    \[A = \begin{pmatrix}
-        -4 & 14 & 0 \\ -5 & 13 & 0 \\ -1 & 0 & 2
-    \end{pmatrix}\]
-    Im ersten Schritt verwenden wir die Potenzmethode um den betragsmäßig größten Eigenwert und den zugehörigen
-    Eigenvektor zu bestimmen, wir erhalten:
-    \[
-    \lambda_1=6 \quad, u^{(1)}=\begin{pmatrix}
-            -4 \\ \nicefrac{-20}{7} \\ 1
-        \end{pmatrix}
-    \]
-    Für die Deflation wählen wir nun $p=1$ mit $u_p^{(1)}\neq 0$ und $a^T=(-4, -5, -1)$, die resultierende Matrix $B$
-    ergibt sich dann durch:
-    \[
-    B = \begin{pmatrix}
-        -4 & 14 & 0 \\ -5 & 13 & 0 \\ -1 & 0 & 2
-    \end{pmatrix} - \dfrac{1}{-4}\cdot\begin{pmatrix}
-        -4 \\ -\tfrac{20}{7} \\ 1
-    \end{pmatrix}\cdot(-4, 14, 0) = \begin{pmatrix}
-        0 & 0 & 0 \\ \nicefrac{-15}{7} & 3 & 0 \\ -2 & \nicefrac{7}{2} & 2
+  Gesucht seien die Eigenwerte und Eigenvektoren der Matrix
+  \begin{align*}A = \begin{pmatrix}
+    -4 & 14 & 0 \\ -5 & 13 & 0 \\ -1 & 0 & 2
+  \end{pmatrix}\end{align*}
+  Im ersten Schritt verwenden wir die Potenzmethode um den betragsmäßig größten Eigenwert und den zugehörigen
+  Eigenvektor zu bestimmen, wir erhalten:
+  \begin{align*}
+  \lambda_1=6 \quad, u^{(1)}=\begin{pmatrix}
+      -4 \\ \nicefrac{-20}{7} \\ 1
     \end{pmatrix}
-    \]
-    Erneutes Anwenden der Potenzmethode auf die neue Matrix $B$ liefert den zweigrößten Eigenwert und den
-    zugehörigen Eigenvektor von $B$:
-    \[
-        \lambda_2=3 \quad, w^{(2)}\begin{pmatrix}
-            0 \\ \nicefrac{2}{7} \\ 1
-        \end{pmatrix}
-    \]
-    Eine weitere Deflation mit dem neu gewonnen Eigenvektor und $p=3$ ergibt
-    \[
-        C = \begin{pmatrix}
-        0 & 0 & 0 \\ \nicefrac{-15}{7} & 3 & 0 \\ -2 & \nicefrac{7}{2} & 2
-    \end{pmatrix} - \dfrac{1}{1}\cdot \begin{pmatrix}
-            0 \\ \nicefrac{2}{7} \\ 1
-        \end{pmatrix} \cdot \begin{pmatrix}
-            -2 & \nicefrac{7}{2} & 2
-        \end{pmatrix} = \left(\begin{matrix}
-            0 & 0 & 0 \\
-            \nicefrac{-11}{7} & 2 & \nicefrac{-4}{7} \\
-            0 & 0 & 0
-        \end{matrix}\right)
-    \]
-    Hierbei ergibt sich der letzte Eigenwert und der zu $C$ zugehörige Eigenvektor
-    \[
-        \lambda_3=2 \quad, v^{(3)}=\begin{pmatrix}
-            0 \\ 1 \\ 0
-        \end{pmatrix}
-    \]
-    Nach beliebiger Methodik aus Satz 3.14 lassen sich nun aus $w^{(2)}$ und $v^{(3)}$ die Eigenvektoren  $u^{(2)}$
-    und $u^{(3)}$ von $A$ konstruieren.
+  \end{align*}
+  Für die Deflation wählen wir nun $p=1$ mit $u_p^{(1)}\neq 0$ und $a^T=(-4, -5, -1)$, die resultierende Matrix $B$
+  ergibt sich dann durch:
+  \begin{align*}
+  B = \begin{pmatrix}
+    -4 & 14 & 0 \\ -5 & 13 & 0 \\ -1 & 0 & 2
+  \end{pmatrix} - \dfrac{1}{-4}\cdot\begin{pmatrix}
+    -4 \\ -\tfrac{20}{7} \\ 1
+  \end{pmatrix}\cdot(-4, 14, 0) = \begin{pmatrix}
+    0 & 0 & 0 \\ \nicefrac{-15}{7} & 3 & 0 \\ -2 & \nicefrac{7}{2} & 2
+  \end{pmatrix}
+  \end{align*}
+  Erneutes Anwenden der Potenzmethode auf die neue Matrix $B$ liefert den zweigrößten Eigenwert und den
+  zugehörigen Eigenvektor von $B$:
+  \begin{align*}
+    \lambda_2=3 \quad, w^{(2)}\begin{pmatrix}
+      0 \\ \nicefrac{2}{7} \\ 1
+    \end{pmatrix}
+  \end{align*}
+  Eine weitere Deflation mit dem neu gewonnen Eigenvektor und $p=3$ ergibt
+  \begin{align*}
+    C = \begin{pmatrix}
+    0 & 0 & 0 \\ \nicefrac{-15}{7} & 3 & 0 \\ -2 & \nicefrac{7}{2} & 2
+  \end{pmatrix} - \dfrac{1}{1}\cdot \begin{pmatrix}
+      0 \\ \nicefrac{2}{7} \\ 1
+    \end{pmatrix} \cdot \begin{pmatrix}
+      -2 & \nicefrac{7}{2} & 2
+    \end{pmatrix} = \left(\begin{matrix}
+      0 & 0 & 0 \\
+      \nicefrac{-11}{7} & 2 & \nicefrac{-4}{7} \\
+      0 & 0 & 0
+    \end{matrix}\right)
+  \end{align*}
+  Hierbei ergibt sich der letzte Eigenwert und der zu $C$ zugehörige Eigenvektor
+  \begin{align*}
+    \lambda_3=2 \quad, v^{(3)}=\begin{pmatrix}
+      0 \\ 1 \\ 0
+    \end{pmatrix}
+  \end{align*}
+  Nach beliebiger Methodik aus Satz 3.14 lassen sich nun aus $w^{(2)}$ und $v^{(3)}$ die Eigenvektoren  $u^{(2)}$
+  und $u^{(3)}$ von $A$ konstruieren.
 \end{egbox}

@@ -979,11 +979,11 @@ werden kann.
 Da $A$ bei Anwendung des CGV typischerweise dünn besetzt ist, dominieren die Kosten für die Lösung des LGS $Ms=r$ 
 bei dem Gesamtkosten des PCGV.
 
-\begin{thmbox}{Satz}
+\begin{colbox}{Satz}
   Die $k$-te Iteriterte $x^{(k)}$ vom Algorithmus des PCGV liegt in dem affin verschobene Krylov-Raum
   $x^{(0)} + \mathcal{K}_k(M^{-1}A, M^{-1}r^{(0)})$ und ist in dieser Menge die eindeutig bestimmte Minimalstelle
   des Funktionals $\phi(x) = \tfrac{1}{2}x^HAx-x^Hb$.
-\end{thmbox}
+\end{colbox}
 
 \textit{Beweis.} %(Vgl. Beweis zu Satz \ref{satz:CGVkrylov})
 
@@ -1129,7 +1129,7 @@ wiederholen wir kurz einen wichtigen Satz der Analysis:
   \end{align*}
   %
   wobei $\kappa := \kappa(A) = \cond(A)$ die Konditionszahl von $A$ ist.
-
+  
   Zur Reduktion des Anfangsfehlers um den Faktor $\varepsilon$ sind circa 
   %
   \begin{align*}

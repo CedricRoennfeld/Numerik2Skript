@@ -1,0 +1,24 @@
+\begin{tikzpicture}[scale=3]
+    % Axes
+    \draw[->] (-0.2,0) -- (4,0) node[right] {Re\((z)\)};
+    \draw[->] (0,-1) -- (0,1) node[above] {Im\((z)\)};
+    
+    % Circle 1
+    \draw[thick] (1,0) circle (0.3);
+    \filldraw (1,0) circle (0.02) node[below] {\(1\)};
+    \draw[thick] (1,0) -- ++(70:0.3);
+    \node at ($(1,0)+(70:0.4)$) {\(r = 0.3\)};
+    
+    % Circle 2
+    \draw[thick] (2,0) circle (0.4);
+    \filldraw (2,0) circle (0.02) node[below] {\(2\)};
+    \draw[thick] (2,0) -- ++(70:0.4);
+    \node at ($(2,0)+(70:0.5)$) {\(r = 0.4\)};
+    
+    % Circle 3
+    \draw[thick] (3,0) circle (0.2);
+    \filldraw (3,0) circle (0.02) node[below] {\(3\)};
+    \draw[thick] (3,0) -- ++(70:0.2);
+    \node at ($(3,0)+(70:0.3)$) {\(r = 0.2\)};
+
+    \end{tikzpicture}
