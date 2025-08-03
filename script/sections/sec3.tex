@@ -549,9 +549,11 @@ Wir führen folgende Transformation durch:
   \end{pmatrix}
 \end{align*}
 
-\textbf{Idee:} Umwandlung der betrachteten Matrix in eine andere Matrix, wobei der betragsgrößte Eigenwert entfernt
+\textbf{Idee:} 
+Umwandlung der betrachteten Matrix in eine andere Matrix, wobei der betragsgrößte Eigenwert entfernt
 wird, d.h. durch $0$ ersetzt wird. Eine Iterative Anwendung liefert dann alle Eigenwerte. 
 
+\textbf{Herleitung:}
 Sei $A\in\R^{n\times n}$ gegeben mit betragsmäßig absteigenden Eigenwerten, d.h. 
 %
 \begin{align*}
@@ -648,7 +650,7 @@ wenn auch mit anderem Eigenvektor.
   %
 \end{colbox}
 
-\begin{colbox}
+\begin{colboxBreakable}{Beispiel}
   Gesucht seien die Eigenwerte und Eigenvektoren der Matrix
   \begin{align*}A = \begin{pmatrix}
     -4 & 14 & 0 \\ -5 & 13 & 0 \\ -1 & 0 & 2
@@ -656,7 +658,7 @@ wenn auch mit anderem Eigenvektor.
   Im ersten Schritt verwenden wir die Potenzmethode um den betragsmäßig größten Eigenwert und den zugehörigen
   Eigenvektor zu bestimmen, wir erhalten:
   \begin{align*}
-  \lambda_1=6 \quad, u^{(1)}=\begin{pmatrix}
+  \lambda_1=6 \quad, w^{(1)}=\begin{pmatrix}
       -4 \\ \nicefrac{-20}{7} \\ 1
     \end{pmatrix}
   \end{align*}
@@ -700,4 +702,4 @@ wenn auch mit anderem Eigenvektor.
   \end{align*}
   Nach beliebiger Methodik aus Satz 3.14 lassen sich nun aus $w^{(2)}$ und $v^{(3)}$ die Eigenvektoren  $u^{(2)}$
   und $u^{(3)}$ von $A$ konstruieren.
-\end{colbox}
+\end{colboxBreakable}
