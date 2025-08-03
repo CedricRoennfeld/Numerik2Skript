@@ -614,7 +614,7 @@ Und damit
 Dies zeigt für $k=2,3,\dots,n$, dass $\lambda_k$ auch ein Eigenwert zu $B$ ist, 
 wenn auch mit anderem Eigenvektor. 
 
-\begin{colbox}{Satz}[Deflation nach Wielandt]
+\begin{colbox}{Satz}[Deflation nach Wielandt]\label{satz:Wielandt}
   Seien die Eigenwerte von $A$, betragsmäßig absteigend, d.h. 
   $|\lambda_1|>|\lambda_2|>\dots>|\lambda_n|$, mit zugehörigen Eigenvektoren $w^{(1)},\dots,w^{(n)}$.
   Dann besitzt die Matrix 
@@ -670,6 +670,7 @@ wenn auch mit anderem Eigenvektor.
   %
   Für die Deflation wählen wir nun $p=1$ mit $w_p^{(1)}\neq 0$ und $A_p=(-4, -5, -1)^T$, die resultierende Matrix $B$
   ergibt sich dann durch:
+  %
   \begin{align*}
   B = \begin{pmatrix}
     -4 & 14 & 0 \\ -5 & 13 & 0 \\ -1 & 0 & 2
@@ -679,14 +680,18 @@ wenn auch mit anderem Eigenvektor.
     0 & 0 & 0 \\ \nicefrac{-15}{7} & 3 & 0 \\ -2 & \nicefrac{7}{2} & 2
   \end{pmatrix}
   \end{align*}
+  %
   Erneutes Anwenden der Potenzmethode auf die neue Matrix $B$ liefert den zweitgrößten Eigenwert und den
   zugehörigen Eigenvektor von $B$:
+  %
   \begin{align*}
-    \lambda_2=3 \quad, w^{(2)}\begin{pmatrix}
+    \lambda_2=3 \quad, \accentset{\sim}{w}^{(2)}\begin{pmatrix}
       0 \\ \nicefrac{2}{7} \\ 1
     \end{pmatrix}
   \end{align*}
+  %
   Eine weitere Deflation mit dem neu gewonnen Eigenvektor und $p=3$ ergibt
+  %
   \begin{align*}
     C = \begin{pmatrix}
     0 & 0 & 0 \\ \nicefrac{-15}{7} & 3 & 0 \\ -2 & \nicefrac{7}{2} & 2
@@ -702,10 +707,11 @@ wenn auch mit anderem Eigenvektor.
   \end{align*}
   Hierbei ergibt sich der letzte Eigenwert und der zu $C$ zugehörige Eigenvektor
   \begin{align*}
-    \lambda_3=2 \quad, v^{(3)}=\begin{pmatrix}
+    \lambda_3=2 \quad, \accentset{\approx}{w}^{(3)}=\begin{pmatrix}
       0 \\ 1 \\ 0
     \end{pmatrix}
   \end{align*}
-  Nach beliebiger Methodik aus Satz 3.14 lassen sich nun aus $w^{(2)}$ und $v^{(3)}$ die Eigenvektoren  $u^{(2)}$
-  und $u^{(3)}$ von $A$ konstruieren.
+  Nach beliebiger Methodik aus Satz \ref{satz:Wielandt} lassen sich nun aus 
+  $\accentset{\sim}{w}^{(2)}$ und $\accentset{\approx}{w}^{(3)}$ die Eigenvektoren $w^{(2)}$
+  und $w^{(3)}$ von $A$ konstruieren.
 \end{colboxBreakable}
