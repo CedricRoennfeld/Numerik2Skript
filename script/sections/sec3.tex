@@ -652,17 +652,23 @@ wenn auch mit anderem Eigenvektor.
 
 \begin{colboxBreakable}{Beispiel}
   Gesucht seien die Eigenwerte und Eigenvektoren der Matrix
-  \begin{align*}A = \begin{pmatrix}
+  %
+  \begin{align*}
+    A = \begin{pmatrix}
     -4 & 14 & 0 \\ -5 & 13 & 0 \\ -1 & 0 & 2
-  \end{pmatrix}\end{align*}
+    \end{pmatrix}
+  \end{align*}
+  %
   Im ersten Schritt verwenden wir die Potenzmethode um den betragsmäßig größten Eigenwert und den zugehörigen
   Eigenvektor zu bestimmen, wir erhalten:
+  %
   \begin{align*}
   \lambda_1=6 \quad, w^{(1)}=\begin{pmatrix}
       -4 \\ \nicefrac{-20}{7} \\ 1
     \end{pmatrix}
   \end{align*}
-  Für die Deflation wählen wir nun $p=1$ mit $u_p^{(1)}\neq 0$ und $a^T=(-4, -5, -1)$, die resultierende Matrix $B$
+  %
+  Für die Deflation wählen wir nun $p=1$ mit $w_p^{(1)}\neq 0$ und $A_p=(-4, -5, -1)^T$, die resultierende Matrix $B$
   ergibt sich dann durch:
   \begin{align*}
   B = \begin{pmatrix}
@@ -673,7 +679,7 @@ wenn auch mit anderem Eigenvektor.
     0 & 0 & 0 \\ \nicefrac{-15}{7} & 3 & 0 \\ -2 & \nicefrac{7}{2} & 2
   \end{pmatrix}
   \end{align*}
-  Erneutes Anwenden der Potenzmethode auf die neue Matrix $B$ liefert den zweigrößten Eigenwert und den
+  Erneutes Anwenden der Potenzmethode auf die neue Matrix $B$ liefert den zweitgrößten Eigenwert und den
   zugehörigen Eigenvektor von $B$:
   \begin{align*}
     \lambda_2=3 \quad, w^{(2)}\begin{pmatrix}
