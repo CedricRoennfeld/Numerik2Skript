@@ -376,14 +376,19 @@ $\{\mu,w\}$ eine gute Approximation ist, basierend auf den berechneten Größen 
 
 \begin{colbox}{Bemerkung}
   Die in Algorithmus \ref{alg:mgsAllg} vorgestellte Methode des modifizierten Gram-Schmidt-Verfahren für allgemeine 
-  Basen $\{v^{(t)}\}_{t=1}^n$ ergibt folgende Fehlerabschätzung:
+  Basen $\{v^{(t)}\}_{t=1}^n$ ergibt folgende Fehlerabschätzung\footnote{
+    Åke Björck, Christopher C. Paige, Loss and recapture of orthogonality in the modified Gram-Schmidt algorithm, 
+    SIAM Journal on Matrix Analysis and Applications, Vol. 13, No. 1, 1992, pp. 176-190, DOI: 
+    \href{https://doi.org/10.1137/0613013}{10.1137/0613013}
+  }:
   %
   \begin{align*}
     \vertn{2}{\mathcal{Q}^{H}\mathcal{Q}-I}_2 \leq \dfrac{c_1\cdot \Cond_2(A)}{1-c_2\cdot\Cond_2(A)}
   \end{align*}
   %
-  wobei $\mathcal{Q} = [q^{(1)}, \dots, q^{(n)}]$.
-  %(Vgl. Björk \& Paige)
+  wobei $\mathcal{Q} = [q^{(1)}, \dots, q^{(n)}]$ und $A=[v^{(1)}, \dots, v^{(n)}]$. Die Konstanten $c_1,c_2$ kommen 
+  aus $\mathcal{O}(n\varepsilon)$ wobei $\varepsilon$ die Maschinengenauigkeit beschreibt.
+  %
 \end{colbox}
 
 \begin{colbox}{Bemerkung}
@@ -398,7 +403,7 @@ Für eine hermitesche Matrix $A$ erhalten wir bei der Rekursions-Formel der Arno
 \begin{align*}
   \tilde{q}^{(t)} 
   = Aq^{(t-1)} - \sum_{j=1}^{t-1} \langle Aq^{(t-1)}, q^{(j)}\rangle_2 q^{(j)},
-  x\quad \text{für } t=2,\dots,m+1
+  \quad \text{für } t=2,\dots,m+1
 \end{align*}
 %
 Dabei ist wegen $A^H=A$ aber $\langle Aq^{(t-1)}, q^{(j)}\rangle_2 = \langle q^{(t-1)}, Aq^{(j)}\rangle_2$ und 
@@ -410,8 +415,8 @@ mit $Aq^{(j)}\in\Span\{q^{(1)},\dots,q^{(j+1)}\}$ ergibt sich für $j=1,\dots,t-
   = q^{(j)H}A^Hq^{(t-1)}
   = (Aq^{(j)})^Hq^{(t-1)} \\
   &= \langle q^{(t-1)}, Aq^{(j)}\rangle_2 
-  = \left\langle q^{(t-1)}, \sum_{i=1}^{j+1} \lambda_i q^{(i)}\right\rangle _2 
-  = \sum_{i=1}^{j+1} \overline{\lambda_i} \underbrace{\langle q^{(t-1)}, q^{(i)}}_{=0}\rangle _2 
+  = \left\langle q^{(t-1)}, \sum_{i=1}^{j+1} c_i q^{(i)}\right\rangle _2 
+  = \sum_{i=1}^{j+1} \overline{c_i} \underbrace{\langle q^{(t-1)}, q^{(i)}}_{=0}\rangle _2 
   = 0
 \end{align*}
 
@@ -462,30 +467,44 @@ oder in Matrix-Form:
     & & & \ddots & \beta_{m-1} & \\
     & & & \beta_{m-1} & \alpha_{m-1} & \beta_m \\
     & & & & \beta_m & \alpha_m
-  \end{pmatrix}}_{=:T^{(m)}} + \beta_m\cdot[0,\dots,0,q^{m+1}]
+  \end{pmatrix}}_{=:T^{(m)}} + \beta_m\cdot[0,\dots,0,q^{(m+1)}]
 \end{align*}
 %
 wobei die Matrix $T^{(m)}\in\R^{m\times m}$ ist reell und symmetrisch. Von dieser sogenannten Lanczos-Beziehung
 ergibt sich
 %
 \begin{align*}
-  (\mathcal{Q}^{(m)})^* A \mathcal{Q}^{(m)} = T^{(m)}
+  \mathcal{Q}^{(m)H} A \mathcal{Q}^{(m)} = T^{(m)}
 \end{align*} 
 %
 \begin{defbox}[Lanczos-Algorithmus]
-  Für eine hermitische Matrix $A\in\C  ^{n\times n}$ bestimmt die Lanczos-Methode eine Menge von orthogonalen 
-  Vektoren $\{q^1,\dots,q^m\}$, $m\ll n$ durch Anwendung der Gram-Schmidt-Methode auf die Basis 
-  $\{q,Aq,\dots,A^{m-1}q\}$ des Krylov-Raumes $K_m$:
+  Für eine hermitesche Matrix $A\in\C  ^{n\times n}$ bestimmt die Lanczos-Methode eine Menge von orthogonalen 
+  Vektoren $\{q^{(1)},\dots,q^{(m)}\}$, $m\ll n$ durch Anwendung der Gram-Schmidt-Methode auf die Basis 
+  $\{q,Aq,\dots,A^{m-1}q\}$ des Krylov-Raumes $K_m$.
 \end{defbox}
-\textcolor{red}{Algobox:} \\
-Startwerte: $q^1=\vertn{2}{q}_2^{-1}q, q^0=0, \beta_1=0$ \\
-Iteriere für $1\leq t\leq m-1$:
-\begin{align*}
-  r^t = Aq^{(t)}, \quad \alpha_t = \langle r^t, q^{(t)}\rangle_2 \\
-  s^t = r^t - \alpha_t q^{(t)} - \beta-tq^{(t-1)} \\
-  \beta^{t+1} = \vertn{2}{s^t}_2, q^{t+1} = \beta_{t+1}^{-1}s^t \\
-  r^m = Aq^m, \alpha_m = \langle r^m,q^m\rangle_2
-\end{align*}
+
+\algorithmbox{Lanczos-Algorithmus}{
+  \begin{algorithm}[H]
+    \SetAlgoNoLine
+    \InitTe{Sei $A\in \C^{n\times n}$ hermitesch und $q^{(1)}:=q\in\C^n$ mit $\vertn{2}{q}_2=1$}
+    %\ErgTe{
+    %  $\{q^{(t)}\}_{t=1}^m$ als Orthonormalbasis des Krylov-Raum $K_m$.
+    %} 
+    \SetAlgoLined
+    $q^{(0)} = 0$ \\
+    $\beta_1 = 0$ \\
+    \ForTe{$t=1,\dots,m-1$}{
+      $r^{(t)} = Aq^{(t)}$ \\
+      $\alpha_t = \langle r^{(t)}, q^{(t)}\rangle_2$ \\
+      $s^{(t)} = r^{(t)} - \alpha_tq^{(t)} - \beta - tq^{(t-1)}$\\
+      $\beta_{t+1} = \vertn{2}{s^{(t)}}$\\
+      $q^{(t+1)} = s^{(t)} \,/\,\beta_{t+1}$\\
+    }\EndTe{}{}
+    $r^{(m)} = Aq^{(m)}$\\
+    $\alpha_m = \langle r^{(m)}, q^{(m)}\rangle_2$
+  \end{algorithm}
+}
+
 Nachdem die Matrix $T^{(m)}$ berechnet ist, kann ihr Eigenwert $\lambda_i$ und der zugehörige Eigenvektor $w^{i}$
 bestimmt werden, z.B. mit QR-Algorithmus. \\
 Die Eigenwert und Eigenvektoren von $T^{(m)}$ werden mit dem Aufwand $\mathcal{O}(m^2)$ berechnet. Die Eigenwerte 
