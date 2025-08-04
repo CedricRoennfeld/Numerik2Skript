@@ -163,9 +163,7 @@ Vektoren $\{q^{(1)},\dots,q^{(t-1)}\}$.
 
 Dieses Vorgehen ist jedoch numerisch instabil, denn Rundungsfehler in frühen Orthogonalisierungsschritten 
 pflanzen sich bei der sukzessiven Subtraktion fort und verstärken sich von Vektor zu Vektor, 
-sodass die resultierende Basis numerisch nicht mehr orthogonal ist. Dies ist besonders in unserem Fall ein Problem, 
-wo die Vektoren zum Ende hin sehr ähnlich sind und damit einen sehr kleinen Vorfaktor 
-$\tfrac{\langle v,u\rangle_2}{\vertn{2}{u}_2^2}$ haben.
+sodass die resultierende Basis numerisch nicht mehr orthogonal ist. 
 
 Wir betrachten daher das \textit{modifizierte Gram-Schmidt-Verfahren}, wobei der $t$-te Schritt die Komponente
 von $Aq^{(t)}$ in Richtung $\{q^{(1)},\dots,q^{(t-1)}\}$ projiziert:
@@ -175,14 +173,14 @@ von $Aq^{(t)}$ in Richtung $\{q^{(1)},\dots,q^{(t-1)}\}$ projiziert:
   &= \dfrac{q}{\vertn{2}{q}_2},\\
   \text{und für } &t=2,\dots,m: \\
   \tilde{q}^{(t)} 
-  &= Aq^{(t-1)} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{(t-1)}), \\
+  &= Aq^{(t-1)} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{(t-1)}), 
+  \tag{1}\label{eq:arnoldiEQ1}\\
   q^{(t)} &
   = \dfrac{\tilde{q}^{(t)}}{\vertn{2}{\tilde{q}^{(t)}}_2}
-  \tag{1}\label{eq:arnoldiEQ1}
 \end{align*}
 %
-Da $q^{(t)}$, $\tilde{q}^{(t)}$ in die gleiche Richtung zeigen 
-und nach Konstruktion $\tilde{q}^{(t)}\perp K_t$ erhalten wir
+Nach Konstruktion ist $q^{(t)}$ senkrecht zu $\{q^{(j)}\}_{j=1}^{t-1}$ und damit auch zu 
+$\{\text{proj}_{q^{(j)}}(Aq^{(t-1)})\}_{j=1}^{t-1}$, es folgt also
 % 
 \begin{align*}
   \langle q^{(t)}, \tilde{q}^{(t)}\rangle_2 
@@ -191,23 +189,36 @@ und nach Konstruktion $\tilde{q}^{(t)}\perp K_t$ erhalten wir
   = \langle q^{(t)}, Aq^{(t-1)}\rangle_2
 \end{align*}
 %
-Mit $h_{i,t-1} := \langle Aq^{(t-1)},q^{(i)} \rangle_2$ ergibt sich mit dem modifizierte Gram-Schmidt-Algorithmus
-\begin{align*}Aq^{(t-1)}=\sum_{i=1}^{t} h_{i,t-1 }q^{(i)}, \qquad t=2,\dots,m+1\end{align*}
-In der Praxis wird der modifizierte Gram-Schmidt-Alg. in der folgenden iterierten Form implementiert:
+Durch die Setzung $h_{i,t-1} := \langle Aq^{(t-1)},q^{(i)} \rangle_2$ ergibt sich mit 
+dem modifizierte Gram-Schmidt-Algorithmus dann
+%
+\begin{align*}
+  Aq^{(t-1)}
+  =\sum_{i=1}^{t} h_{i,t-1 }q^{(i)}, 
+  \qquad t=2,\dots,m+1
+\end{align*}
+%
+In der Praxis wird der modifizierte Gram-Schmidt-Algorithmus in der folgenden iterierten Form implementiert:
+%
 \begin{align*}
   q^1 &= \vertn{2}{q}_2^{-1}q, \\
-  q^{t,1}&=Aq^{(t-1)}, \\
-  q^{t,j+1}&=q^{t,j}-\text{proj}_{q^{(j)}}(q^{t,j}), \tag{2}\\
-  q^{(t)}&=\vertn{2}{q^{t,t}}_2^{-1}q^{t,t}
+  q^{(t,1)} &= Aq^{(t-1)}, \\
+  q^{(t,j+1)} &= q^{(t,j)}-\text{proj}_{q^{(j)}}(q^{(t,j)}), 
+  \tag{2}\label{eq:arnoldiEQ2}\\
+  q^{(t)} &= \vertn{2}{q^{(t,t)}}_2^{-1}q^{(t,t)}
 \end{align*}
-Man erhält das gleiche Resultat, wie beim klassischen Gram-Schmidt-Verfahren, aber mit kleinerem numerischen Fehler. \\ \\
-\begin{defbox}[Arnoldi-Algorithmus] \ \\
+%
+Wir erhalten dabei das gleiche Resultat, wie beim klassischen Gram-Schmidt-Verfahren, 
+aber mit kleinerem numerischen Fehler, da sich die Fehler nicht fortpflanzen.
+
+\begin{colbox}{Definition}[Arnoldi-Algorithmus] \ \\
   Für eine beliebige Matrix $A\in\C  ^{n\times n}$ bestimmt die Arnoldi-Methode eine Folge orthonormaler 
   Vektoren $q^{(t)}\in\C  $ für $1\leq t \leq m \ll n$ (Arnoldi-Basis), durch Anwendung der modifizierten 
   Gram-Schmidt-Methode (2) auf die Basis $\{q,Aq,A^{m-1}q\}$ des Krylov-Unterraums $K_m$.
-\end{defbox}
+\end{colbox}
+
 \textcolor{red}{(Algobox)} \\
-Startvektor: $q^1=\vertn{2}{q}^{-1}_2 q$ \\
+Startvektor: $q^{(1)}=\vertn{2}{q}^{-1}_2 q$ \\
 Iteriere für $2\leq t\leq m: q^{t,1}=Aq^{(t-1)}$ \\
 und für $j=1,\dots,t-1: h_{j,t} = \langle q^{t,j},q^{(j)}\rangle_2$ und $q^{t,j+1=q^{t,j}-h_{j,t}q^{(j)}}$ und $h_{t,t}=\vertn{2}{q^{t,t}}_2$ 
 und $q^{(t)} = h_{t,t}^{-1}\cdot q^{t,t}$ \\ \\
