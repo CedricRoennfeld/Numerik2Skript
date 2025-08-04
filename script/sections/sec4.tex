@@ -135,7 +135,7 @@ Arnoldi-Vektoren) zu erzeugen, sodass für jedes $m$ die Vektoren $\{q^{(1)},\do
 aufspannen. 
 
 \begin{colbox}{Definition}
-Wir definieren für das Folgende den orthogonalen Projektionsoperator:
+Für das Folgende definieren wir den orthogonalen Projektionsoperator:
 %
 \begin{align*}
   \text{proj}_u(v) 
@@ -149,46 +149,65 @@ Mit diesem Operator ergibt sich das \textit{klassische Gram-Schmidt-Orthogonalis
 %
 \begin{align*}
   q^{(1)} 
-  = \dfrac{q}{\vertn{2}{q}_2},
-  \qquad
+  &= \dfrac{q}{\vertn{2}{q}_2}, \\
+  \text{und für } &t=2,\dots,m: \\
   \tilde{q}^{(t)} 
-  = A^{t-1}q - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(A^{t-1}q), 
-  \quad\text{und}\quad
-   q^{(t)} = \dfrac{\tilde{q}^{(t)}}{\vertn{2}{\tilde{q}^{(t)}}_2}\quad\text{für } t=2,\dots,m
+  &= A^{t-1}q - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(A^{t-1}q), 
+  \\
+  q^{(t)} 
+  &= \dfrac{\tilde{q}^{(t)}}{\vertn{2}{\tilde{q}^{(t)}}_2}
 \end{align*}
 %
-Der $t$-te Schritt projiziert die Komponente von $A^{t-1}q$ in Richtung der bereits bestimmten Orthogonal-Vektoren 
-$\{q^{(1)},\dots,q^{(t-1)}\}$. 
+Der $t$-te Schritt projiziert dabei die Komponente von $A^{t-1}q$ in Richtung der bereits bestimmten orthogonalen 
+Vektoren $\{q^{(1)},\dots,q^{(t-1)}\}$. 
 
-Dies ist numerisch instabil durch Summieren der Rundungsfehler. 
+Dieses Vorgehen ist jedoch numerisch instabil, denn Rundungsfehler in frühen Orthogonalisierungsschritten 
+pflanzen sich bei der sukzessiven Subtraktion fort und verstärken sich von Vektor zu Vektor, 
+sodass die resultierende Basis numerisch nicht mehr orthogonal ist. Dies ist besonders in unserem Fall ein Problem, 
+wo die Vektoren zum Ende hin sehr ähnlich sind und damit einen sehr kleinen Vorfaktor 
+$\tfrac{\langle v,u\rangle_2}{\vertn{2}{u}_2^2}$ haben.
 
-Wir betrachten daher \textit{das modifizierte Gram-Schmidt-Verfahren}, wobei der $t$-te Schritt projeziert die Komponenten
-von $Aq^t$ in Richtung $\{q^1,\dots,q^{t-1}\}$:
-\begin{align*}q^{1} = \dfrac{q}{\vertn{2}{q}_2},\quad\text{und}\quad\tilde{q}^{t} = Aq^{t-1} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{t-1}), 
-\qquad q^t = \dfrac{\tilde{q}^t}{\vertn{2}{\tilde{q}^t}_2}\quad\text{für } t=2,\dots,m \tag{1}\end{align*}
-Da $q^t$, $\tilde{q}^t$ in die gleiche Richtung zeigen und $\tilde{q}^t\perp K_t$ erhält man 
-\begin{align*}\langle q^t, \tilde{q}^t\rangle_2 = \vertn{2}{\tilde{q}^t}_2 = 
-\left\langle q^t,Aq^{t-1} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{t-1})\right\rangle_2 = \langle q^t, Aq^{t-1}\rangle_2\end{align*}
-Mit $h_{i,t-1} := \langle Aq^{t-1},q^{(i)} \rangle_2$ ergibt sich mit dem modifizierte Gram-Schmidt-Algorithmus
-\begin{align*}Aq^{t-1}=\sum_{i=1}^{t} h_{i,t-1 }q^{(i)}, \qquad t=2,\dots,m+1\end{align*}
+Wir betrachten daher das \textit{modifizierte Gram-Schmidt-Verfahren}, wobei der $t$-te Schritt die Komponente
+von $Aq^{(t)}$ in Richtung $\{q^{(1)},\dots,q^{(t-1)}\}$ projiziert:
+%
+\begin{align*}
+  q^{(1)} = \dfrac{q}{\vertn{2}{q}_2},
+  \qquad 
+  \tilde{q}^{(t)} = Aq^{(t-1)} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{(t-1)}), 
+  \quad\text{und}\quad
+  q^{(t)} = \dfrac{\tilde{q}^{(t)}}{\vertn{2}{\tilde{q}^{(t)}}_2}\quad\text{für } t=2,\dots,m \tag{1}
+\end{align*}
+%
+Da $q^{(t)}$, $\tilde{q}^{(t)}$ in die gleiche Richtung zeigen 
+und nach Konstruktion $\tilde{q}^{(t)}\perp K_t$ erhalten wir
+% 
+\begin{align*}
+  \langle q^{(t)}, \tilde{q}^{(t)}\rangle_2 
+  = \vertn{2}{\tilde{q}^{(t)}}_2 
+  = \left\langle q^{(t)},Aq^{(t-1)} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{(t-1)})\right\rangle _2 
+  = \langle q^{(t)}, Aq^{(t-1)}\rangle_2
+\end{align*}
+%
+Mit $h_{i,t-1} := \langle Aq^{(t-1)},q^{(i)} \rangle_2$ ergibt sich mit dem modifizierte Gram-Schmidt-Algorithmus
+\begin{align*}Aq^{(t-1)}=\sum_{i=1}^{t} h_{i,t-1 }q^{(i)}, \qquad t=2,\dots,m+1\end{align*}
 In der Praxis wird der modifizierte Gram-Schmidt-Alg. in der folgenden iterierten Form implementiert:
 \begin{align*}
   q^1 &= \vertn{2}{q}_2^{-1}q, \\
-  q^{t,1}&=Aq^{t-1}, \\
+  q^{t,1}&=Aq^{(t-1)}, \\
   q^{t,j+1}&=q^{t,j}-\text{proj}_{q^{(j)}}(q^{t,j}), \tag{2}\\
-  q^t&=\vertn{2}{q^{t,t}}_2^{-1}q^{t,t}
+  q^{(t)}&=\vertn{2}{q^{t,t}}_2^{-1}q^{t,t}
 \end{align*}
 Man erhält das gleiche Resultat, wie beim klassischen Gram-Schmidt-Verfahren, aber mit kleinerem numerischen Fehler. \\ \\
 \begin{defbox}[Arnoldi-Algorithmus] \ \\
   Für eine beliebige Matrix $A\in\C  ^{n\times n}$ bestimmt die Arnoldi-Methode eine Folge orthonormaler 
-  Vektoren $q^t\in\C  $ für $1\leq t \leq m \ll n$ (Arnoldi-Basis), durch Anwendung der modifizierten 
+  Vektoren $q^{(t)}\in\C  $ für $1\leq t \leq m \ll n$ (Arnoldi-Basis), durch Anwendung der modifizierten 
   Gram-Schmidt-Methode (2) auf die Basis $\{q,Aq,A^{m-1}q\}$ des Krylov-Unterraums $K_m$.
 \end{defbox}
 \textcolor{red}{(Algobox)} \\
 Startvektor: $q^1=\vertn{2}{q}^{-1}_2 q$ \\
-Iteriere für $2\leq t\leq m: q^{t,1}=Aq^{t-1}$ \\
+Iteriere für $2\leq t\leq m: q^{t,1}=Aq^{(t-1)}$ \\
 und für $j=1,\dots,t-1: h_{j,t} = \langle q^{t,j},q^{(j)}\rangle_2$ und $q^{t,j+1=q^{t,j}-h_{j,t}q^{(j)}}$ und $h_{t,t}=\vertn{2}{q^{t,t}}_2$ 
-und $q^t = h_{t,t}^{-1}\cdot q^{t,t}$ \\ \\
+und $q^{(t)} = h_{t,t}^{-1}\cdot q^{t,t}$ \\ \\
 Bezeichne die $n\times m$-Matrix aus den ersten Arnoldi-Vektoren $\{q^1,q^2,\dots,q^m\}$ mit 
 \begin{align*}\mathcal{Q}^{(m)}:=[q^1,q^2,\dots,q^m]\end{align*} und sei $H^{(m)}$ die obere Hessenberg Matrix ($m\times m)$ aus $h_{j,k}$:
 \begin{align*}H^{(m)} = \begin{pmatrix}
@@ -277,20 +296,20 @@ $\{\mu,w\}$ eine gute Approximation ist.
 \subsection{Lanczos-Methode}
 Voraussetzung: $A$ sei hermitesch. Dann erhält man für die Rekursions-Formel der Arnoldi-Methode:
 \begin{align*}
-  \tilde{q}^t = Aq^{t-1} - \sum_{j=1}^{t-1} \langle Aq^{t-1}, q^{(j)}\rangle_2 q^{(j)}, \quad \text{für } t=2,\dots,m+1
+  \tilde{q}^{(t)} = Aq^{(t-1)} - \sum_{j=1}^{t-1} \langle Aq^{(t-1)}, q^{(j)}\rangle_2 q^{(j)}, \quad \text{für } t=2,\dots,m+1
 \end{align*}
-da $\langle Aq^{t-1}, q^{(j)}\rangle_2 = \langle q^{t-1}, Aq^{(j)}\rangle_2 = 0$ für $j=1,\dots,t-3$. \\
+da $\langle Aq^{(t-1)}, q^{(j)}\rangle_2 = \langle q^{(t-1)}, Aq^{(j)}\rangle_2 = 0$ für $j=1,\dots,t-3$. \\
 Die Vereinfachung zu 
-\begin{align*}\tilde{q}^t = Aq^{t-1} - \underbrace{\langle Aq^{t-1}, q^{t-1}\rangle_2}_{=:\alpha_{t-1}} q^{t-1}
-- \underbrace{\langle Aq^{t-1}, q^{t-2}\rangle_2}_{=:\beta_{t-2}} q^{t-2} = Aq^{t-1}-\alpha_{t-1}q^{t-1}-\beta_{t-2}q^{t-2}\end{align*}
-Da $A$ hermitesch, ist $\alpha_{t-1}\in\R$. Multiplikation mit $q^t$ ergibt
+\begin{align*}\tilde{q}^{(t)} = Aq^{(t-1)} - \underbrace{\langle Aq^{(t-1)}, q^{(t-1)}\rangle_2}_{=:\alpha_{t-1}} q^{(t-1)}
+- \underbrace{\langle Aq^{(t-1)}, q^{t-2}\rangle_2}_{=:\beta_{t-2}} q^{t-2} = Aq^{(t-1)}-\alpha_{t-1}q^{(t-1)}-\beta_{t-2}q^{t-2}\end{align*}
+Da $A$ hermitesch, ist $\alpha_{t-1}\in\R$. Multiplikation mit $q^{(t)}$ ergibt
 \begin{align*}
-  \vertn{2}{\tilde{q}^t}_2 = \langle q^t, \tilde{q}^t\rangle_2 = \langle q^t, Aq^{t-1}-\alpha_{t-1}q^{t-1}-\beta_{t-2}q^{t-2}\rangle_2 
-  = \langle q^t, Aq^{t-1}\rangle_2 = \langle Aq^t, q^{t-1}\rangle_2 = \beta_{t-1}
+  \vertn{2}{\tilde{q}^{(t)}}_2 = \langle q^{(t)}, \tilde{q}^{(t)}\rangle_2 = \langle q^{(t)}, Aq^{(t-1)}-\alpha_{t-1}q^{(t-1)}-\beta_{t-2}q^{t-2}\rangle_2 
+  = \langle q^{(t)}, Aq^{(t-1)}\rangle_2 = \langle Aq^{(t)}, q^{(t-1)}\rangle_2 = \beta_{t-1}
 \end{align*}
-Daraus folgt, dass auch $\beta_{t-1}\in\R$ und $\beta_{t-1}q^t = \tilde{q}^t$. Also erhält man 
+Daraus folgt, dass auch $\beta_{t-1}\in\R$ und $\beta_{t-1}q^{(t)} = \tilde{q}^{(t)}$. Also erhält man 
 \begin{align*}
-  Aq^{t-1} = \beta_{t-1}q^t + \alpha_{t-1}q^{t-1} + \beta_{t-2}q^{t-2},\quad\text{für } t=2,\dots,m+1
+  Aq^{(t-1)} = \beta_{t-1}q^{(t)} + \alpha_{t-1}q^{(t-1)} + \beta_{t-2}q^{t-2},\quad\text{für } t=2,\dots,m+1
 \end{align*}
 In Matrix-Form:
 
@@ -314,8 +333,8 @@ erhält man
 Startwerte: $q^1=\vertn{2}{q}_2^{-1}q, q^0=0, \beta_1=0$ \\
 Iteriere für $1\leq t\leq m-1$:
 \begin{align*}
-  r^t = Aq^t, \quad \alpha_t = \langle r^t, q^t\rangle_2 \\
-  s^t = r^t - \alpha_t q^t - \beta-tq^{t-1} \\
+  r^t = Aq^{(t)}, \quad \alpha_t = \langle r^t, q^{(t)}\rangle_2 \\
+  s^t = r^t - \alpha_t q^{(t)} - \beta-tq^{(t-1)} \\
   \beta^{t+1} = \vertn{2}{s^t}_2, q^{t+1} = \beta_{t+1}^{-1}s^t \\
   r^m = Aq^m, \alpha_m = \langle r^m,q^m\rangle_2
 \end{align*}
