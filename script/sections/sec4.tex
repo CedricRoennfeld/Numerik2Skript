@@ -74,7 +74,7 @@ und somit schreibt man das Galerkin-EW-Problem in der Form\footnote{
   \quad\forall\, i=1,\dots,m
 \end{align*}
 %
-Mit $\mathcal{Q}^{(m)}=(q^{(1)}|\dots|q^{(m)})\in\C^{n\times m}$ kann dies in kompakter Form
+Mit $\mathcal{Q}^{(m)}=[q^{(1)},\dots,q^{(m)}]\in\C^{n\times m}$ kann dies in kompakter Form
 %
 \begin{align*}
   \mathcal{Q}^{(m)H}A\mathcal{Q}^{(m)}\alpha = \lambda \mathcal{Q}^{(m)H}\mathcal{Q}^{(m)}\alpha
@@ -100,7 +100,7 @@ ursprünglichen Matrix $A$ betrachtet werden.
     \item[1.] Wähle geeignete Unterräume $K_m\in\C  ^{m\times m}$, $m\ll n$ (Krylov-Räume) durch Verwendung der 
     Matrix $A$ und deren Potenz.
     \item[2.] Konstruiere eine Orthonormalbasis $\{q^{(1)},\dots, q^{(m)}\}$ von $K_m$ mit der stabilisierten 
-    Version des Gram-Schmidt-Algorithmus und setze $\mathcal{Q}^{(m)}:=(q^{(1)}|\dots|q^{(m)})$.
+    Version des Gram-Schmidt-Algorithmus und setze $\mathcal{Q}^{(m)}:=[q^{(1)},\dots,q^{(m)}]$.
     \item[3.] Berechne die Matrix $H^{(m)}:=\mathcal{Q}^{(m)H}A\mathcal{Q}^{(m)}$, welche 
     konstruktionsbedingt eine Hessenberg-Matrix oder im hermiteschen Fall eine hermitesche Tridiagonalmatrix ist. 
     \item[4.] Löse das Eigenwertproblem der reduzierten Matrix $H^{(m)}\in\C^{m\times m}$ durch die 
@@ -116,15 +116,15 @@ ursprünglichen Matrix $A$ betrachtet werden.
 Die Potenzmethode verwendet nur die aktuelle Iterierte $A^mq$ mit $m\ll n$ für den normierten Startvektor 
 $q\in\C  ^n$ mit $\vertn{2}{q}_2=1$, ignoriert aber die bereits berechneten Iterierten $\{q,Aq,A^2q,\dots,A^{m-1}q\}$.
 
-Wir wollen diese bereits bestimmten Informationen nutzen und eine sogenannte \textit{Krylov-Matrix} erstellen:
+Wir wollen diese bereits bestimmten Informationen nun nutzen und erstellen eine sogenannte \textit{Krylov-Matrix}:
 %
 \begin{align*}
-  K_m = (q|Aq|A^2q|\dots|A^{m-1}q)
+  K_m = [q,Aq,A^2q,\dots,A^{m-1}q]
   \quad\text{mit }1\leq m\leq n
 \end{align*}
 %
-Die Spalten dieser Matrix sind nicht orthogonal zueinander. $A^tq$ konvergiert gegen den Eigenvektor zum betragsgrößten
-Eigenwert, d.h. $K_m$ ist schlecht konditioniert \textcolor{red}{(Was heißt schlecht konditionert bei nicht quadratisch?)} (da sich die letzten Spalten kaum ändern). \\
+Die Spalten dieser Matrix sind jedoch nicht orthogonal zueinander, außerdem konvergiert $A^tq$ gegen den 
+Eigenvektor zum betragsgrößten Eigenwert, d.h. $K_m$ ist schlecht konditioniert \textcolor{red}{(Was heißt schlecht konditionert bei nicht quadratisch?)} (da sich die letzten Spalten kaum ändern). \\
 Die Konstruktion in eine orthogonale Basis mit dem Gram-Schmidt-Algorithmus ist instabil. \\
 Wir wählen als Alternative in der Arnoldi-Methode die Verwendung einer stabilisierten Variante des 
 Gram-Schmidt-Verfahrens um eine Folge orthonormaler Vektoren $\{q^1,q^2,\dots\}$ (bezeichnet als 
