@@ -65,12 +65,12 @@ $\mathcal{M} = (\langle q^{(j)}, q^{(i)}\rangle_2)_{i,j=1}^m$.
 Im Folgenden betrachten wir immer die \textit{kartesische Repräsentation} der Basisvektoren $q^{(i)}=(q_j^{(i)})_{j=1}^n$ 
 und somit schreibt man das Galerkin-EW-Problem in der Form\footnote{
   Als Erinnerung: Im Komplexen ist das Standardskalarprodukt definiert durch 
-  $\langle x,y\rangle_2 = \sum_i \overline{x}_i\cdot y_i$
+  $\langle x,y\rangle_2 = \sum_i x_i\cdot \overline{y}_i$
 }
 %
 \begin{align*}
-  \sum_{j=1}^{m} \alpha_j\cdot \sum_{k,l=1}^{n} a_{k,l}\cdot \overline{q_k}^{(j)}\cdot q^{(i)}_l 
-  = \lambda\cdot \sum_{j=1}^{m} \alpha_j \cdot\sum_{k,l=1}^{n}\overline{q_k}^{(j)}\cdot q^{(i)}_l
+  \sum_{j=1}^{m} \alpha_j\cdot \sum_{k,l=1}^{n} a_{k,l}\cdot q_k^{(j)}\cdot \overline{q}^{(i)}_l 
+  = \lambda\cdot \sum_{j=1}^{m} \alpha_j \cdot\sum_{k,l=1}^{n}q_k^{(j)}\cdot \overline{q}^{(i)}_l
   \quad\forall\, i=1,\dots,m
 \end{align*}
 %
@@ -393,36 +393,85 @@ $\{\mu,w\}$ eine gute Approximation ist, basierend auf den berechneten Größen 
 \end{colbox}
 
 \subsection{Lanczos-Methode}
-Voraussetzung: $A$ sei hermitesch. Dann erhält man für die Rekursions-Formel der Arnoldi-Methode:
+Für eine hermitesche Matrix $A$ erhalten wir bei der Rekursions-Formel der Arnoldi-Methode:
+%
 \begin{align*}
-  \tilde{q}^{(t)} = Aq^{(t-1)} - \sum_{j=1}^{t-1} \langle Aq^{(t-1)}, q^{(j)}\rangle_2 q^{(j)}, \quad \text{für } t=2,\dots,m+1
+  \tilde{q}^{(t)} 
+  = Aq^{(t-1)} - \sum_{j=1}^{t-1} \langle Aq^{(t-1)}, q^{(j)}\rangle_2 q^{(j)},
+  x\quad \text{für } t=2,\dots,m+1
 \end{align*}
-da $\langle Aq^{(t-1)}, q^{(j)}\rangle_2 = \langle q^{(t-1)}, Aq^{(j)}\rangle_2 = 0$ für $j=1,\dots,t-3$. \\
-Die Vereinfachung zu 
-\begin{align*}\tilde{q}^{(t)} = Aq^{(t-1)} - \underbrace{\langle Aq^{(t-1)}, q^{(t-1)}\rangle_2}_{=:\alpha_{t-1}} q^{(t-1)}
-- \underbrace{\langle Aq^{(t-1)}, q^{t-2}\rangle_2}_{=:\beta_{t-2}} q^{t-2} = Aq^{(t-1)}-\alpha_{t-1}q^{(t-1)}-\beta_{t-2}q^{t-2}\end{align*}
-Da $A$ hermitesch, ist $\alpha_{t-1}\in\R$. Multiplikation mit $q^{(t)}$ ergibt
+%
+Dabei ist wegen $A^H=A$ aber $\langle Aq^{(t-1)}, q^{(j)}\rangle_2 = \langle q^{(t-1)}, Aq^{(j)}\rangle_2$ und 
+mit $Aq^{(j)}\in\Span\{q^{(1)},\dots,q^{(j+1)}\}$ ergibt sich für $j=1,\dots,t-3$:
+%
 \begin{align*}
-  \vertn{2}{\tilde{q}^{(t)}}_2 = \langle q^{(t)}, \tilde{q}^{(t)}\rangle_2 = \langle q^{(t)}, Aq^{(t-1)}-\alpha_{t-1}q^{(t-1)}-\beta_{t-2}q^{t-2}\rangle_2 
-  = \langle q^{(t)}, Aq^{(t-1)}\rangle_2 = \langle Aq^{(t)}, q^{(t-1)}\rangle_2 = \beta_{t-1}
+  \langle Aq^{(t-1)}, q^{(j)}\rangle_2 
+  &= q^{(j)H}Aq^{(t-1)}
+  = q^{(j)H}A^Hq^{(t-1)}
+  = (Aq^{(j)})^Hq^{(t-1)} \\
+  &= \langle q^{(t-1)}, Aq^{(j)}\rangle_2 
+  = \left\langle q^{(t-1)}, \sum_{i=1}^{j+1} \lambda_i q^{(i)}\right\rangle _2 
+  = \sum_{i=1}^{j+1} \overline{\lambda_i} \underbrace{\langle q^{(t-1)}, q^{(i)}}_{=0}\rangle _2 
+  = 0
 \end{align*}
-Daraus folgt, dass auch $\beta_{t-1}\in\R$ und $\beta_{t-1}q^{(t)} = \tilde{q}^{(t)}$. Also erhält man 
+
+Dies vereinfacht unseren Ausdruck für $\tilde{q}^{(t)}$ zu
+%
+\begin{align*}
+  \tilde{q}^{(t)} 
+  &= Aq^{(t-1)} - \underbrace{\langle Aq^{(t-1)}, q^{(t-1)}\rangle_2}_{=:\alpha_{t-1}} q^{(t-1)}
+  - \underbrace{\langle Aq^{(t-1)}, q^{t-2}\rangle_2}_{=:\beta_{t-2}} q^{t-2} \\
+  &= Aq^{(t-1)}-\alpha_{t-1}q^{(t-1)}-\beta_{t-2}q^{t-2}
+  \tag{1}\label{eq:lanczosEQ1}
+\end{align*}
+%
+Da $A$ hermitesch ist, folgt $\alpha_{t-1}\in\R$:
+%
+\begin{align*}
+  \alpha_{t-1}  
+  = \langle Aq^{(t-1)}, q^{(t-1)}\rangle_2 
+  = \langle q^{(t-1)}, Aq^{(t-1)}\rangle_2 
+  = \overline{\langle Aq^{(t-1)}, q^{(t-1)}\rangle_2 }
+  = \overline{\alpha_{t-1}}
+\end{align*}
+%
+
+Weiter gilt für $\beta_{t-1}$:
+%
+\begin{align*}
+  \vertn{2}{\tilde{q}^{(t)}}_2 
+  &= \langle q^{(t)}, \tilde{q}^{(t)}\rangle_2 \\
+  &\stackrel{(\ref{eq:lanczosEQ1})}{=} \langle q^{(t)}, Aq^{(t-1)}-\alpha_{t-1}q^{(t-1)}-\beta_{t-2}q^{t-2}\rangle_2 \\
+  &= \langle q^{(t)}, Aq^{(t-1)}\rangle_2 \\
+  = \langle Aq^{(t)}, q^{(t-1)}\rangle_2 \\
+  &= \beta_{t-1}
+\end{align*}
+%
+Daraus folgt, dass auch $\beta_{t-1}\in\R$ und $\beta_{t-1}q^{(t)} = \tilde{q}^{(t)}$. Also erhalten wir 
 \begin{align*}
   Aq^{(t-1)} = \beta_{t-1}q^{(t)} + \alpha_{t-1}q^{(t-1)} + \beta_{t-2}q^{t-2},\quad\text{für } t=2,\dots,m+1
 \end{align*}
-In Matrix-Form:
-
-\begin{align*}A\cdot \mathcal{Q}^{(m)} = \mathcal{Q}^{(m)}\cdot\underbrace{\begin{pmatrix}
-  \alpha_1 & \beta_2 & & & & \\
-  \beta_2 & \alpha_2 & \beta_3 & & & \\
-  & \beta_3 & \alpha_3 & \ddots & & \\
-  & & & \ddots & \beta_{m-1} & \\
-  & & & \beta_{m-1} & \alpha_{m-1} & \beta_m \\
-  & & & & \beta_m & \alpha_m
-\end{pmatrix}}_{=:T^{(m)}} + \beta_m\cdot[0,\dots,0,q^{m+1}]\end{align*}
+%
+oder in Matrix-Form:
+%
+\begin{align*}A\cdot \mathcal{Q}^{(m)} = \mathcal{Q}^{(m)}\cdot\underbrace{
+  \begin{pmatrix}
+    \alpha_1 & \beta_2 & & & & \\
+    \beta_2 & \alpha_2 & \beta_3 & & & \\
+    & \beta_3 & \alpha_3 & \ddots & & \\
+    & & & \ddots & \beta_{m-1} & \\
+    & & & \beta_{m-1} & \alpha_{m-1} & \beta_m \\
+    & & & & \beta_m & \alpha_m
+  \end{pmatrix}}_{=:T^{(m)}} + \beta_m\cdot[0,\dots,0,q^{m+1}]
+\end{align*}
+%
 wobei die Matrix $T^{(m)}\in\R^{m\times m}$ ist reell und symmetrisch. Von dieser sogenannten Lanczos-Beziehung
-erhält man 
-\begin{align*}(\mathcal{Q}^{(m)})^* A \mathcal{Q}^{(m)} = T^{(m)}\end{align*} 
+ergibt sich
+%
+\begin{align*}
+  (\mathcal{Q}^{(m)})^* A \mathcal{Q}^{(m)} = T^{(m)}
+\end{align*} 
+%
 \begin{defbox}[Lanczos-Algorithmus]
   Für eine hermitische Matrix $A\in\C  ^{n\times n}$ bestimmt die Lanczos-Methode eine Menge von orthogonalen 
   Vektoren $\{q^1,\dots,q^m\}$, $m\ll n$ durch Anwendung der Gram-Schmidt-Methode auf die Basis 
