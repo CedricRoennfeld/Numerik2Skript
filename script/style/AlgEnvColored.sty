@@ -27,6 +27,26 @@
   }
   \vspace{10pt}
 }
+\newcommand{\algorithmboxDouble}[3][]{
+  \refstepcounter{algcounter}
+  \noindent
+  \colorbox{algBackground}{
+    \parbox{\dimexpr\linewidth-2\fboxsep\relax}{
+      \vspace*{.6\baselineskip}
+      \hspace*{20pt}
+      {
+        \bfseries\sffamily Algorithmus \thealgcounter\,+\,\refstepcounter{algcounter}\thealgcounter: #2
+      }\\[.5\baselineskip]
+      \hspace*{20pt}
+      \begin{minipage}{\dimexpr\linewidth - 40pt\relax}
+        #3
+      \end{minipage}
+      \vspace*{.6\baselineskip}
+    }
+  }
+  \vspace{10pt}
+}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % EXAMPLE USAGES

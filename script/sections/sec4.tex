@@ -209,7 +209,7 @@ aber mit kleinerem numerischen Fehler Um dies zu verdeutlichen hilft es
 das klassische und modifizierte Gram-Schmidt-Verfahren im Allgemeinen zu vergleichen 
 (also nicht auf unsere spezielle Basis bezogen sondern für beliebige linear unabhängige Vektoren $\{v^{(t)}\}_{t=1}^n$):
 
-\algorithmbox{Gram-Schmidt (klassisch vs. modifiziert)}{
+\algorithmboxDouble{Gram-Schmidt (klassisch vs. modifiziert)}{
 \begin{minipage}[t]{0.48\textwidth}
 \textbf{klassisch:} 
 
@@ -231,7 +231,7 @@ das klassische und modifizierte Gram-Schmidt-Verfahren im Allgemeinen zu verglei
 \begin{minipage}[t]{0.48\textwidth}
 \textbf{modifiziert:}
 
-\begin{algorithm}[H]
+\begin{algorithm}[H]\label{alg:mgsAllg}
   \ForTe{$t=1,\dots,n$}{
     $q^{(t)} = v^{(t)}$ \\
     \ForTe{$j=1,\dots,t-1$}{
@@ -299,14 +299,14 @@ Die Matrizen $\mathcal{Q}^{(m)}$ sind orthonormal und mit (\ref{eq:arnoldiEQ1}) 
 %
 \begin{align*}
   A\mathcal{Q}^{(m)} 
-  = \mathcal{Q}^{(m)} H^{(m)} + h_{m,m+1}[0,\dots,0,q^{m+1}]
+  = \mathcal{Q}^{(m)} H^{(m)} + h_{m,m+1}[0,\dots,0,q^{(m+1)}]
   \tag{3}\label{eq:arnoldiEQ3}
 \end{align*}
 %
 Multiplikation mit ${\mathcal{Q}^{(m)H}}$ und Verwendung von 
 %
 \begin{align*}
-  {\mathcal{Q}^{(m)H}} \mathcal{Q}^{(m)} = I \quad \text{und}\quad {\mathcal{Q}^{(m)H}} q^{m+1}=0
+  {\mathcal{Q}^{(m)H}} \mathcal{Q}^{(m)} = I \quad \text{und}\quad {\mathcal{Q}^{(m)H}} q^{(m+1)}=0
 \end{align*}
 %
 ergibt die für die Galerkin-Approximation benötigte Darstellung von $H^{(m)}$:
@@ -327,68 +327,70 @@ Das folgende Lemma liefert a-posteriori Abschätzungen der Genauigkeit für die 
 $H^{(m)}$.
 
 \begin{colbox}{Lemma}
-  Sei $\{\mu,w\}$ ein Eigenpaar der Hessenberg-Matrix $H^{(m)}$ und sei $v=\mathcal{Q}^{(m)}w$ sodass $\{\mu,v\}$ ein 
-  approximiertes Eigenpaar von $A$ ist. Dann gilt
-  \begin{align*}\vertn{2}{Av-\mu w}_2 = |h_{m+1,m}|\cdot |w_m|,\end{align*} 
+  Sei $\{\mu,w\}$ ein Eigenpaar der Hessenberg-Matrix $H^{(m)}$ und sei $v=\mathcal{Q}^{(m)}w$, sodass $\{\mu,v\}$ ein 
+  approximiertes Eigenpaar von $A$ ist, dann gilt
+  %
+  \begin{align*}
+    \vertn{2}{Av-\mu w}_2 = |h_{m+1,m}|\cdot |w_m|
+  \end{align*} 
+  %
   wobei $w_m$ die letzte Komponente des Eigenvektors $w$ ist.
 \end{colbox}
 
-\textit{Beweis.} Multiplikation von (3) mit $w$ ergibt 
+\textit{Beweis.} Die Arnoldi-Beziehung (\ref{eq:arnoldiEQ3}) liefert
+%
 \begin{align*}
-Av &= A\mathcal{Q}^{(m)}w\\ 
-&= \mathcal{Q}^{(m)}H^{(m)}w + h_{m+1,m}\cdot[0,\dots,0,q^{m+1}]w \\
-&= \mu \mathcal{Q}^{(m)}w + h_{m+1,m}\cdot[0,\dots,0,q^{m+1}]w \\
-&= \mu v + h_{m+1,m}\cdot[0,\dots,0,q^{m+1}]w
+Av 
+&= A\mathcal{Q}^{(m)}w\\ 
+&= \mathcal{Q}^{(m)}H^{(m)}w + h_{m+1,m}\cdot[0,\dots,0,q^{(m+1)}]w \\
+&= \mu \mathcal{Q}^{(m)}w + h_{m+1,m}\cdot[0,\dots,0,q^{(m+1)}]w \\
+&= \mu v + h_{m+1,m}\cdot[0,\dots,0,q^{(m+1)}]w \\
+&= \mu v + h_{m+1,m}\cdot w_m \cdot q^{(m+1)}
 \end{align*}
-Daraus folgt mit $\vertn{2}{q_{m+1}}_2 = 1$, dass
-\begin{align*}\vertn{2}{Av-\mu v}_2 = |h_{m+1,m}|\cdot |w_m|\end{align*}
+%
+Daraus folgt mit $\vertn{2}{q^{(m+1)}}_2 = 1$, dass
+\begin{align*}\vertn{2}{Av-\mu v}_2 
+  = |h_{m+1,m}|\cdot |w_m|
+\end{align*}
 \qed \\ \\
-Dies liefert keine a priori-Information der Konvergenz der Eigenwerte von $H^{(m)}$ gegen die von $A$ für $m\to n$, aber
-liefert a posteriori-Prüfung basierend auf den berechneten Größen $h_{m+q,m}$ und $w_m$, ob das erhaltene Paar 
-$\{\mu,w\}$ eine gute Approximation ist.
-\begin{rembox}
+Dies liefert keine a-priori-Information der Konvergenz der Eigenwerte von $H^{(m)}$ gegen die von $A$ für $m\to n$, aber
+liefert eine a-posteriori-Prüfung, ob das erhaltene Paar 
+$\{\mu,w\}$ eine gute Approximation ist, basierend auf den berechneten Größen $h_{m+q,m}$ und $w_m$.
+
+\begin{colbox}{Bemerkung}
   Die Ritz-Eigenwerte konvergieren zu den betragsgrößten Eigenwerten von $A$. Falls die betragskleinsten Eigenwerte 
   bestimmt werden sollen, muss das diskutierte Verfahren auf die inverse Matrix angewendet werden (Vgl. Inverse 
   Iteration nach Wielandt). In diesem Fall hat man einen großen Aufwand die Krylov-Räume 
   $K_m = \Span{q,A^{-1}q,\dots,A^{-m+1}q}$ zu bestimmen, da hierfür die linearen Systeme $v^0:=q, Av^1=v^0, 
   \dots, Av^m=v^{m-1}$ sukzessiv gelöst werden müssen.
-\end{rembox}
-\begin{rembox}
+\end{colbox}
+
+\begin{colbox}{Bemerkung}
   Typische Implementierungen der Arnoldi-Methode werden nach einer bestimmten Anzahl von Iterationen neu begonnen.
   Es kann untersucht werden, dass die Konvergenz sich mit einer größeren Krylov-Unterraum-Dimension $m$ verbessert.
-  Die Größe $m$, für die eine optimale Konvergenz erhalten wird, ist leider nicht im Voraus bekannt. \\
-  $\implies$\glqq{}Switching\grqq{}-Strategien um zu testen, ob ein Neustart sinnvoll ist, 
+  Die Größe $m$, für die eine optimale Konvergenz erhalten wird, ist leider nicht im Voraus bekannt. 
+
+  Stattdessen verwendet man sogenannte \glqq{}Switching\grqq{} Strategien zum testen, ob ein Neustart sinnvoll ist, 
   um die Konvergenz zu beschleunigen.
-\end{rembox}
-\begin{rembox}
-  Der Algorithmus der rekursiven Form des Gram-Schmidt-Verfahrens kann auch für die stabile Orthogonalisierung einer 
-  allgemeinen Basis $\{v_1,\dots,v_m\}\subset\C  ^n$ verwendet werden:\\
-  \textcolor{red}{Algobox} \\
-  $u^1=\vertn{2}{v^1}_2^{-1}\cdot v^1$ \\
-  Für $t=2,...,m$:  \\
-  Für $j=1,...,t-1$: \\
-  $u^{t,1}=v^t, u^{t,j+1}=u^{t,j}-proj_{u^{j}}(u^{t,j})$ \\
-  $u^t=\vertn{2}{u^{t,t}}_2^{-1}\cdot u^{t,t}$ \\
-  Dieser modifizierte Gram-Schmidt-Algorithmus (mit exakter Arithmetik) liefert das gleiche Resultat, 
-  wie der klassiche Gram-Schmidt-Algorithmus. \\
-  $u^1=\vertn{2}{v^1}_2^{-1}\cdot v^1$ \\
-  Für $t=2,...,m$: \\
-  $\tilde{u}^t = v^t - \sum_{j=1}^{t-1} proj_{u^j}(v^t)$ \\
-  $u^t = \vertn{2}{\tilde{u}}_2^{-1}\cdot\tilde{u}^t$
-  Beide Algorithmen haben die gleiche arithmetische Komplexität. \\
-  In jedem Schritt wird ein zu den vorherigen Vektoren orthogonaler Vektor bestimmt und dieser ist auch orthonormal
-  zu einem eventuellen Fehler, der bei den Berechnungen entstand, was die Stabilität angeht.\\
-  Für die Fehlerabschätzung der resultierenden orthonormalen Matrix $u=[u^1,\dots,u^m]$ gilt:
+\end{colbox}
+
+\begin{colbox}{Bemerkung}
+  Die in Algorithmus \ref{alg:mgsAllg} vorgestellte Methode des modifizierten Gram-Schmidt-Verfahren für allgemeine 
+  Basen $\{v^{(t)}\}_{t=1}^n$ ergibt folgende Fehlerabschätzung:
+  %
   \begin{align*}
-    \vertn{2}{u^Tu-I}_2 \leq \dfrac{c_1\cdot \Cond_2(A)}{1-c_2\cdot\Cond_2(A)}
+    \vertn{2}{\mathcal{Q}^{H}\mathcal{Q}-I}_2 \leq \dfrac{c_1\cdot \Cond_2(A)}{1-c_2\cdot\Cond_2(A)}
   \end{align*}
-  (Vgl. Björk \& Paige)
-\end{rembox}
-\begin{rembox}
+  %
+  wobei $\mathcal{Q} = [q^{(1)}, \dots, q^{(n)}]$.
+  %(Vgl. Björk \& Paige)
+\end{colbox}
+
+\begin{colbox}{Bemerkung}
   Andere Methoden zu Orthogonalisierung (wie z.B. Householder Transformation oder Givens-Rotation) sind zum Teil 
   stabiler, als die stabilisierte Gram-Schmidt-Methode, aber aufgrund der iterativen Anwendungsmöglichkeit ist 
   Gram-Schmidt beim Arnoldi-Verfahren vorteilhafter.
-\end{rembox}
+\end{colbox}
 
 \subsection{Lanczos-Methode}
 Voraussetzung: $A$ sei hermitesch. Dann erhält man für die Rekursions-Formel der Arnoldi-Methode:
