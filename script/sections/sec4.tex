@@ -171,11 +171,14 @@ Wir betrachten daher das \textit{modifizierte Gram-Schmidt-Verfahren}, wobei der
 von $Aq^{(t)}$ in Richtung $\{q^{(1)},\dots,q^{(t-1)}\}$ projiziert:
 %
 \begin{align*}
-  q^{(1)} = \dfrac{q}{\vertn{2}{q}_2},
-  \qquad 
-  \tilde{q}^{(t)} = Aq^{(t-1)} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{(t-1)}), 
-  \quad\text{und}\quad
-  q^{(t)} = \dfrac{\tilde{q}^{(t)}}{\vertn{2}{\tilde{q}^{(t)}}_2}\quad\text{für } t=2,\dots,m \tag{1}
+  q^{(1)} 
+  &= \dfrac{q}{\vertn{2}{q}_2},\\
+  \text{und für } &t=2,\dots,m: \\
+  \tilde{q}^{(t)} 
+  &= Aq^{(t-1)} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{(t-1)}), \\
+  q^{(t)} &
+  = \dfrac{\tilde{q}^{(t)}}{\vertn{2}{\tilde{q}^{(t)}}_2}
+  \tag{1}\label{eq:arnoldiEQ1}
 \end{align*}
 %
 Da $q^{(t)}$, $\tilde{q}^{(t)}$ in die gleiche Richtung zeigen 
@@ -183,7 +186,7 @@ und nach Konstruktion $\tilde{q}^{(t)}\perp K_t$ erhalten wir
 % 
 \begin{align*}
   \langle q^{(t)}, \tilde{q}^{(t)}\rangle_2 
-  = \vertn{2}{\tilde{q}^{(t)}}_2 
+  %= \vertn{2}{\tilde{q}^{(t)}}_2 
   = \left\langle q^{(t)},Aq^{(t-1)} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{(t-1)})\right\rangle _2 
   = \langle q^{(t)}, Aq^{(t-1)}\rangle_2
 \end{align*}
