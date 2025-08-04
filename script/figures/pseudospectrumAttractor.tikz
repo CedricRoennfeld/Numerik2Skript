@@ -1,0 +1,21 @@
+\begin{tikzpicture}
+
+  % Noch flacherer Hügel mit weitem Abfall
+  \draw[thick, domain=-6.5:6.5, smooth, variable=\x] 
+    plot ({\x}, {-0.004*(\x)^4+0.125*(\x)^2});
+  % Ball im Tal
+  \filldraw[black] (0,0.1) circle (3pt);
+
+  % Pfeil für kleine Auslenkung
+  \draw[->, thick, rounded corners=5pt] 
+    (0,0.1) -- (-0.5,0.15) -- (-1.5, 0.45);
+
+  % Pfeil für große Auslenkung
+  \draw[->, thick, rounded corners=25pt] 
+    (0,0.1) -- (1,0.3) -- (4.5,1.5) -- (6,0);
+
+  % Klammer und Beschriftung unten
+  \draw[decorate,decoration={brace, mirror, amplitude=6pt}, thick] (-4,-0.3) -- (4,-0.3);
+  \node at (0,-0.9) {\small \textit{Attraktorgebiet}};
+
+\end{tikzpicture}

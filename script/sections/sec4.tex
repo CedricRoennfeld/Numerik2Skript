@@ -448,13 +448,14 @@ Weiter gilt für $\beta_{t-1}$:
   &= \langle q^{(t)}, \tilde{q}^{(t)}\rangle_2 \\
   &\stackrel{(\ref{eq:lanczosEQ1})}{=} \langle q^{(t)}, Aq^{(t-1)}-\alpha_{t-1}q^{(t-1)}-\beta_{t-2}q^{t-2}\rangle_2 \\
   &= \langle q^{(t)}, Aq^{(t-1)}\rangle_2 \\
-  = \langle Aq^{(t)}, q^{(t-1)}\rangle_2 \\
+  &= \langle Aq^{(t)}, q^{(t-1)}\rangle_2 \\
   &= \beta_{t-1}
 \end{align*}
 %
 Daraus folgt, dass auch $\beta_{t-1}\in\R$ und $\beta_{t-1}q^{(t)} = \tilde{q}^{(t)}$. Also erhalten wir 
 \begin{align*}
   Aq^{(t-1)} = \beta_{t-1}q^{(t)} + \alpha_{t-1}q^{(t-1)} + \beta_{t-2}q^{t-2},\quad\text{für } t=2,\dots,m+1
+  \tag{2}\label{eq:lanczosEQ2}
 \end{align*}
 %
 oder in Matrix-Form:
@@ -482,6 +483,8 @@ ergibt sich
   Vektoren $\{q^{(1)},\dots,q^{(m)}\}$, $m\ll n$ durch Anwendung der Gram-Schmidt-Methode auf die Basis 
   $\{q,Aq,\dots,A^{m-1}q\}$ des Krylov-Raumes $K_m$.
 \end{defbox}
+
+Durch Umstellen von (\ref{eq:lanczosEQ2}) erhalten wir folgenden Algorithmus:
 
 \algorithmbox{Lanczos-Algorithmus}{
   \begin{algorithm}[H]
@@ -513,68 +516,108 @@ approximieren die der ursprünglichen Matrix $A$. Die zugehörigen Ritz Eigenvek
 mit $v^{(i)}=\mathcal{Q}^{(m)}\cdot w^{(i)}$ berechnet werden.
 
 \subsection{Pseudospektren}
-Motivation:
-Mit Fußball spielen: \textcolor{red}{Bild einfügen} \\
-Bei dem einen stabil, weil Ball bleibt in Kuhle. Bei dem anderen instabil, da Ball wegrollt.
-\\
-Sauber: Fehler verschwinden / werden schlimmer. \\ \\
-Spezialfall: \textcolor{red}{Bild einfügen} \\
-Kleine Auslenkung ist kein Problem, wenn zu groß, dann schon. \\
-Frage ist, wie groß ist das Attraktorgebiet? \\ \\ \\
+\textbf{Motivation:}
+Wir stellen uns einen Ball vor, der in einer Landschaft liegt, abhängig von der Form des Untergrundes kann der Ball 
+bei Impulseinwirkung entweder wieder zur Ruhe kommen oder wegrollen:
 
-Begriff der Pseudospektren geht auf Landau zurück. Viele Resultate von Trefethen etal. \\
-Konzept des Pseudo-Spektrums ist bei normalen Operatoren die Vereinigung der $\varepsilon$-Umgebungen seiner Eigenwerte
+\begin{center}
+  \input{figures/pseudospectrumBall.tikz}
+\end{center}
 
-\begin{defbox}
+Im linken Fall haben wir ein stabiles System, d.h. kleine Störungen (der Ball wird leicht angestoßen) führen nicht dazu,
+dass sich der Zustand des Systems stark ändert. Rechts hingegen reicht ein kleiner Impuls, sodass der Ball wegrollt, 
+das System ist daher instabil.
+
+Betrachten wir ein scheinbar stabiles System herausgezoomt, so erkennen wir, dass zu große Störungen doch wieder zu 
+einer starken System Änderung sorgt.
+
+\begin{center}
+  \input{figures/pseudospectrumAttractor.tikz}
+\end{center}
+
+Den Bereich, in welchem Störungen kein Problem darstellen, das System also stabil bleibt, nennen wir Attraktorgebiet.
+In der Praxis sind wir oftmals daran interessiert wie groß das Attraktorgebiet ist, also wie viel Störung verkraftbar 
+ist, ohne dass unser System instabil wird.
+
+Basierend auf dieser Idee wollen wir nun den Begriff der Pseudospektren im Kontext von Matrizen / Eigenwerten einführen.
+
+Die Grundidee des Pseudospektrums kann jedoch auch in viel allgemeineren Situationen eingeführt werden. 
+% Dunford \& Schwartz: Linear Operators
+% Kato: https://doi.org/10.1007/978-3-642-66282-9
+
+
+% Begriff der Pseudospektren geht auf Landau zurück. Viele Resultate von Trefethen etal. \\
+
+% Das Konzept des Pseudospektrums ist bei normalen Operatoren die Vereinigung der 
+% $\varepsilon$-Umgebungen seiner Eigenwerte 
+
+\begin{colbox}{Definition}
   Für $\varepsilon\in\R_+$, ist das $\varepsilon$-Pseudospektrum $\sigma_\varepsilon(A)\subset\C  $ 
   einer Matrix $A\in\K^{n\times n}$ definiert als 
   \begin{align*}
-    \sigma_\varepsilon(A) := \{z\in\C  \sigma(A)\,|\, \vertn{2}{(A-zI)^{-1}}_2\geq \varepsilon^{-1}\} \cup \sigma(A)
+    \sigma_\varepsilon(A) := \{z\in\C  \sigma(A)\,|\, \vertn{2}{(A-zI)^{-1}}_2\geq \tfrac{1}{\varepsilon}\} \cup \sigma(A)
   \end{align*}
-\end{defbox}
+\end{colbox}
 
-\begin{rembox}
-  Das Konzept des Pseudo-Spektrums kann in viel allgemeineren Situationen eingeführt werden. 
-  (z.B. Dunford \& Schwartz oder Kato)
-\end{rembox}
+\begin{colbox}{Bemerkung}
+  Die Krylov-Unterraum-Methoden, die bisher diskutiert wurden, lassen sich zur Berechnung des Pseudo-Spektrums einer 
+  Matrix verwenden. (z.B. bei der Matrix von diskretisierten partiellen Differentialgleichungen)
+\end{colbox}
 
-\begin{rembox}
-  Krylov-Unterraum-Methoden, die bisher diskutiert wurden, lassen sich zur Berechnung des Pseudo-Spektrums einer 
-  Matrix verwenden. (z.B. bei Matrix von diskretisierten partiellen Differentialgleichungen)
-\end{rembox}
-
-\begin{thmbox}{Lemma}
+\begin{colbox}{Lemma}\ref{lem:pseudoChar}
   \begin{enumerate}
-    \item Das $\varepsilon$-Pseudospektrum einer Matrix $T\in\C  ^{n\times n}$ kann definiert werden 
+    \item 
+      Das $\varepsilon$-Pseudospektrum einer Matrix $T\in\C  ^{n\times n}$ kann definiert werden 
       durch
-      \begin{align*}\sigma_\varepsilon(T) := \{z\in\C  \,|\,\sigma_{\min}(zI-T)\leq\varepsilon\}\end{align*}
+      %
+      \begin{align*}
+        \sigma_\varepsilon(T) 
+        := \{z\in\C  \,|\,\sigma_{\min}(zI-T)\leq\varepsilon\}
+      \end{align*}
+      %
       wobei $\sigma_{\min}(B)$ den kleinsten Singulärwert der Matrix $B$ bezeichnet, d.h. 
-      \begin{align*}\sigma_{\min(B)}:=\min\{\lambda^{1/2}\,|\,\lambda\in\sigma(B^*)\}\end{align*}
-      mit der adjungierten $B^*$ von $B$.
-    \item Das $\varepsilon$-Pseudospektrum $\sigma_\varepsilon(T)$ einer Matrix $T\in\C  ^{n\times n}$ ist 
+      %
+      \begin{align*}
+        \sigma_{\min}(B) := \sqrt{\lambda_{\min}(B^HB)}
+         % \min\{\lambda^{1/2}\,|\,\lambda\in\sigma(B^HB)\}
+      \end{align*}
+      %
+    \item 
+      Das $\varepsilon$-Pseudospektrum $\sigma_\varepsilon(T)$ einer Matrix $T\in\C  ^{n\times n}$ ist 
       invariant unter Orhtonormalen Transformationen, d.h. für eine unitäre Matrix $Q\in\C  ^{n\times n}$ 
       gilt $\sigma_\varepsilon(Q^*TQ) = \sigma_\varepsilon(T)$
   \end{enumerate}
-\end{thmbox}
+\end{colbox}
+
 \textit{Beweis.} 
 \begin{enumerate}
-  \item Es gilt
+  \item 
+    Es gilt
+    %
     \begin{align*}
-      \vertn{2}{(zI-T)^{-1}}_2 
-      &= \max\{\mu{1/2}\,|\, \mu \text{ Singulärwert von } (zI-T)^{-1}\}  \\
-      &= \min\{\mu{1/2}\,|\, \mu \text{ Singulärwert von } (zI-T)\}^{-1} \\
-      &= \sigma_{\min}(zI-T)^{-1}
+      \vertn{2}{(zI-T)^{-1}}_2  
+      &= \sqrt{\lambda_{\max}((zI-T)^{-H})(zI-T)^{-1}} \\
+      &= \sigma_{\max}((zI-T)^{-1}) \\ 
+      &= \sigma_{\min}((zI-T))^{-1} \\ 
     \end{align*}
+    %
     Daraus folgt:
+    %
     \begin{align*}
       \sigma_\varepsilon(T) 
-      &= \left\{ z \in \C   \;\middle|\; \vertn{2}{(zI-T)^{-1}}_2 \geq \varepsilon^{-1} \right\} \\
-      &= \left\{ z \in \C   \;\middle|\; \sigma_{\min}(zI-T)^{-1} \geq \varepsilon^{-1} \right\} \\
+      &= \left\{ z \in \C   \;\middle|\; \vertn{2}{(zI-T)^{-1}}_2 \geq \tfrac{1}{\varepsilon} \right\} \\
+      &= \left\{ z \in \C   \;\middle|\; \sigma_{\min}(zI-T)^{-1} \geq \tfrac{1}{\varepsilon} \right\} \\
       &= \left\{ z \in \C   \;\middle|\; \sigma_{\min}(zI-T) \leq \varepsilon \right\}
     \end{align*}
-  \item Übungsaufgabe
+    %
+  \item \textcolor{red}{vgl. Aufgabe 10.1}
 \end{enumerate}
 
-Betrachtung einer Folge von Gitterpunkten $z_i\in D\subset \C  $ für $i=1,2,3,\dots$ und in jedem Gitterpunkt
-wir das kleinste $\varepsilon$ bestimmt, für das $z_i\in\sigma_\varepsilon(T)$. \\
-Interpolation der erhaltenen Werte, bestimmt ob ein Punkte $z\in\C  $ approxmativ zu $\sigma_\varepsilon(T)$ gehört.
+\textbf{Numerische Berechnung}\\
+Zur näherungsweisen Bestimmung von $\varepsilon$-Pseudospektren einer Matrix $T$ betrachtet man in der Praxis eine 
+diskrete Menge von Gitterpunkten $D\subset \C$ und berechnet alle Punkte $z_i\in D$ den kleinsten Singulärwert 
+von $(z_i I - T)$. Diese Werte liefern nach Lemma \ref{lem:pseudoChar} das größtmögliche $\varepsilon$, so dass 
+$z_i\in \sigma_{\varepsilon}(T)$. 
+
+Anschaulich liefern die Pseudospektren eine Art Höhenprofilüber der komplexen Ebene, mittels Interpolation 
+der Gitterwerte erhalten wir eine grafische Darstellung der zugehörigen Höhenlinien.
