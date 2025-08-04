@@ -62,7 +62,7 @@ mit Vektoren $\alpha=(\alpha_1,\dots,\alpha_m)$ und Matrizen
 $\mathcal{A}=(\langle Aq^{(j)}, q^{(i)}\rangle_2)_{i,j=1}^m$, 
 $\mathcal{M} = (\langle q^{(j)}, q^{(i)}\rangle_2)_{i,j=1}^m$.
 
-Im Folgenden betrachten wir immer die \textit{kartesische Representation} der Basisvektoren $q^{(i)}=(q_j^{(i)})_{j=1}^n$ 
+Im Folgenden betrachten wir immer die \textit{kartesische Repräsentation} der Basisvektoren $q^{(i)}=(q_j^{(i)})_{j=1}^n$ 
 und somit schreibt man das Galerkin-EW-Problem in der Form\footnote{
   Als Erinnerung: Im Komplexen ist das Standardskalarprodukt definiert durch 
   $\langle x,y\rangle_2 = \sum_i \overline{x}_i\cdot y_i$
@@ -89,7 +89,7 @@ Wenn $\{q^{(1)},\dots,q^{(m)}\}$ eine Orthonormalbasis von $K_m$ ist, reduziert 
   \tag{2}\label{eq:galerkinEQ2}
 \end{align*}
 %
-Fall $H^{(m)}$ eine spezielle Struktur hat (z.\,B. Hessenberg-Matrix oder symmetrische Tridiagonalgestalt), dann kann 
+Falls $H^{(m)}$ eine spezielle Struktur hat (z.\,B. Hessenberg-Matrix oder symmetrische Tridiagonalgestalt), dann kann 
 das EW-Problem mit niedriger Dimension (\ref{eq:galerkinEQ2}) mit z.B. QR-Methode gelöst werden. 
 
 Seine Eigenwerte, genannt \textit{Ritz-Eigenwerte}, können als Approximationen der dominanten Eigenwerte der 
@@ -124,22 +124,38 @@ Wir wollen diese bereits bestimmten Informationen nun nutzen und erstellen eine 
 \end{align*}
 %
 Die Spalten dieser Matrix sind jedoch nicht orthogonal zueinander, außerdem konvergiert $A^tq$ gegen den 
-Eigenvektor zum betragsgrößten Eigenwert, d.h. $K_m$ ist schlecht konditioniert \textcolor{red}{(Was heißt schlecht konditionert bei nicht quadratisch?)} (da sich die letzten Spalten kaum ändern). \\
-Die Konstruktion in eine orthogonale Basis mit dem Gram-Schmidt-Algorithmus ist instabil. \\
+Eigenvektor zum betragsgrößten Eigenwert, d.h. $K_m$ ist schlecht konditioniert, da sich die letzten Spalten kaum ändern. 
+
+Die Konstruktion in eine orthogonale Basis mit dem Gram-Schmidt-Algorithmus ist instabil, denn bereits kleine 
+Rundungsfehler in frühen Orthogonalisierungsschritten pflanzen sich bei der sukzessiven Subtraktion fort und 
+verstärken sich von Vektor zu Vektor, sodass die resultierende Basis numerisch nicht mehr orthogonal ist.
+
 Wir wählen als Alternative in der Arnoldi-Methode die Verwendung einer stabilisierten Variante des 
 Gram-Schmidt-Verfahrens um eine Folge orthonormaler Vektoren $\{q^1,q^2,\dots\}$ (bezeichnet als 
 Arnoldi-Vektoren) zu erzeugen, sodass für jedes $m$ die Vektoren $\{q^1,\dots,q^m\}$ den Krylov-Unterraum $K_m$ 
 aufspannen. 
-\newpage
-\begin{defbox}
-Wir definieren für das Folgende orthogonalen Projektionsoperator:
-\begin{align*}\text{proj}_u(v) := \dfrac{\langle v,u\rangle_2}{\vertn{2}{u}_2^2}\cdot u\end{align*}
-Dieser projeziert den Vektor $v$ auf $\Span{u}$.
-\end{defbox}
-Damit ergibt sich das klassische \textit{Gram-Schmidt-Orthogonalisierungs-Verfahren} als 
-\begin{align*}q^{1} = \dfrac{q}{\vertn{2}{q}_2},\quad\text{und}\quad\tilde{q}^{t} = A^{t-1}q - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(A^{t-1}q), 
+
+\begin{colbox}{Definition}
+Wir definieren für das Folgende den orthogonalen Projektionsoperator:
+%
+\begin{align*}
+  \text{proj}_u(v) 
+  := \dfrac{\langle v,u\rangle_2}{\vertn{2}{u}_2^2}\cdot u
+\end{align*}
+%
+Dieser projiziert den Vektor $v$ auf $\Span\{u\}$.
+\end{colbox}
+
+Damit ergibt sich das \textit{klassische Gram-Schmidt-Orthogonalisierungs-Verfahren} als 
+%
+\begin{align*}
+  q^{1} 
+  = \dfrac{q}{\vertn{2}{q}_2},
+  \quad\text{und}\quad
+  \tilde{q}^{t} 
+  = A^{t-1}q - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(A^{t-1}q), 
 \qquad q^t = \dfrac{\tilde{q}^t}{\vertn{2}{\tilde{q}^t}_2}\quad\text{für } t=2,\dots,m\end{align*}
-Der $t$-te Schritt projeziert die Komponente von $A^{t-1}q$ in Richtung der bereits bestimmten Orthogonal-Vektoren 
+Der $t$-te Schritt projiziert die Komponente von $A^{t-1}q$ in Richtung der bereits bestimmten Orthogonal-Vektoren 
 $\{q^1,\dots,q^{t-1}\}$. \\
 Dies ist numerisch instabil durch Summieren der Rundungsfehler. \\ \\
 Wir betrachten daher \textit{das modifizierte Gram-Schmidt-Verfahren}, wobei der $t$-te Schritt projeziert die Komponenten
