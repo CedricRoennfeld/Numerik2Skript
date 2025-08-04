@@ -6,74 +6,129 @@ Probleme, werden durch geeignete Unterräume (Krylov-Räume) in kleinere Problem
 Wir erhalten dabei ein iteratives Vorgehen, zu betrachtende Beispiele sind die Arnoldi-Methode und die 
 Lanczos-Methode.
 
-Wir betrachten also die Eigenwertgleichung $Az=\lambda z$ mit $A\in\C  ^{n\times n}$ 
+Wir betrachten also die Eigenwertgleichung $Az=\lambda z$ mit $A\in\C^{n\times n}$ 
 (ab jetzt erlauben wir auch komplexe Matrizen), wobei $A$ eine sehr große
 Matrix ist, typischerweise $n\geq 10^4$.
-\subsection{Galerkin-Approximation} 
-Eigenwertprobleme können äquivalent in Variationsform (schwache Formulierung) geschrieben werden.\\
-Diese besagt: $z\in\C  ^n$ ist genau dann ein Eigenvektor von $A$ zum Eigenwert $\lambda\in\C  $, wenn
-\begin{align*}\langle Az,y\rangle_2 = \lambda\langle z,y\rangle_2 \quad\forall\,y\in\C  ^n\tag{1*}\end{align*}
-Diese Äquivalenz gilt, da aus $\langle r, y\rangle_2 = 0$ für alle $y\in\C  ^{n}$ folgt, dass $r=0$ sein muss, 
-in unserem Fall ist $r=Az-\lambda z$ das Residuum des Eigenwertproblems.\\ \\
-Sei $K_m=\Span{q^1,\dotsc,q^m}$ ein geeignet gewählter Unterrraum von $\C  ^n$ kleiner Dimension, d.h. 
-$\dim K_m=m\ll n$, dann wird das $n$-dimensionale Eigenwertproblem (1*) mit dem $m$-dimensionale Eigenwertproblem
-approximiert: 
-\begin{align*}z\in K_m, \ \lambda\in\C  : \quad \langle Az,y\rangle_2=\lambda\langle y,z\rangle_2 \quad\forall\,y\in K_m\end{align*}
-Statt alle $y\in K_m$ zu betrachten, reicht es auch, wenn wir nur die erzeugenden $q^i$ benutzen. 
+
+\subsection{Galerkin-Approximation}
+Eigenwertprobleme können äquivalent in Variationsform (schwache Formulierung) geschrieben werden, diese besagt: \\
+$z\in\C^n$ ist genau dann ein Eigenvektor von $A$ zum Eigenwert $\lambda\in\C$, wenn
+%
+\begin{align*}
+  \langle Az,y\rangle_2 
+  = \lambda\langle z,y\rangle_2 \quad\forall\,y\in\C^n 
+  \tag{1}\label{eq:galerkinEQ1}
+\end{align*}
+%
+Diese Äquivalenz gilt, da aus $\langle r, y\rangle_2 = 0$ für alle $y\in\C^{n}$ folgt, dass $r=0$ sein muss, 
+in unserem Fall ist $r=Az-\lambda z$ das Residuum des Eigenwertproblems.
+
+Sei $K_m=\Span\{q^{(1)},\dots,q^{(m)}\}$ ein geeignet gewählter Unterraum von $\C^n$ kleiner Dimension, d.h. 
+$\dim K_m=m\ll n$, dann wird das $n$-dimensionale Eigenwertproblem (\ref{eq:galerkinEQ1}) mit 
+folgendem $m$-dimensionalem Eigenwertproblem approximiert: 
+%
+\begin{align*}
+  \text{suche } z\in K_m, \ \lambda\in\C : 
+  \quad \text{mit}\quad 
+  \langle Az,y\rangle_2 
+  = \lambda\langle z,y\rangle_2 
+  \quad\forall\,y\in K_m
+\end{align*}
+%
+Aufgrund der Bilinearität des Skalarproduktes reicht es auch, wenn wir nur die erzeugenden $q^{(i)}$ betrachten, 
+statt alle $y\in K_m$. 
+
 Wir entwickeln die Eigenvektoren $z\in K_m$ bzgl. der gegebenen Basis:
-\begin{align*}z = \sum_{j=1}^{m} \alpha_j q^j\end{align*}
-und erhalten somit das Galverkin-System
-\begin{align*}\sum_{j=1}^{k} \alpha_j \langle Aq^j,q^i\rangle_2 = \lambda\cdot\sum_{j=1}^{k} \alpha_j \langle q^j,q^i\rangle_2
-\qquad\forall\,i=1,\dotsc,m\end{align*}
-Wir schreiben dieses System typischerweise in kompakter Form als Eigenwertproblem 
-$\mathcal{A}\alpha = \lambda\mathcal{M}\alpha$ mit Vektoren $\alpha=(\alpha_1,\dotsc,\alpha_m)$ und Matrix 
-$\mathcal{A}=(\langle Aq^j, q^i\rangle_2)_{i,j=1}^m$, 
-$\mathcal{M} = (\langle q^j, q^i\rangle_2)_{i,j=1}^m$. \\ \\
-Im folgenden betrachten wir immer die \textit{kartesischer Representation} der Basisvektoren $q^{i}=(q_j^i)_{j=1}^n$ 
+%
+\begin{align*}
+  z = \sum_{j=1}^{m} \alpha_j q^{(j)}
+\end{align*}
+%
+und erhalten somit das Galerkin-System
+%
+\begin{align*}
+  \sum_{j=1}^{k} \alpha_j \langle Aq^{(j)},q^{(i)}\rangle_2 
+  = \lambda\cdot\sum_{j=1}^{k} \alpha_j \langle q^{(j)},q^{(i)}\rangle_2
+  \qquad\forall\,i=1,\dots,m
+\end{align*}
+Dabei charakterisieren die $\alpha_i$ unser gesuchtes $z$, wir schreiben dieses System daher typischerweise 
+in kompakter Form als Eigenwertproblem
+%
+\begin{align*}
+  \mathcal{A}\alpha = \lambda\mathcal{M}\alpha
+\end{align*} 
+%
+mit Vektoren $\alpha=(\alpha_1,\dots,\alpha_m)$ und Matrizen
+$\mathcal{A}=(\langle Aq^{(j)}, q^{(i)}\rangle_2)_{i,j=1}^m$, 
+$\mathcal{M} = (\langle q^{(j)}, q^{(i)}\rangle_2)_{i,j=1}^m$.
+
+Im Folgenden betrachten wir immer die \textit{kartesische Representation} der Basisvektoren $q^{(i)}=(q_j^{(i)})_{j=1}^n$ 
 und somit schreibt man das Galerkin-EW-Problem in der Form\footnote{
   Als Erinnerung: Im Komplexen ist das Standardskalarprodukt definiert durch 
-  $\langle x,y\rangle_2 = \sum_i x_i\cdot\overline{y}_i$
+  $\langle x,y\rangle_2 = \sum_i \overline{x}_i\cdot y_i$
 }
-\begin{align*}\sum_{j=1}^{m} \alpha_j\cdot \sum_{k,l=1}^{n} a_{k,l}\cdot q_k^{j}\cdot\overline{q^i}_l = 
-\lambda\cdot \sum_{j=1}^{m} \alpha_j \cdot\sum_{k,l=1}^{n} a_{k,l}\cdot q_k^{j}\cdot\overline{q^i}_l
-\quad\forall\, i=1,\dotsc,m\end{align*}
-Mit $\mathcal{Q}^{(m)}=(q^,\dotsc,q^m)\in\C  ^{n\times m}$  und dem Vektor $\alpha=(\alpha_j)_{j=1}^m\in\C  ^m$ 
-kann dies in der kompakten Form 
-\begin{align*}(\mathcal{Q}^{(m)})^*A\mathcal{Q}^{(m)}\alpha = \lambda (\mathcal{Q}^{(m)})^*\mathcal{Q}^{(m)}\alpha\end{align*}
-formuliert werden. \\ \\
-Wenn $\{q^1,\dotsc,q^m\}$ eine ONB von $K_m$ ist, reduziert sich dies zum normalen EW-Problem:
-\begin{align*}\underbrace{(\mathcal{Q}^{(m)})^*A\mathcal{Q}^{(m)}}_{=: H^{(m)}\in\C  ^{m\times m}}\alpha = 
-\lambda \alpha \tag{2*}\end{align*}
+%
+\begin{align*}
+  \sum_{j=1}^{m} \alpha_j\cdot \sum_{k,l=1}^{n} a_{k,l}\cdot \overline{q_k}^{(j)}\cdot q^{(i)}_l 
+  = \lambda\cdot \sum_{j=1}^{m} \alpha_j \cdot\sum_{k,l=1}^{n}\overline{q_k}^{(j)}\cdot q^{(i)}_l
+  \quad\forall\, i=1,\dots,m
+\end{align*}
+%
+Mit $\mathcal{Q}^{(m)}=(q^{(1)}|\dots|q^{(m)})\in\C^{n\times m}$ kann dies in kompakter Form
+%
+\begin{align*}
+  \mathcal{Q}^{(m)H}A\mathcal{Q}^{(m)}\alpha = \lambda \mathcal{Q}^{(m)H}\mathcal{Q}^{(m)}\alpha
+\end{align*}
+formuliert werden.
+
+Wenn $\{q^{(1)},\dots,q^{(m)}\}$ eine Orthonormalbasis von $K_m$ ist, reduziert sich dies zum normalen EW-Problem:
+%
+\begin{align*}
+  \underbrace{\mathcal{Q}^{(m)H}A\mathcal{Q}^{(m)}}_{=: H^{(m)}\in\C^{m\times m}}\alpha 
+  = \lambda \alpha 
+  \tag{2}\label{eq:galerkinEQ2}
+\end{align*}
+%
 Fall $H^{(m)}$ eine spezielle Struktur hat (z.\,B. Hessenberg-Matrix oder symmetrische Tridiagonalgestalt), dann kann 
-das EW-Problem mit niedriger Dimension (2*) mit QR-Methode gelöst weden. \\ \\
-Seine Eigenwerte können als Approximationen der dominanten Eigenwerte der ursprünglichen Matrix $A$ betrachtet werden
-und werden \textit{Ritz-Eigenwerte} genannt. \\ \\
-\begin{sumbox}[Krylov-Methode] \ 
+das EW-Problem mit niedriger Dimension (\ref{eq:galerkinEQ2}) mit z.B. QR-Methode gelöst werden. 
+
+Seine Eigenwerte, genannt \textit{Ritz-Eigenwerte}, können als Approximationen der dominanten Eigenwerte der 
+ursprünglichen Matrix $A$ betrachtet werden. 
+
+\begin{colbox}{Bemerkung}[Krylov-Methode] 
   \begin{enumerate}
-    \item[1.] Wähle geeignete Unterräume $K_m\in\C  ^{m\times m}$, $m\ll n$ Krylov-Raum durch Verwendung der 
+    \item[1.] Wähle geeignete Unterräume $K_m\in\C  ^{m\times m}$, $m\ll n$ (Krylov-Räume) durch Verwendung der 
     Matrix $A$ und deren Potenz.
-    \item[2.] Konstruiere eine ONB $\{q^1,\dotsc, q^m\}$ von $K_m$ mit der stabilisierten Version des 
-    Gram-Schmidt-Algorithmus und setze $\mathcal{Q}^{(m)}:=[q^1,\dotsc,q^m]$.
-    \item[3.] Berechne die Matrix $H^{(m)}:=(\mathcal{Q}^{(m)})^*A\mathcal{Q}^{(m)}$, welche 
-    konstruktionsbedingt eine Hessenberg-Matrix oder im hermitischen Fall hermitische Tridiagonalmatrix ist. 
-    \item[4.] Löse das Eigenwertproblem der reduzierten Matrix $H^{(m)}\in\C  ^{m\times m}$ durch die 
+    \item[2.] Konstruiere eine Orthonormalbasis $\{q^{(1)},\dots, q^{(m)}\}$ von $K_m$ mit der stabilisierten 
+    Version des Gram-Schmidt-Algorithmus und setze $\mathcal{Q}^{(m)}:=(q^{(1)}|\dots|q^{(m)})$.
+    \item[3.] Berechne die Matrix $H^{(m)}:=\mathcal{Q}^{(m)H}A\mathcal{Q}^{(m)}$, welche 
+    konstruktionsbedingt eine Hessenberg-Matrix oder im hermiteschen Fall eine hermitesche Tridiagonalmatrix ist. 
+    \item[4.] Löse das Eigenwertproblem der reduzierten Matrix $H^{(m)}\in\C^{m\times m}$ durch die 
     QR-Methode.
     \item[5.] Nehme die Eigenwerte von $H^{(m)}$ als die Näherung der dominanten (betragsgrößten) Eigenwerte 
     von $A$. Im Falle des kleinstgrößten Eigenwert, muss die Matrix $A^{-1}$ betrachtet werden (Konstruktion 
     der Unterräume $K_m$ kann sehr aufwendig sein).
   \end{enumerate}
-\end{sumbox}
+\end{colbox}
+
 \subsection{Arnoldi-Methode}
+\textbf{Idee:} \\
 Die Potenzmethode verwendet nur die aktuelle Iterierte $A^mq$ mit $m\ll n$ für den normierten Startvektor 
-$q\in\C  ^n$ mit $\vertn{2}{q}_2=1$, ignoriert aber die bereits berechneten Iterierten $\{q,Aq,A^2q,\dotsc,A^{m-1}q\}$. \\ \\
-\textbf{Idee:} Verwendung dieser Informationen und Erstellen einer sogenannten \textit{Krylov-Matrix}
-\begin{align*}K_m = [q,Aq,A^2q,\dotsc,A^{m-1}q]\quad\text{mit }1\leq m\leq n\end{align*}
+$q\in\C  ^n$ mit $\vertn{2}{q}_2=1$, ignoriert aber die bereits berechneten Iterierten $\{q,Aq,A^2q,\dots,A^{m-1}q\}$.
+
+Wir wollen diese bereits bestimmten Informationen nutzen und eine sogenannte \textit{Krylov-Matrix} erstellen:
+%
+\begin{align*}
+  K_m = (q|Aq|A^2q|\dots|A^{m-1}q)
+  \quad\text{mit }1\leq m\leq n
+\end{align*}
+%
 Die Spalten dieser Matrix sind nicht orthogonal zueinander. $A^tq$ konvergiert gegen den Eigenvektor zum betragsgrößten
-Eigenwert, d.h. $K_m$ ist schlecht konditionert \textcolor{red}{(Was heißt schlecht konditionert bei nicht quadratisch?)} (da sich die letzten Spalten kaum ändern). \\
+Eigenwert, d.h. $K_m$ ist schlecht konditioniert \textcolor{red}{(Was heißt schlecht konditionert bei nicht quadratisch?)} (da sich die letzten Spalten kaum ändern). \\
 Die Konstruktion in eine orthogonale Basis mit dem Gram-Schmidt-Algorithmus ist instabil. \\
 Wir wählen als Alternative in der Arnoldi-Methode die Verwendung einer stabilisierten Variante des 
-Gram-Schmidt-Verfahrens um eine Folge orthonormaler Vektoren $\{q^1,q^2,\dotsc\}$ (bezeichnet als 
-Arnoldi-Vektoren) zu erzeugen, sodass für jedes $m$ die Vektoren $\{q^1,\dotsc,q^m\}$ den Krylov-Unterraum $K_m$ 
+Gram-Schmidt-Verfahrens um eine Folge orthonormaler Vektoren $\{q^1,q^2,\dots\}$ (bezeichnet als 
+Arnoldi-Vektoren) zu erzeugen, sodass für jedes $m$ die Vektoren $\{q^1,\dots,q^m\}$ den Krylov-Unterraum $K_m$ 
 aufspannen. 
 \newpage
 \begin{defbox}
@@ -82,25 +137,25 @@ Wir definieren für das Folgende orthogonalen Projektionsoperator:
 Dieser projeziert den Vektor $v$ auf $\Span{u}$.
 \end{defbox}
 Damit ergibt sich das klassische \textit{Gram-Schmidt-Orthogonalisierungs-Verfahren} als 
-\begin{align*}q^{1} = \dfrac{q}{\vertn{2}{q}_2},\quad\text{und}\quad\tilde{q}^{t} = A^{t-1}q - \sum_{j=1}^{t-1} \text{proj}_{q^j}(A^{t-1}q), 
-\qquad q^t = \dfrac{\tilde{q}^t}{\vertn{2}{\tilde{q}^t}_2}\quad\text{für } t=2,\dotsc,m\end{align*}
+\begin{align*}q^{1} = \dfrac{q}{\vertn{2}{q}_2},\quad\text{und}\quad\tilde{q}^{t} = A^{t-1}q - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(A^{t-1}q), 
+\qquad q^t = \dfrac{\tilde{q}^t}{\vertn{2}{\tilde{q}^t}_2}\quad\text{für } t=2,\dots,m\end{align*}
 Der $t$-te Schritt projeziert die Komponente von $A^{t-1}q$ in Richtung der bereits bestimmten Orthogonal-Vektoren 
-$\{q^1,\dotsc,q^{t-1}\}$. \\
+$\{q^1,\dots,q^{t-1}\}$. \\
 Dies ist numerisch instabil durch Summieren der Rundungsfehler. \\ \\
 Wir betrachten daher \textit{das modifizierte Gram-Schmidt-Verfahren}, wobei der $t$-te Schritt projeziert die Komponenten
-von $Aq^t$ in Richtung $\{q^1,\dotsc,q^{t-1}\}$:
-\begin{align*}q^{1} = \dfrac{q}{\vertn{2}{q}_2},\quad\text{und}\quad\tilde{q}^{t} = Aq^{t-1} - \sum_{j=1}^{t-1} \text{proj}_{q^j}(Aq^{t-1}), 
-\qquad q^t = \dfrac{\tilde{q}^t}{\vertn{2}{\tilde{q}^t}_2}\quad\text{für } t=2,\dotsc,m \tag{1}\end{align*}
+von $Aq^t$ in Richtung $\{q^1,\dots,q^{t-1}\}$:
+\begin{align*}q^{1} = \dfrac{q}{\vertn{2}{q}_2},\quad\text{und}\quad\tilde{q}^{t} = Aq^{t-1} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{t-1}), 
+\qquad q^t = \dfrac{\tilde{q}^t}{\vertn{2}{\tilde{q}^t}_2}\quad\text{für } t=2,\dots,m \tag{1}\end{align*}
 Da $q^t$, $\tilde{q}^t$ in die gleiche Richtung zeigen und $\tilde{q}^t\perp K_t$ erhält man 
 \begin{align*}\langle q^t, \tilde{q}^t\rangle_2 = \vertn{2}{\tilde{q}^t}_2 = 
-\left\langle q^t,Aq^{t-1} - \sum_{j=1}^{t-1} \text{proj}_{q^j}(Aq^{t-1})\right\rangle_2 = \langle q^t, Aq^{t-1}\rangle_2\end{align*}
-Mit $h_{i,t-1} := \langle Aq^{t-1},q^i \rangle_2$ ergibt sich mit dem modifizierte Gram-Schmidt-Algorithmus
-\begin{align*}Aq^{t-1}=\sum_{i=1}^{t} h_{i,t-1 }q^i, \qquad t=2,\dotsc,m+1\end{align*}
+\left\langle q^t,Aq^{t-1} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{t-1})\right\rangle_2 = \langle q^t, Aq^{t-1}\rangle_2\end{align*}
+Mit $h_{i,t-1} := \langle Aq^{t-1},q^{(i)} \rangle_2$ ergibt sich mit dem modifizierte Gram-Schmidt-Algorithmus
+\begin{align*}Aq^{t-1}=\sum_{i=1}^{t} h_{i,t-1 }q^{(i)}, \qquad t=2,\dots,m+1\end{align*}
 In der Praxis wird der modifizierte Gram-Schmidt-Alg. in der folgenden iterierten Form implementiert:
 \begin{align*}
   q^1 &= \vertn{2}{q}_2^{-1}q, \\
   q^{t,1}&=Aq^{t-1}, \\
-  q^{t,j+1}&=q^{t,j}-\text{proj}_{q^j}(q^{t,j}), \tag{2}\\
+  q^{t,j+1}&=q^{t,j}-\text{proj}_{q^{(j)}}(q^{t,j}), \tag{2}\\
   q^t&=\vertn{2}{q^{t,t}}_2^{-1}q^{t,t}
 \end{align*}
 Man erhält das gleiche Resultat, wie beim klassischen Gram-Schmidt-Verfahren, aber mit kleinerem numerischen Fehler. \\ \\
@@ -112,19 +167,19 @@ Man erhält das gleiche Resultat, wie beim klassischen Gram-Schmidt-Verfahren, a
 \textcolor{red}{(Algobox)} \\
 Startvektor: $q^1=\vertn{2}{q}^{-1}_2 q$ \\
 Iteriere für $2\leq t\leq m: q^{t,1}=Aq^{t-1}$ \\
-und für $j=1,\dotsc,t-1: h_{j,t} = \langle q^{t,j},q^j\rangle_2$ und $q^{t,j+1=q^{t,j}-h_{j,t}q^j}$ und $h_{t,t}=\vertn{2}{q^{t,t}}_2$ 
+und für $j=1,\dots,t-1: h_{j,t} = \langle q^{t,j},q^{(j)}\rangle_2$ und $q^{t,j+1=q^{t,j}-h_{j,t}q^{(j)}}$ und $h_{t,t}=\vertn{2}{q^{t,t}}_2$ 
 und $q^t = h_{t,t}^{-1}\cdot q^{t,t}$ \\ \\
-Bezeichne die $n\times m$-Matrix aus den ersten Arnoldi-Vektoren $\{q^1,q^2,\dotsc,q^m\}$ mit 
-\begin{align*}\mathcal{Q}^{(m)}:=[q^1,q^2,\dotsc,q^m]\end{align*} und sei $H^{(m)}$ die obere Hessenberg Matrix ($m\times m)$ aus $h_{j,k}$:
+Bezeichne die $n\times m$-Matrix aus den ersten Arnoldi-Vektoren $\{q^1,q^2,\dots,q^m\}$ mit 
+\begin{align*}\mathcal{Q}^{(m)}:=[q^1,q^2,\dots,q^m]\end{align*} und sei $H^{(m)}$ die obere Hessenberg Matrix ($m\times m)$ aus $h_{j,k}$:
 \begin{align*}H^{(m)} = \begin{pmatrix}
-  h_{11} & h_{12} & h_{13} & \dotsc & h_{1m} \\
-  h_{21} & h_{22} & h_{23} & \dotsc & \vdots \\
-  0 & h_{32} & h_{33} & \dotsc & \vdots \\
+  h_{11} & h_{12} & h_{13} & \dots & h_{1m} \\
+  h_{21} & h_{22} & h_{23} & \dots & \vdots \\
+  0 & h_{32} & h_{33} & \dots & \vdots \\
   \vdots & \ddots &  \ddots &   \ddots &  h_{m-1,m} \\
-  0 &\dotsc & 0 & h_{m,m-1} & h_{m,m}
+  0 &\dots & 0 & h_{m,m-1} & h_{m,m}
 \end{pmatrix}\end{align*}
 Die Matrizen $\mathcal{Q}^{(m)}$ sind orthonormal und mit (1) ergibt sich die Arnoldi-Beziehung 
-\begin{align*}A\mathcal{Q}^{(m)} = \mathcal{Q}^{(m)} H^{(m)} + h_{m,m+1}[0,\dotsc,0,q^{m+1}]\tag{3}\end{align*}
+\begin{align*}A\mathcal{Q}^{(m)} = \mathcal{Q}^{(m)} H^{(m)} + h_{m,m+1}[0,\dots,0,q^{m+1}]\tag{3}\end{align*}
 Multiplikation mit ${\mathcal{Q}^{(m)}}^*$  und Verwendung von 
 \begin{align*}{\mathcal{Q}^{(m)}}^* \mathcal{Q}^{(m)} = I \quad \text{und}\quad {\mathcal{Q}^{(m)}}^* q^{m+1}=0\end{align*}
 ergibt 
@@ -145,9 +200,9 @@ $H^{(m)}$.
 \textit{Beweis.} Multiplikation von (3) mit $w$ ergibt 
 \begin{align*}
 Av &= A\mathcal{Q}^{(m)}w\\ 
-&= \mathcal{Q}^{(m)}H^{(m)}w + h_{m+1,m}\cdot[0,\dotsc,0,q^{m+1}]w \\
-&= \mu \mathcal{Q}^{(m)}w + h_{m+1,m}\cdot[0,\dotsc,0,q^{m+1}]w \\
-&= \mu v + h_{m+1,m}\cdot[0,\dotsc,0,q^{m+1}]w
+&= \mathcal{Q}^{(m)}H^{(m)}w + h_{m+1,m}\cdot[0,\dots,0,q^{m+1}]w \\
+&= \mu \mathcal{Q}^{(m)}w + h_{m+1,m}\cdot[0,\dots,0,q^{m+1}]w \\
+&= \mu v + h_{m+1,m}\cdot[0,\dots,0,q^{m+1}]w
 \end{align*}
 Daraus folgt mit $\vertn{2}{q_{m+1}}_2 = 1$, dass
 \begin{align*}\vertn{2}{Av-\mu v}_2 = |h_{m+1,m}|\cdot |w_m|\end{align*}
@@ -159,8 +214,8 @@ $\{\mu,w\}$ eine gute Approximation ist.
   Die Ritz-Eigenwerte konvergieren zu den betragsgrößten Eigenwerten von $A$. Falls die betragskleinsten Eigenwerte 
   bestimmt werden sollen, muss das diskutierte Verfahren auf die inverse Matrix angewendet werden (Vgl. Inverse 
   Iteration nach Wielandt). In diesem Fall hat man einen großen Aufwand die Krylov-Räume 
-  $K_m = \Span{q,A^{-1}q,\dotsc,A^{-m+1}q}$ zu bestimmen, da hierfür die linearen Systeme $v^0:=q, Av^1=v^0, 
-  \dotsc, Av^m=v^{m-1}$ sukzessiv gelöst werden müssen.
+  $K_m = \Span{q,A^{-1}q,\dots,A^{-m+1}q}$ zu bestimmen, da hierfür die linearen Systeme $v^0:=q, Av^1=v^0, 
+  \dots, Av^m=v^{m-1}$ sukzessiv gelöst werden müssen.
 \end{rembox}
 \begin{rembox}
   Typische Implementierungen der Arnoldi-Methode werden nach einer bestimmten Anzahl von Iterationen neu begonnen.
@@ -200,15 +255,15 @@ $\{\mu,w\}$ eine gute Approximation ist.
 \end{rembox}
 
 \subsection{Lanczos-Methode}
-Voraussetzung: $A$ sei hermitisch. Dann erhält man für die Rekursions-Formel der Arnoldi-Methode:
+Voraussetzung: $A$ sei hermitesch. Dann erhält man für die Rekursions-Formel der Arnoldi-Methode:
 \begin{align*}
-  \tilde{q}^t = Aq^{t-1} - \sum_{j=1}^{t-1} \langle Aq^{t-1}, q^j\rangle_2 q^j, \quad \text{für } t=2,\dots,m+1
+  \tilde{q}^t = Aq^{t-1} - \sum_{j=1}^{t-1} \langle Aq^{t-1}, q^{(j)}\rangle_2 q^{(j)}, \quad \text{für } t=2,\dots,m+1
 \end{align*}
-da $\langle Aq^{t-1}, q^j\rangle_2 = \langle q^{t-1}, Aq^j\rangle_2 = 0$ für $j=1,\dots,t-3$. \\
+da $\langle Aq^{t-1}, q^{(j)}\rangle_2 = \langle q^{t-1}, Aq^{(j)}\rangle_2 = 0$ für $j=1,\dots,t-3$. \\
 Die Vereinfachung zu 
 \begin{align*}\tilde{q}^t = Aq^{t-1} - \underbrace{\langle Aq^{t-1}, q^{t-1}\rangle_2}_{=:\alpha_{t-1}} q^{t-1}
 - \underbrace{\langle Aq^{t-1}, q^{t-2}\rangle_2}_{=:\beta_{t-2}} q^{t-2} = Aq^{t-1}-\alpha_{t-1}q^{t-1}-\beta_{t-2}q^{t-2}\end{align*}
-Da $A$ hermitisch, ist $\alpha_{t-1}\in\R$. Multiplikation mit $q^t$ ergibt
+Da $A$ hermitesch, ist $\alpha_{t-1}\in\R$. Multiplikation mit $q^t$ ergibt
 \begin{align*}
   \vertn{2}{\tilde{q}^t}_2 = \langle q^t, \tilde{q}^t\rangle_2 = \langle q^t, Aq^{t-1}-\alpha_{t-1}q^{t-1}-\beta_{t-2}q^{t-2}\rangle_2 
   = \langle q^t, Aq^{t-1}\rangle_2 = \langle Aq^t, q^{t-1}\rangle_2 = \beta_{t-1}
@@ -233,7 +288,7 @@ erhält man
 \begin{defbox}[Lanczos-Algorithmus]
   Für eine hermitische Matrix $A\in\C  ^{n\times n}$ bestimmt die Lanczos-Methode eine Menge von orthogonalen 
   Vektoren $\{q^1,\dots,q^m\}$, $m\ll n$ durch Anwendung der Gram-Schmidt-Methode auf die Basis 
-  $\{q,Aq,\dotsc,A^{m-1}q\}$ des Krylov-Raumes $K_m$:
+  $\{q,Aq,\dots,A^{m-1}q\}$ des Krylov-Raumes $K_m$:
 \end{defbox}
 \textcolor{red}{Algobox:} \\
 Startwerte: $q^1=\vertn{2}{q}_2^{-1}q, q^0=0, \beta_1=0$ \\
