@@ -169,8 +169,7 @@ wobei der $t$-te Schritt die Komponente von $Aq^{(t)}$ in Richtung $\{q^{(1)},\d
   &= \dfrac{q}{\vertn{2}{q}_2},\\
   \text{und für } &t=2,\dots,m: \\
   \tilde{q}^{(t)} 
-  &= Aq^{(t-1)} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{(t-1)}), 
-  \tag{1}\label{eq:arnoldiEQ1}\\
+  &= Aq^{(t-1)} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{(t-1)}), \\
   q^{(t)} &
   = \dfrac{\tilde{q}^{(t)}}{\vertn{2}{\tilde{q}^{(t)}}_2}
 \end{align*}
@@ -192,6 +191,7 @@ ergibt sich mit dem modifizierte Gram-Schmidt-Algorithmus dann
   Aq^{(t-1)}
   =\sum_{j=1}^{t} h_{j,t-1 }q^{(j)}, 
   \qquad t=2,\dots,m+1
+  \tag{1}\label{eq:arnoldiEQ1}
 \end{align*}
 %
 In der Praxis wird der modifizierte Gram-Schmidt-Algorithmus in der folgenden iterierten Form implementiert:
@@ -281,14 +281,7 @@ Speziell für diese Basis ergibt sich dann folgender Algorithmus:
   \end{algorithm}
 }
 
-Sei 
-%
-\begin{align*}
-  \mathcal{Q}^{(m)}
-  :=[q^{(1)},q^{(2)},\dots,q^{(m)}]
-\end{align*}
-%
-die $n\times m$-Matrix aus den ersten Arnoldi-Vektoren  
+Sei $\mathcal{Q}^{(m)} := [q^{(1)},q^{(2)},\dots,q^{(m)}] $ die $n\times m$-Matrix aus den ersten Arnoldi-Vektoren  
 und sei $H^{(m)}$ die obere Hessenberg Matrix ($m\times m)$:
 %
 \begin{align*}
@@ -307,29 +300,39 @@ Die Matrizen $\mathcal{Q}^{(m)}$ sind orthonormal und mit (\ref{eq:arnoldiEQ1}) 
 \begin{align*}
   A\mathcal{Q}^{(m)} 
   = \mathcal{Q}^{(m)} H^{(m)} + h_{m,m+1}[0,\dots,0,q^{m+1}]
-  \tag{3}\ref{eq:arnoldiEQ3}
+  \tag{3}\label{eq:arnoldiEQ3}
 \end{align*}
 %
-Multiplikation mit ${\mathcal{Q}^{(m)}}^*$ und Verwendung von 
+Multiplikation mit ${\mathcal{Q}^{(m)H}}$ und Verwendung von 
 %
-\begin{align*}{\mathcal{Q}^{(m)}}^* \mathcal{Q}^{(m)} = I \quad \text{und}\quad {\mathcal{Q}^{(m)}}^* q^{m+1}=0\end{align*}
+\begin{align*}
+  {\mathcal{Q}^{(m)H}} \mathcal{Q}^{(m)} = I \quad \text{und}\quad {\mathcal{Q}^{(m)H}} q^{m+1}=0
+\end{align*}
 %
-ergibt 
+ergibt die für die Galerkin-Approximation benötigte Darstellung von $H^{(m)}$:
 %
-\begin{align*}H^{(m)} = {\mathcal{Q}^{(m)}}^* A \mathcal{Q}^{(m)}\end{align*}
-Im Grenzfall $m=n$ ist die Matrix $H^{(n)}$ ähnlich zu $A$ und hat die gleichen Eigenwerte. \\
+\begin{align*}
+  H^{(m)} = {\mathcal{Q}^{(m)H}} A \mathcal{Q}^{(m)}
+\end{align*}
+%
+Im Grenzfall $m=n$ ist die Matrix $H^{(n)}$ ähnlich zu $A$ und hat die gleichen Eigenwerte. 
+
 Dies legt nahe, dass auch für $m\ll n$ die Eigenwerte der reduzierten Matrix $H^{(m)}$ eine gute Approximation 
-einiger Eigenwerte von $A$ sind. Wenn der Algorithmus endet (in exakter Arithmetik) für $m<n$ mit $h_{m,m+1}$ dann
+einiger Eigenwerte von $A$ sind. Wenn der Algorithmus endet (in exakter Arithmetik) für $m<n$ mit $h_{m,m+1} = 0$ dann
 ist der Krylov-Raum $K_m$ ein invarianter Unterraum der Matrix $A$ und die reduzierte Matrix $H^{(m)} = 
-{\mathcal{Q}^{(m)}}^* A \mathcal{Q}^{(m)}$ hat $m$ Eigenwerte gemeinsam mit $A$, d.h. $\sigma(H^{(m)})\subset \sigma(A)$\footnote{Beweis: Übungsblatt}
-Das folgende Lemma liefert a posteriori Abschätzungen der Genauigkeit für die Approximation der Eigenwerte von $A$ durch 
+{\mathcal{Q}^{(m)H}} A \mathcal{Q}^{(m)}$ hat $m$ gemeinsame Eigenwerte mit $A$, 
+d.h. $\sigma(H^{(m)})\subset \sigma(A)$ (\textcolor{red}{vgl. Aufgabe 9.3})
+
+Das folgende Lemma liefert a-posteriori Abschätzungen der Genauigkeit für die Approximation der Eigenwerte von $A$ durch 
 $H^{(m)}$.
-\begin{thmbox}{Lemma}
+
+\begin{colbox}{Lemma}
   Sei $\{\mu,w\}$ ein Eigenpaar der Hessenberg-Matrix $H^{(m)}$ und sei $v=\mathcal{Q}^{(m)}w$ sodass $\{\mu,v\}$ ein 
   approximiertes Eigenpaar von $A$ ist. Dann gilt
   \begin{align*}\vertn{2}{Av-\mu w}_2 = |h_{m+1,m}|\cdot |w_m|,\end{align*} 
   wobei $w_m$ die letzte Komponente des Eigenvektors $w$ ist.
-\end{thmbox}
+\end{colbox}
+
 \textit{Beweis.} Multiplikation von (3) mit $w$ ergibt 
 \begin{align*}
 Av &= A\mathcal{Q}^{(m)}w\\ 
