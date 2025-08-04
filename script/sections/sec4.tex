@@ -105,8 +105,8 @@ ursprünglichen Matrix $A$ betrachtet werden.
     konstruktionsbedingt eine Hessenberg-Matrix oder im hermiteschen Fall eine hermitesche Tridiagonalmatrix ist. 
     \item[4.] Löse das Eigenwertproblem der reduzierten Matrix $H^{(m)}\in\C^{m\times m}$ durch die 
     QR-Methode.
-    \item[5.] Nehme die Eigenwerte von $H^{(m)}$ als die Näherung der dominanten (betragsgrößten) Eigenwerte 
-    von $A$. Im Falle des kleinstgrößten Eigenwert, muss die Matrix $A^{-1}$ betrachtet werden (Konstruktion 
+    \item[5.] Die Eigenwerte von $H^{(m)}$ als Näherung der dominanten (betragsgrößten) Eigenwerte 
+    von $A$. Im Falle des betragskleinsten Eigenwert, muss die Matrix $A^{-1}$ betrachtet werden (Konstruktion 
     der Unterräume $K_m$ kann sehr aufwendig sein).
   \end{enumerate}
 \end{colbox}
@@ -114,7 +114,7 @@ ursprünglichen Matrix $A$ betrachtet werden.
 \subsection{Arnoldi-Methode}
 \textbf{Idee:} \\
 Die Potenzmethode verwendet nur die aktuelle Iterierte $A^mq$ mit $m\ll n$ für den normierten Startvektor 
-$q\in\C  ^n$ mit $\vertn{2}{q}_2=1$, ignoriert aber die bereits berechneten Iterierten $\{q,Aq,A^2q,\dots,A^{m-1}q\}$.
+$q\in\C^n$ mit $\vertn{2}{q}_2=1$, ignoriert aber die bereits berechneten Iterierten $\{q,Aq,A^2q,\dots,A^{m-1}q\}$.
 
 Wir wollen diese bereits bestimmten Informationen nun nutzen und erstellen eine sogenannte \textit{Krylov-Matrix}:
 %
@@ -124,15 +124,14 @@ Wir wollen diese bereits bestimmten Informationen nun nutzen und erstellen eine 
 \end{align*}
 %
 Die Spalten dieser Matrix sind jedoch nicht orthogonal zueinander, außerdem konvergiert $A^tq$ gegen den 
-Eigenvektor zum betragsgrößten Eigenwert, d.h. $K_m$ ist schlecht konditioniert, da sich die letzten Spalten kaum ändern. 
+Eigenvektor zum betragsgrößten Eigenwert, d.h. $K_m$ ist schlecht konditioniert\footnote{
+  Für nicht-invertierbare Matrizen $A\in\C^{n\times m}$ ist die Konditionszahl über das Pseudoinverse definiert
+}, da sich die letzten Spalten kaum ändern. 
 
-Die Konstruktion in eine orthogonale Basis mit dem Gram-Schmidt-Algorithmus ist instabil, denn bereits kleine 
-Rundungsfehler in frühen Orthogonalisierungsschritten pflanzen sich bei der sukzessiven Subtraktion fort und 
-verstärken sich von Vektor zu Vektor, sodass die resultierende Basis numerisch nicht mehr orthogonal ist.
-
-Wir wählen als Alternative in der Arnoldi-Methode die Verwendung einer stabilisierten Variante des 
-Gram-Schmidt-Verfahrens um eine Folge orthonormaler Vektoren $\{q^1,q^2,\dots\}$ (bezeichnet als 
-Arnoldi-Vektoren) zu erzeugen, sodass für jedes $m$ die Vektoren $\{q^1,\dots,q^m\}$ den Krylov-Unterraum $K_m$ 
+Wie wir sehen werden, ist die Konstruktion in eine orthogonale Basis mit dem Gram-Schmidt-Algorithmus instabil, 
+wir wählen daher als Alternative in der Arnoldi-Methode die Verwendung einer stabilisierten Variante des 
+Gram-Schmidt-Verfahrens um eine Folge orthonormaler Vektoren $\{q^{(1)},q^{(2)},\dots\}$ (bezeichnet als 
+Arnoldi-Vektoren) zu erzeugen, sodass für jedes $m$ die Vektoren $\{q^{(1)},\dots,q^{(m)}\}$ den Krylov-Unterraum $K_m$ 
 aufspannen. 
 
 \begin{colbox}{Definition}
@@ -146,18 +145,23 @@ Wir definieren für das Folgende den orthogonalen Projektionsoperator:
 Dieser projiziert den Vektor $v$ auf $\Span\{u\}$.
 \end{colbox}
 
-Damit ergibt sich das \textit{klassische Gram-Schmidt-Orthogonalisierungs-Verfahren} als 
+Mit diesem Operator ergibt sich das \textit{klassische Gram-Schmidt-Orthogonalisierungs-Verfahren} als 
 %
 \begin{align*}
-  q^{1} 
+  q^{(1)} 
   = \dfrac{q}{\vertn{2}{q}_2},
-  \quad\text{und}\quad
-  \tilde{q}^{t} 
+  \qquad
+  \tilde{q}^{(t)} 
   = A^{t-1}q - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(A^{t-1}q), 
-\qquad q^t = \dfrac{\tilde{q}^t}{\vertn{2}{\tilde{q}^t}_2}\quad\text{für } t=2,\dots,m\end{align*}
+  \quad\text{und}\quad
+   q^{(t)} = \dfrac{\tilde{q}^{(t)}}{\vertn{2}{\tilde{q}^{(t)}}_2}\quad\text{für } t=2,\dots,m
+\end{align*}
+%
 Der $t$-te Schritt projiziert die Komponente von $A^{t-1}q$ in Richtung der bereits bestimmten Orthogonal-Vektoren 
-$\{q^1,\dots,q^{t-1}\}$. \\
-Dies ist numerisch instabil durch Summieren der Rundungsfehler. \\ \\
+$\{q^{(1)},\dots,q^{(t-1)}\}$. 
+
+Dies ist numerisch instabil durch Summieren der Rundungsfehler. 
+
 Wir betrachten daher \textit{das modifizierte Gram-Schmidt-Verfahren}, wobei der $t$-te Schritt projeziert die Komponenten
 von $Aq^t$ in Richtung $\{q^1,\dots,q^{t-1}\}$:
 \begin{align*}q^{1} = \dfrac{q}{\vertn{2}{q}_2},\quad\text{und}\quad\tilde{q}^{t} = Aq^{t-1} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{t-1}), 
