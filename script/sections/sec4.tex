@@ -505,11 +505,12 @@ ergibt sich
   \end{algorithm}
 }
 
-Nachdem die Matrix $T^{(m)}$ berechnet ist, kann ihr Eigenwert $\lambda_i$ und der zugehörige Eigenvektor $w^{i}$
-bestimmt werden, z.B. mit QR-Algorithmus. \\
-Die Eigenwert und Eigenvektoren von $T^{(m)}$ werden mit dem Aufwand $\mathcal{O}(m^2)$ berechnet. Die Eigenwerte 
-approximieren die der ursprünglichen Matrix. \\
-Die Ritz Eigenvektoren $v^i$ von $A$ können mit $v^i=\mathcal{Q}^{(m)}\cdot w^i$ berechnet werden.
+Nachdem die Matrix $T^{(m)}$ berechnet ist, kann ihr Eigenwert $\lambda_i$ und der zugehörige Eigenvektor $w^{(i)}$
+bestimmt werden (z.B. mit QR-Algorithmus). 
+
+Die Eigenwerte und Eigenvektoren von $T^{(m)}$ werden mit dem Aufwand $\mathcal{O}(m^2)$ berechnet und 
+approximieren die der ursprünglichen Matrix $A$. Die zugehörigen Ritz Eigenvektoren $v^{(i)}$ können dann 
+mit $v^{(i)}=\mathcal{Q}^{(m)}\cdot w^{(i)}$ berechnet werden.
 
 \subsection{Pseudospektren}
 Motivation:
