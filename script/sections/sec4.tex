@@ -161,12 +161,8 @@ Mit diesem Operator ergibt sich das \textit{klassische Gram-Schmidt-Orthogonalis
 Der $t$-te Schritt projiziert dabei die Komponente von $A^{t-1}q$ in Richtung der bereits bestimmten orthogonalen 
 Vektoren $\{q^{(1)},\dots,q^{(t-1)}\}$. 
 
-Dieses Vorgehen ist jedoch numerisch instabil, denn Rundungsfehler in frühen Orthogonalisierungsschritten 
-pflanzen sich bei der sukzessiven Subtraktion fort und verstärken sich von Vektor zu Vektor, 
-sodass die resultierende Basis numerisch nicht mehr orthogonal ist. 
-
-Wir betrachten daher das \textit{modifizierte Gram-Schmidt-Verfahren}, wobei der $t$-te Schritt die Komponente
-von $Aq^{(t)}$ in Richtung $\{q^{(1)},\dots,q^{(t-1)}\}$ projiziert:
+Wir betrachten jetzt das \textit{modifizierte Gram-Schmidt-Verfahren} (\textcolor{red}{Nochmal überarbeiten}), 
+wobei der $t$-te Schritt die Komponente von $Aq^{(t)}$ in Richtung $\{q^{(1)},\dots,q^{(t-1)}\}$ projiziert:
 %
 \begin{align*}
   q^{(1)} 
@@ -183,25 +179,25 @@ Nach Konstruktion ist $q^{(t)}$ senkrecht zu $\{q^{(j)}\}_{j=1}^{t-1}$ und damit
 $\{\text{proj}_{q^{(j)}}(Aq^{(t-1)})\}_{j=1}^{t-1}$, es folgt also
 % 
 \begin{align*}
-  \langle q^{(t)}, \tilde{q}^{(t)}\rangle_2 
+  \langle q^{(t)}, \tilde{q}^{(j)}\rangle_2 
   %= \vertn{2}{\tilde{q}^{(t)}}_2 
-  = \left\langle q^{(t)},Aq^{(t-1)} - \sum_{j=1}^{t-1} \text{proj}_{q^{(j)}}(Aq^{(t-1)})\right\rangle _2 
-  = \langle q^{(t)}, Aq^{(t-1)}\rangle_2
+  = \left\langle q^{(t)}, Aq^{(j-1)} - \sum_{i=1}^{j-1} \text{proj}_{q^{(i)}}(Aq^{(j-1)})\right\rangle _2 
+  = \langle q^{(t)}, Aq^{(j-1)}\rangle_2
 \end{align*}
 %
-Durch die Setzung $h_{i,t-1} := \langle Aq^{(t-1)},q^{(i)} \rangle_2$ ergibt sich mit 
-dem modifizierte Gram-Schmidt-Algorithmus dann
+Durch die Setzung $h_{j,t-1} := \langle q^{(j)},Aq^{(t-1)} \rangle_2$ und $h_{t,t-1}:=\vertn{2}{\tilde{q}^{t}}$ 
+ergibt sich mit dem modifizierte Gram-Schmidt-Algorithmus dann
 %
 \begin{align*}
   Aq^{(t-1)}
-  =\sum_{i=1}^{t} h_{i,t-1 }q^{(i)}, 
+  =\sum_{j=1}^{t} h_{j,t-1 }q^{(j)}, 
   \qquad t=2,\dots,m+1
 \end{align*}
 %
 In der Praxis wird der modifizierte Gram-Schmidt-Algorithmus in der folgenden iterierten Form implementiert:
 %
 \begin{align*}
-  q^1 &= \vertn{2}{q}_2^{-1}q, \\
+  q^{(1)} &= \vertn{2}{q}_2^{-1}q, \\
   q^{(t,1)} &= Aq^{(t-1)}, \\
   q^{(t,j+1)} &= q^{(t,j)}-\text{proj}_{q^{(j)}}(q^{(t,j)}), 
   \tag{2}\label{eq:arnoldiEQ2}\\
@@ -209,33 +205,117 @@ In der Praxis wird der modifizierte Gram-Schmidt-Algorithmus in der folgenden it
 \end{align*}
 %
 Wir erhalten dabei das gleiche Resultat, wie beim klassischen Gram-Schmidt-Verfahren, 
-aber mit kleinerem numerischen Fehler, da sich die Fehler nicht fortpflanzen.
+aber mit kleinerem numerischen Fehler Um dies zu verdeutlichen hilft es 
+das klassische und modifizierte Gram-Schmidt-Verfahren im Allgemeinen zu vergleichen 
+(also nicht auf unsere spezielle Basis bezogen sondern für beliebige linear unabhängige Vektoren $\{v^{(t)}\}_{t=1}^n$):
 
-\begin{colbox}{Definition}[Arnoldi-Algorithmus] \ \\
+\algorithmbox{Gram-Schmidt (klassisch vs. modifiziert)}{
+\begin{minipage}[t]{0.48\textwidth}
+\textbf{klassisch:} 
+
+\begin{algorithm}[H]
+  \ForTe{$t=1,\dots,n$}{
+    $q^{(t)} = v^{(t)}$ \\
+    \ForTe{$j=1,\dots,t-1$}{
+      $h_{j,t-1} \leftarrow \langle q^{(j)}, q^{(t)}\rangle$
+    }\EndTe{}{}
+    \ForTe{$j=1,\dots,t-1$}{
+      $q^{(t)} \leftarrow q^{(t)} - h_{j,t-1}\cdot q^{(j)}$
+    }\EndTe{}{}
+      $h_{t,t-1} \leftarrow \vertn{2}{q^{(t)}}$
+      $q^{(t)} \leftarrow q^{(t)} \,/\, h_{t,t-1} $
+  }\EndTe{}{}
+\end{algorithm}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\textbf{modifiziert:}
+
+\begin{algorithm}[H]
+  \ForTe{$t=1,\dots,n$}{
+    $q^{(t)} = v^{(t)}$ \\
+    \ForTe{$j=1,\dots,t-1$}{
+      $h_{j,t-1} \leftarrow \langle q^{(j)}, q^{(t)}\rangle$ \\
+      $q^{(t)} \leftarrow q^{(t)} - h_{j,t-1}\cdot q^{(j)}$
+    }\EndTe{}{}
+      $h_{t,t-1} \leftarrow \vertn{2}{q^{(t)}}$
+      $q^{(t)} \leftarrow q^{(t)} \,/\, h_{t,t-1} $
+  }\EndTe{}{}
+\end{algorithm}
+\end{minipage}
+}
+
+Einfaches Nachrechnen zeigt, dass beide Algorithmen bei exakter Arithmetik das
+gleiche Ergebnis liefern (\textcolor{red}{vgl. Aufgabe 9.2}).
+
+Weiter sorgt das verzögerte Berechnen der Koeffizienten $h_{j,t-1}$ dafür, dass sich in $q^{(t)}$ weniger 
+Fehler fortpflanzen. Im $j$-ten Schritt wurden bereits die Koeffizienten der Basisvektoren $q^{(1)},\dots,q^{(j-1)}$ 
+von $q^{(t)}$ eliminiert, wohingegen bei der Verwendung von $v^{(t)}$ noch große derartige Koeffizienten
+vorkommen könnten, welche zu stärkeren Fehlern in $h_{j,t-1}$ sorgen.
+
+\begin{colbox}{Definition}[Arnoldi-Algorithmus] 
   Für eine beliebige Matrix $A\in\C  ^{n\times n}$ bestimmt die Arnoldi-Methode eine Folge orthonormaler 
   Vektoren $q^{(t)}\in\C  $ für $1\leq t \leq m \ll n$ (Arnoldi-Basis), durch Anwendung der modifizierten 
   Gram-Schmidt-Methode (2) auf die Basis $\{q,Aq,A^{m-1}q\}$ des Krylov-Unterraums $K_m$.
 \end{colbox}
 
-\textcolor{red}{(Algobox)} \\
-Startvektor: $q^{(1)}=\vertn{2}{q}^{-1}_2 q$ \\
-Iteriere für $2\leq t\leq m: q^{t,1}=Aq^{(t-1)}$ \\
-und für $j=1,\dots,t-1: h_{j,t} = \langle q^{t,j},q^{(j)}\rangle_2$ und $q^{t,j+1=q^{t,j}-h_{j,t}q^{(j)}}$ und $h_{t,t}=\vertn{2}{q^{t,t}}_2$ 
-und $q^{(t)} = h_{t,t}^{-1}\cdot q^{t,t}$ \\ \\
-Bezeichne die $n\times m$-Matrix aus den ersten Arnoldi-Vektoren $\{q^1,q^2,\dots,q^m\}$ mit 
-\begin{align*}\mathcal{Q}^{(m)}:=[q^1,q^2,\dots,q^m]\end{align*} und sei $H^{(m)}$ die obere Hessenberg Matrix ($m\times m)$ aus $h_{j,k}$:
-\begin{align*}H^{(m)} = \begin{pmatrix}
+Speziell für diese Basis ergibt sich dann folgender Algorithmus:
+
+\algorithmbox{MGS für Krylov-Räume}{
+  \begin{algorithm}[H]
+    \SetAlgoNoLine
+    \InitTe{$A\in \C^{n\times n}$ beliebig und $q^{(1)}:=q\in\C^n$ mit $\vertn{2}{q}_2=1$}
+    \ErgTe{
+      $\{q^{(t)}\}_{t=1}^m$ als Orthonormalbasis des Krylov-Raum $K_m$.
+    } 
+    \SetAlgoLined
+    \ForTe{$t=2,\dots,n$}{
+      $q^{(t)} = Aq^{(t-1)}$ \\
+      \ForTe{$j=1,\dots,t-1$}{
+        $h_{j,t-1} \leftarrow  \langle q^{(j)}, q^{(t)}\rangle$ \\
+        $q^{(t)} \leftarrow q^{(t)} - h_{j,t-1} \cdot q^{(j)}$
+      }\EndTe{}{}
+      $h_{t,t-1} \leftarrow \vertn{2}{q^{(t)}}$
+      $q^{(t)} \leftarrow q^{(t)} \,/\, h_{t,t-1} $
+    }\EndTe{}{}
+  \end{algorithm}
+}
+
+Sei 
+%
+\begin{align*}
+  \mathcal{Q}^{(m)}
+  :=[q^{(1)},q^{(2)},\dots,q^{(m)}]
+\end{align*}
+%
+die $n\times m$-Matrix aus den ersten Arnoldi-Vektoren  
+und sei $H^{(m)}$ die obere Hessenberg Matrix ($m\times m)$:
+%
+\begin{align*}
+  H^{(m)} 
+  = \begin{pmatrix}
   h_{11} & h_{12} & h_{13} & \dots & h_{1m} \\
   h_{21} & h_{22} & h_{23} & \dots & \vdots \\
   0 & h_{32} & h_{33} & \dots & \vdots \\
   \vdots & \ddots &  \ddots &   \ddots &  h_{m-1,m} \\
   0 &\dots & 0 & h_{m,m-1} & h_{m,m}
-\end{pmatrix}\end{align*}
-Die Matrizen $\mathcal{Q}^{(m)}$ sind orthonormal und mit (1) ergibt sich die Arnoldi-Beziehung 
-\begin{align*}A\mathcal{Q}^{(m)} = \mathcal{Q}^{(m)} H^{(m)} + h_{m,m+1}[0,\dots,0,q^{m+1}]\tag{3}\end{align*}
-Multiplikation mit ${\mathcal{Q}^{(m)}}^*$  und Verwendung von 
+\end{pmatrix}
+\end{align*}
+%
+Die Matrizen $\mathcal{Q}^{(m)}$ sind orthonormal und mit (\ref{eq:arnoldiEQ1}) ergibt sich die Arnoldi-Beziehung 
+%
+\begin{align*}
+  A\mathcal{Q}^{(m)} 
+  = \mathcal{Q}^{(m)} H^{(m)} + h_{m,m+1}[0,\dots,0,q^{m+1}]
+  \tag{3}\ref{eq:arnoldiEQ3}
+\end{align*}
+%
+Multiplikation mit ${\mathcal{Q}^{(m)}}^*$ und Verwendung von 
+%
 \begin{align*}{\mathcal{Q}^{(m)}}^* \mathcal{Q}^{(m)} = I \quad \text{und}\quad {\mathcal{Q}^{(m)}}^* q^{m+1}=0\end{align*}
+%
 ergibt 
+%
 \begin{align*}H^{(m)} = {\mathcal{Q}^{(m)}}^* A \mathcal{Q}^{(m)}\end{align*}
 Im Grenzfall $m=n$ ist die Matrix $H^{(n)}$ ähnlich zu $A$ und hat die gleichen Eigenwerte. \\
 Dies legt nahe, dass auch für $m\ll n$ die Eigenwerte der reduzierten Matrix $H^{(m)}$ eine gute Approximation 
