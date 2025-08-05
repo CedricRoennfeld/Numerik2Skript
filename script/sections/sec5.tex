@@ -479,3 +479,258 @@ $g\in\C^m$ und $h\in\C^m$ (zweimal Ordnung $m$).
   Der Rechenaufwand für die Berechnung einer diskreten komplexen Fourier-Transformation nach der Methode des Aufteilens
   entspricht $\mathcal{O}(n\log(n))$.
 \end{colbox}
+
+\subsection{Symmetrische Transformationen}
+In der Anwendung ist es oftmals hilfreich die symmetrischen Fortsetzungen von reellen Funktionen zu betrachten. Dies 
+ermöglicht die Fourier-Darstellung nur auf Sinus- oder nur auf Kosinusreihen zu reduzieren.
+
+Auch hier geben wir eine kurze Wiederholung zur Fourier-Reihe:
+
+\begin{colbox}{Definition}\label{def:fourierSeries}
+  Sei $f:\R\to\C$ eine $2\pi$-periodische, über $[0,2\pi]$ integrierbare Funktion, dann heißt 
+  %
+  \begin{align*}
+    \hat{f}(x) = \sum_{k=-\infty}^{\infty} c_k e^{ikx}
+  \end{align*}
+  %
+  Fourier-Reihe von $f$, wobei sich die Fourier-Koeffizienten $c_k$ durch 
+  %
+  \begin{align*}
+    c_k := \dfrac{1}{2\pi}\int_{0}^{2\pi} f(x)e^{-ikx} \diff x, \qquad k\in\Z
+  \end{align*}
+  % 
+
+  Eine alternative Darstellung ergibt sich durch
+  %
+  \begin{align*}
+    \hat{f}(x) = \dfrac{a_0}{2} + \sum_{k=1}^{\infty} \big(a_k\cos(kx) + b_k\sin(kx)\big)
+  \end{align*}
+  %
+  mit 
+  %
+  \begin{align*}
+    a_k &:= \dfrac{1}{\pi} \int_{0}^{2\pi} f(x)\cos(kx) \diff x \\
+    b_k &:= \dfrac{1}{\pi} \int_{0}^{2\pi} f(x)\sin(kx) \diff x
+  \end{align*}
+  %
+\end{colbox}
+
+\begin{colbox}{Satz}
+  Beide Darstellungen in Definition \ref{def:fourierSeries} sind äquivalent und 
+  für die Umrechnung der Darstellungen gilt 
+  \begin{align*}
+    c_k = \begin{cases}
+      \tfrac{1}{2}(a_k-ib_k), & k>0 \\
+      \tfrac{a_0}{2}, & k=0 \\
+      \tfrac{1}{2}(a_{-k}+ib_{-k}), & k<0
+    \end{cases}
+    \quad \text{und}\quad 
+    a_k = \begin{cases}
+      c_k + c_{-k}, & k>0 \\
+      2c_0
+    \end{cases},
+    \quad 
+    b_k = i(c_{-k} - c_k)
+  \end{align*}
+\end{colbox}
+\textit{Beweis.} Ergibt sich direkt durch die Verwendung der eulerschen Formel und der Euler-Darstellung 
+von $\sin$ und $\cos$.
+
+\begin{colboxBreakable}{Bemerkung}
+  \begin{enumerate}
+    \item 
+    Wenn $f$ punktsymmetrisch bzgl. $x=\pi$ ist, d.h. $f(\pi+x) = -f(\pi-x)$, so gilt 
+    %
+    % \begin{align*}
+    %   c_k 
+    %   &= \dfrac{1}{2\pi}\int_{0}^{2\pi} f(x)e^{-ikx} \diff x \\
+    %   &= \dfrac{1}{2\pi}\left(\int_{0}^{\pi} f(x)e^{-ikx} \diff x + \underbrace{\int_{\pi}^{2\pi} f(x)e^{-ikx} \diff x}_{z=2\pi-x}\right) \\
+    %   &= \dfrac{1}{2\pi}\left(\int_{0}^{\pi} f(x)e^{-ikx} \diff x - \int_{\pi}^{0} \underbrace{f(2\pi-z)}_{-f(z)}\underbrace{e^{-ik(2\pi-z)}}_{e^{ikz}} \diff z\right) \\
+    %   &= \dfrac{1}{2\pi}\left(\int_{0}^{\pi} f(x)e^{-ikx} \diff x + \int_{0}^{\pi} -f(z)e^{ikz} \diff z\right) \\
+    %   &= \dfrac{1}{2\pi}\int_{0}^{\pi} f(x)\big(e^{-ikx}-e^{-ikx}\big) \diff x \\
+    %   &= \dfrac{i}{\pi}\int_{0}^{\pi} f(x)\sin(kx)
+    % \end{align*}
+    %
+    \begin{align*}
+      a_k &= \frac{1}{\pi} \int_0^{2\pi} f(x) \cos(kx)  \diff x \\
+      &= \frac{1}{\pi} \int_{2\pi}^{0} f(2\pi - z) \cos(k(2\pi - z))  (-\diff z) \qquad (z = 2\pi - x) \\
+      &= \frac{1}{\pi} \int_0^{2\pi} -f(z) \cos(kz)  \diff z \\
+      &= -a_n \\
+      \Rightarrow \quad a_k &= 0
+    \end{align*}
+    %
+    Also ist die Fourier-Reihe von $f$ gegeben durch 
+    %
+    \begin{align*}
+      \hat{f}(x) = \sum_{k=1}^{\infty} b_k\sin(kx)
+    \end{align*}
+    %
+    \item Wenn $f$ spiegelsymmetrisch bzgl. $x=\pi$ ist, d.h. $f(\pi+x)=f(\pi-x)$, so gilt analog 
+    (wegen $\sin(k(2\pi-z))=-\sin(kz)$), dass die Fourier-Reihe von $f$ gegeben ist durch 
+    %
+    \begin{align*}
+      \hat{f}(x) = \dfrac{a_0}{2} + \sum_{k=1}^{\infty} a_k\cos(kx)
+    \end{align*}
+    %
+  \end{enumerate}
+\end{colboxBreakable}
+
+\textbf{Sinustransformation:} \\
+Sei $f$ eine Funktion, welche auf den Intervallgrenzen von $I=[0,\pi]$ verschwindet, d.h. $f(0)=f(\pi)=0$, so kann 
+diese punktsymmetrisch bzgl. $x=\pi$ über $[0,2\pi]$ fortgesetzt werden durch 
+%
+\begin{align*}
+  f_u(x) = \begin{cases}
+    f(x), & 0\leq x \leq \pi \\
+    -f(2\pi-x), &\pi < x \leq 2\pi
+  \end{cases}
+\end{align*}
+%
+und es ergibt sich eine Sinustransformation 
+%
+\begin{align*}
+  \hat{f}_u = \sum_{k=1}^{\infty} b_k\sin(kx), 
+  \quad 0\leq x\leq \pi, 
+  \quad\text{mit}\quad b_k = \dfrac{2}{\pi}\int_{0}^{\pi} f(x) \sin(kx) \diff x
+\end{align*}
+%
+
+\textbf{Kosinustransformation:} \\
+Sei $f$ eine beliebige Funktion auf $I=[0,\pi]$, so kann 
+diese spiegelsymmetrisch bzgl. $x=\pi$ über $[0,2\pi]$ fortgesetzt werden durch 
+%
+\begin{align*}
+  f_g(x) = \begin{cases}
+    f(x), & 0\leq x \leq \pi \\
+    -f(2\pi-x), &\pi < x \leq 2\pi
+  \end{cases}
+\end{align*}
+%
+und es ergibt sich eine Sinustransformation 
+%
+\begin{align*}
+  \hat{f}_g = \dfrac{a_0}{2} + \sum_{k=1}^{\infty} a_k\cos(kx), 
+  \quad 0\leq x\leq \pi, 
+  \quad\text{mit}\quad a_k = \dfrac{2}{\pi}\int_{0}^{\pi} f(x) \cos(kx) \diff x
+\end{align*}
+%
+
+\subsection{diskrete Kosinustransformation}
+
+In der Anwendung auf eine diskrete Zeitreihe $x_0,\dots,x_{N-1}$, zum Beispiel Pixelreihen eines Bildes, ergeben 
+sich verschiedene Möglichkeiten der spiegelsymmetrischen Fortsetzung und somit ergeben sich auch verschiedene 
+Versionen der diskreten Kosinustransformation (DCT):
+
+\textbf{DCT-I}: \\
+Im ersten Fall setzten wir unsere Punkte auf einen Rändern spiegelsymmetrisch bzgl. des Randes fort, d.h. 
+zum Beispiel durch 
+%
+\begin{align*}
+  y_0 = x_0, 
+  \dots, 
+  y_{N-2} = x_{N-2}, 
+  y_{N-1} = x_{N-1},
+  y_N = x_{N-2}, 
+  y_{N+1} = x_{N-3}, 
+  \dots, 
+  y_{2N-3} = x_1
+\end{align*}
+%
+oder in allgemeiner Schreibweise:
+%
+\begin{align*}
+  y_{n} = \begin{cases}
+    x_n, & 0\leq n\leq N-1 \\
+    x_{2N-2-n} & N \leq n \leq 2N-3
+  \end{cases}
+\end{align*}
+%
+Führen wir jetzt eine \glqq{normale}\grqq{} diskrete Fourier-Transformation mit unsere neue Zeitreihe 
+$y_0,\dots,y_{2N-3}$ durch
+%
+\begin{align*}
+  \hat{y}_{k} 
+  = \sum_{j=0}^{2N-3} y_j\cdot e^{-2\pi i\cdot \tfrac{jk}{2N-2}} 
+\end{align*}
+%
+Durch die Symmetry kommt jeder Punkt $x_j$ für $j=1,\dots,N-2$ doppelt vor und die Ränder $x_0$ und $x_{N-1}$ einfach.
+Wir erhalten daher mit analogen Umformungen wie bei der stetigen Sinus- / Kosinustransformation:
+%
+\begin{align*}
+  \hat{y}_{k} 
+  &= x_0 e^{-2\pi i\cdot \tfrac{0\cdot k}{2N-2}} + x_{N-1} \underbrace{e^{-2\pi i\cdot \tfrac{(N-1)\cdot k}{2N-2}}}_{(e^{-\pi i})^k}
+  + \sum_{j=1}^{N-2} x_j\cdot \Big(e^{-2\pi i\cdot \tfrac{jk}{2N-2}} + e^{-2\pi i\cdot \tfrac{(2N-2-n)k}{2N-2}} \Big) \\
+  &= x_0 + (-1)^kx_{N-1} + 2\sum_{j=1}^{N-2} x_j \cos\left(\dfrac{\pi}{N-1}nk\right)
+\end{align*} 
+%
+Nach einer Normierung mit dem Faktor $\tfrac{1}{2}$ erhalten wir:
+%
+\begin{align*}
+  \hat{x}^{(I)}_k 
+  = \dfrac{1}{2}\left(x_0 + (-1)^kx_{N-1}\right) + \sum_{j=1}^{N-2} x_j \cos\left(\dfrac{\pi}{N-1}nk\right), 
+  \quad k=0,\dots,N-1
+  \tag{I}\label{eq:DCTIeq}
+\end{align*}
+%
+
+\textbf{DCT-II}:
+Statt der exakten Fortsetzung auf $x_{N-1}$ setzen wir nun unsere Zeitreihe etwas versetzt fort, also so gesehen an 
+der Stelle $x_{N-1/2}$. Dies hat den Vorteil, dass für unsere neuen Punkte $y_{N}=x_{N-1}$ und $y_{2N-1}=x_0$ gilt. 
+Damit verschwindet der unschöne $x_0 + (-1)^kx_{N-1}$ aus (\ref{eq:DCTIeq}) und wir erhalten:
+%
+\begin{align*}
+  \hat{x}^{(II)}_k 
+  = \sum_{j=0}^{N-1} x_j \cos\left(\dfrac{\pi}{N}\Big(n+\dfrac{1}{2}\Big)k\right), 
+  \quad k=0,\dots,N-1
+  \tag{II}\label{eq:DCTIIeq}
+\end{align*}
+%
+
+\textbf{DCT-III}:
+DCT-III basiert auf einer Punktspiegelung, dafür erweitern wir zunächst mit einem neuen Punkt $y_N=0$ um dann nicht 
+spiegelsymmetrisch fortzusetzen, sondern mit $y_{N+n} = x_{N-n}$ für $n<N-1$. In der Herleitung haben wir daher 
+$x_0$ einfach und den Rest doppelt. Es ergibt sich
+%
+\begin{align*}
+  \hat{x}^{(III)}_k 
+  = \dfrac{1}{2}x_0 + \sum_{j=1}^{N-1} x_j \cos\left(\dfrac{\pi}{N}n\Big(k+\dfrac{1}{2}\Big)\right), 
+  \quad k=0,\dots,N-1
+  \tag{III}\label{eq:DCTIIIeq}
+\end{align*}
+%
+
+\textbf{DCT-IV}:
+Als letztes verbinden wir die Idee von DCT-II und DCT-III indem wir spiegelsymmetrisch bei $x_{N-1/2}$ fortsetzten 
+und bekommen
+%
+\begin{align*}
+  \hat{x}^{(III)}_k 
+  = \sum_{j=0}^{N-1} x_j \cos\left(\dfrac{\pi}{N}\Big(n+\dfrac{1}{2}\Big)\Big(k+\dfrac{1}{2}\Big)\right), 
+  \quad k=0,\dots,N-1
+  \tag{III}\label{eq:DCTIIIeq}
+\end{align*}
+%
+
+\begin{colbox}{Satz}
+  Die DCT-III und DCT-II Verfahren sind (bis auf Skalierung) invers zu einander. DCT-I und DCT-IV sind hingegen 
+  selbst-invers.
+\end{colbox}
+\textit{ohne Beweis.}
+
+\textcolor{red}{Insert images.}
+
+\subsection{Mehrdimensionale DCT}
+In der Anwendung dient DCT-II für die digitale Bildverarbeitung, wir müssen dafür jedoch eine Möglichkeit der 
+mehrdimensionalen DCT finden. Wir nutzen hierfür die Spalten- bzw. Zeilenweise Anwendung von DCT-II und 
+erhalten dann für $x\in\R^{N_1\times N_2}$ folgende Transformation
+\begin{align*}
+  \hat{x}_{k_1,k_2}
+  = \sum_{n_1=0}^{N_1-1} \sum_{n_2=0}^{N_2-1}
+  x_{n_1,n_2}
+  \cos\Big(\dfrac{\pi}{N_1}\big(n_1+\tfrac{1}{2}\big)k_1\Big)
+  \cos\Big(\dfrac{\pi}{N_2}\big(n_2+\tfrac{1}{2}\big)k_2\Big)
+\end{align*}
+
+\textcolor{red}{Detaillierte Erklärung zu JPEG und 8x8 Bildern}
+
+\subsection{Wavelets}
