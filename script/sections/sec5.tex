@@ -133,8 +133,8 @@ ergibt sich die diskrete Fourier-Transformation:
 Mit Berücksichtigung der $2\pi$-Periodizität von $f$ ergeben sich für $a_k$ und $b_k$ die Näherungswerte
 %
 \begin{align*}
-  a_k^* &:= \dfrac{2}{N}\sum{j=1}^N f(x_j)\cdot \cos(kx_j), \quad k=0,1,2,\dots \\
-  b_k^* &:= \dfrac{2}{N}\sum{j=1}^N f(x_j)\cdot \cos(kx_j), \quad k=1,2,3\dots
+  a_k^* &:= \dfrac{2}{N}\sum_{j=1}^N f(x_j)\cdot \cos(kx_j), \quad k=0,1,2,\dots \\
+  b_k^* &:= \dfrac{2}{N}\sum_{j=1}^N f(x_j)\cdot \cos(kx_j), \quad k=1,2,3\dots
 \end{align*}
 
 \begin{colbox}{Lemma}\label{lem:diskStstelSum}
@@ -234,7 +234,7 @@ verwendet und das Lemma \ref{lem:diskStstelSum} angewandt.
   Mittel der $N$ Stützstellen $x_j$ derart, dass die Summe der quadratischen Abweichungen 
   %
   \begin{align*}
-    F:=\sum_{j=1}^{N}\{g^*_n(x_j)-f(x_k)\}^2
+    F:=\sum_{j=1}^{N}\Big(g^*_n(x_j)-f(x_k)\Big)^2
   \end{align*}
   %
   minimal ist.
@@ -250,12 +250,14 @@ verwendet und das Lemma \ref{lem:diskStstelSum} angewandt.
 
 \subsection{Effiziente Berechnung der Fourier-Koeffizienten}
 Die näherungsweise Berechnung der Fourier-Koeffizienten $a_k^*$ und $b_k^*$ ist für eine große Anzahl $N$ der 
-Stützstellen sehr aufwendig. \\
-Dies ist vorallem bei der diskreten Fouriertransformation relevant, die in Ingenieur- und Naturwissenschaften 
-häufig eingesetzt wird, um z.B. die Frequenzen von Vibrationen. \\
+Stützstellen sehr aufwendig. 
+
+Dies ist vor allem bei der diskreten Fouriertransformation relevant, die in Ingenieur- und Naturwissenschaften 
+häufig eingesetzt wird, um z.B. die Frequenzen von Vibrationen. 
+
 $\implies$ Aufwand $\propto N^2$ ($N^2$ trigonometrischen Funktionsauswertungen). Problem bei $N\gg 1000$ \\
 Runge 1903, 1905, sowie verchiedene unabhängige Arbeiten vieler Mathematiker.
-\subsection{Schnelle Fourier-Transformation (Details)}
+%\subsection{Schnelle Fourier-Transformation (Details)}
 Zur Berechnung der Summe
 \begin{align*}
   a'_k := \sum_{j=0}^{N-1} f(x_j)\cos(kx_j), \quad k=0,1,\dots,\tfrac{N}{2} \\
