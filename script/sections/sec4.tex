@@ -499,7 +499,7 @@ Durch Umstellen von (\ref{eq:lanczosEQ2}) erhalten wir folgenden Algorithmus:
     \ForTe{$t=1,\dots,m-1$}{
       $r^{(t)} = Aq^{(t)}$ \\
       $\alpha_t = \langle r^{(t)}, q^{(t)}\rangle_2$ \\
-      $s^{(t)} = r^{(t)} - \alpha_tq^{(t)} - \beta - tq^{(t-1)}$\\
+      $s^{(t)} = r^{(t)} - \alpha_tq^{(t)} - \beta_tq^{(t-1)}$\\
       $\beta_{t+1} = \vertn{2}{s^{(t)}}$\\
       $q^{(t+1)} = s^{(t)} \,/\,\beta_{t+1}$\\
     }\EndTe{}{}
@@ -555,7 +555,8 @@ Die Grundidee des Pseudospektrums kann jedoch auch in viel allgemeineren Situati
   Für $\varepsilon\in\R_+$, ist das $\varepsilon$-Pseudospektrum $\sigma_\varepsilon(A)\subset\C  $ 
   einer Matrix $A\in\K^{n\times n}$ definiert als 
   \begin{align*}
-    \sigma_\varepsilon(A) := \{z\in\C  \sigma(A)\,|\, \vertn{2}{(A-zI)^{-1}}_2\geq \tfrac{1}{\varepsilon}\} \cup \sigma(A)
+    \sigma_\varepsilon(A) := \{z\in\C\backslash\sigma(A)\,:\, \vertn{2}{(A-zI)^{-1}}_2\geq \tfrac{1}{\varepsilon}\} 
+    \cup \sigma(A)
   \end{align*}
 \end{colbox}
 
@@ -611,6 +612,7 @@ Die Grundidee des Pseudospektrums kann jedoch auch in viel allgemeineren Situati
     \end{align*}
     %
   \item \textcolor{red}{vgl. Aufgabe 10.1}
+  \qed
 \end{enumerate}
 
 \textbf{Numerische Berechnung}\\
