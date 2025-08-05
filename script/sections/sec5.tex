@@ -259,7 +259,7 @@ Zur Berechnung der Summen
 %
 \begin{align*}
   a'_k := \sum_{j=0}^{N-1} f(x_j)\cos(kx_j), \quad k=0,1,\dots,\tfrac{N}{2} \\
-  b'_k := \sum_{j=0}^{N-1} f(x_j)\cos(kx_j), \quad k=1,2,\dots,\tfrac{N}{2}-1 
+  b'_k := \sum_{j=0}^{N-1} f(x_j)\sin(kx_j), \quad k=1,2,\dots,\tfrac{N}{2}-1 
   \tag{1}\label{eq:fftEQ1}
 \end{align*}
 %
@@ -319,7 +319,7 @@ In unserem Fall haben wir eine reellwertige Funktion $f$ und damit auch reellwer
 wir können dennoch eine diskrete komplexe Fourier-Transformation durchführen und uns aus dem Resultat 
 dann unsere reelle diskrete Fourier-Transformation berechnen:
 
-\begin{colbox}{Satz}[Zusammenhang zwischen reellwertigen und komplexen Fourier-Transformation]
+\begin{colbox}{Satz}[Zusammenhang zwischen reeller und komplexer DFT]
   Sei $\hat{y}=(\hat{y}_0,\dots,\hat{y}_{n-1})^T$ die komplexe DFT von 
   $y=(y_0,\dots,y_{n-1})^T\in\C^n$, wobei $y$ folgende Darstellung hat
   \begin{align*}
@@ -342,6 +342,7 @@ dann unsere reelle diskrete Fourier-Transformation berechnen:
 
 \textit{Beweis.} 
 Durch 
+%
 \begin{align*}
   \overline{\omega_n^{j(n-k)}} 
   = \overline{\underbrace{\omega_n^{n}}_{1}} \cdot \overline{\omega_n^{-k}} 
@@ -349,31 +350,54 @@ Durch
   = e^{-2\pi i\,/\,n\cdot k}
   = \overline{\omega_n^k} 
 \end{align*}
-erhalten wir für den ersten Summanden der oberen Formel
+%
+erhalten wir für die Summanden der oberen Formel
+%
 \begin{align*}
   \tfrac{1}{2}(\hat{y}_k + \overline{\hat{y}_{n-k}}) 
-  &= \dfrac{1}{2}\cdot\sum_{j=0}^{n-1}\Big(\hat{y}_j\cdot\omega_n^{jk} + \overline{\hat{y}}_j\cdot\overline{\omega_n^{j(n-k)}}\Big) \\
-  &= \dfrac{1}{2}\cdot\sum_{j=0}^{n-1}\left(\hat{y}_j+\overline{\hat{y}}_j\right)\cdot\omega_n^{jk}
+  &= \dfrac{1}{2}\cdot\sum_{j=0}^{n-1}
+  \Big({y}_j\cdot\omega_n^{jk} + \overline{{y}}_j\cdot\overline{\omega_n^{j(n-k)}}\Big) \\
+  &= \dfrac{1}{2}\cdot\sum_{j=0}^{n-1}\left({y}_j+\overline{{y}}_j\right)\cdot\omega_n^{jk}\\
+  &= \dfrac{1}{2}\cdot\sum_{j=0}^{n-1}\left({y}_j+\overline{{y}}_j\right)\cdot e^{-2\pi i\cdot\frac{jk}{n}}
 \end{align*}
-
-\textcolor{green}{Wenn du hier bist, Datei aktualisieren :)}
-
-Für den Ausdruck in Klammern des 2. Summanden \textcolor{red}{prüfen, glaube - statt +}
+%
+und 
+%
 \begin{align*}
-  \dfrac{1}{2i}\left(c_k+\overline{c_{n-k}}\right) 
-  &= \dfrac{1}{2i}\cdot\sum_{j=0}^{n-1}\left\{y_j\cdot\omega_n^{jk} + \overline{y_j}\cdot\overline{\omega_n^{j(n-k)}}\right\} \\
-  &= \dfrac{1}{2}\cdot\sum_{j=0}^{n-1}\left(y_j+\overline{y_j}\right)\cdot\omega_n^{jk}
+  \tfrac{1}{2i}(\hat{y}_k - \overline{\hat{y}_{n-k}})e^{-i\pi\cdot\tfrac{k}{n}}
+  &= \dfrac{1}{2i}\cdot\sum_{j=0}^{n-1}
+  \Big({y}_j\cdot\omega_n^{jk} - \overline{{y}}_j\cdot\overline{\omega_n^{j(n-k)}}\Big)
+  e^{-i\pi\cdot\tfrac{k}{n}} \\
+  &= \dfrac{1}{2i}\cdot\sum_{j=0}^{n-1}
+  \left({y}_j-\overline{{y}}_j\right)\cdot\omega_n^{jk}\cdot e^{-i\pi\cdot\tfrac{k}{n}}\\
+  &= \dfrac{1}{2i}\cdot\sum_{j=0}^{n-1}
+  \left({y}_j-\overline{{y}}_j\right)\cdot e^{-i\pi(2j+1)\tfrac{k}{n}}
 \end{align*}
-Mit Definition von $y_j$ folgt
+%
+Mit Definition von $y_j$ ergibt sich 
+%
 \begin{align*}
-  &\dfrac{1}{2}\left(c_k+\overline{c_{n-k}}\right) - \dfrac{1}{2i}\left(c_k+\overline{c_{n-k}}\right)e^{-\tfrac{ik\pi}{n}}\\
-  &= \sum_{j=0}^{n-1}\left\{f(x_{2j})e^{-ijk\tfrac{2\pi}{n}}+f(x_{2j+1})e^{-i(2j+1)k\tfrac{\pi}{n}}\right\} \\
-  &= \sum_{j=0}^{n-1}\left\{f(x_{2j})\left[\cos(kx_{2j})-i\sin(kx_{2j})\right]
-  + f(x_{2j+1})\left[\cos(kx_{2j+1})-i\sin(kx_{2j+1})\right]\right\} \\
+  {y}_j+\overline{{y}}_j &= 2\cdot \mathrm{Re}(y_j) = 2\cdot f(x_{2j}) \\
+  {y}_j-\overline{{y}}_j &= 2i\cdot \mathrm{Im}(y_j) = 2\cdot f(x_{2j+1}) \\
+\end{align*}
+%
+und für die Summe
+%
+\begin{align*}
+  &\tfrac{1}{2}(\hat{y}_k + \overline{\hat{y}_{n-k}}) 
+  +\tfrac{1}{2i}(\hat{y}_k - \overline{\hat{y}_{n-k}}) e^{-i\pi\cdot\tfrac{k}{n}} \\
+  &= \sum_{j=0}^{n-1}\Big(f(x_{2j})e^{-ijk\tfrac{2\pi}{n}}+f(x_{2j+1})e^{-i(2j+1)k\tfrac{\pi}{n}}\Big) \\
+  &= \sum_{j=0}^{n-1}\Big(f(x_{2j})\left[\cos(kx_{2j})-i\sin(kx_{2j})\right]
+  + f(x_{2j+1})\left[\cos(kx_{2j+1})-i\sin(kx_{2j+1})\right]\Big) \\
+  &= \sum_{j=0}^{n-1}\Big(f(x_{2j})\cos(kx_{2j}) + f(x_{2j+1})\cos(kx_{2j+1})\Big)\\
+  & + i\cdot\sum_{j=0}^{n-1}\Big(f(x_{2j})\sin(kx_{2j}) + f(x_{2j+1})\sin(kx_{2j+1})\Big) \\
   &= a_k' - ib_k'
 \end{align*}
 Die zweite Formel des Satzes ergibt sich durch Substitution von $k$ durch $n-k$. 
-\qed\\ \\
+\qed
+
+\textcolor{green}{Wenn du hier bist, Datei aktualisieren :)}
+
 Die Reduktion einer komplexen Fourier-Transformation von gerader Ordnung auf zwei Fourier-Transformationen je der halben
 Ordnung ist möglich. \\
 Diese Reduktion der Ordnung wird iterativ durchgeführt: \\ \\
