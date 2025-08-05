@@ -7,7 +7,7 @@ als zentrales Werkzeug der Signalverarbeitung und Bildkompression.
 Um die Idee hinter dem FFT-Algorithmus zu verstehen beginnen wir mit einer kurzen Wiederholung zu Fourier-Reihen.
 
 \subsection{Fourier-Reihen}
-Wir betrachten $f$ eine $2\pi$-periodische Funktion (d.h. $f(x+2\pi)=f(x)$ für alle $x\in\mathbb{R}$) mit 
+Wir betrachten $f$ eine $2\pi$-periodische Funktion (d.h. $f(x+2\pi)=f(x)$ für alle $x\in\R$) mit 
 dem Ziel eine Annäherung durch Linearkombinationen $2\pi$-periodischen Funktionen $\{\cos(kx)\}_{k=0}^{n}$ und 
 $\{\sin(kx)\}_{k=1}^{n}$ zu finden:
 %
@@ -145,11 +145,11 @@ Mit Berücksichtigung der $2\pi$-Periodizität von $f$ ergeben sich für $a_k$ u
   \begin{align*}
     \sum_{j=1}^N \cos(kx_j) 
     &= \begin{cases}
-      0, & \text{falls } \tfrac{k}{N}\notin\mathbb{Z} \\
-      N, & \text{falls } \tfrac{k}{N}\in\mathbb{Z}
+      0, & \text{falls } \tfrac{k}{N}\notin\Z \\
+      N, & \text{falls } \tfrac{k}{N}\in\Z
     \end{cases} \\
     \sum_{j=1}^N \sin(kx_j) 
-    &= 0 \text{ für alle } k\in\mathbb{Z}
+    &= 0 \text{ für alle } k\in\Z
   \end{align*}
   %
 \end{colbox}
@@ -162,16 +162,16 @@ Wir betrachten die komplexe Kombination beider Ausdrücke und erhalten
 \end{align*}%
 Dies ist eine endliche geometrische Reihe mit komplexem $q := e^{ikh} = e^{2\pi ik/N}$
 
-Ist $\tfrac{k}{N}\notin\mathbb{Z}$, dann ist $q\neq 1$, und die Summenformel der endlichen geometrischen Reihe liefert 
+Ist $\tfrac{k}{N}\notin\Z$, dann ist $q\neq 1$, und die Summenformel der endlichen geometrischen Reihe liefert 
 %
 \begin{align*}
    S_N 
    = e^{ikh}\dfrac{e^{ikhN}-1}{e^{ikh}-1} 
    = e^{ikh}\cdot\dfrac{e^{2\pi ki}-1}{e^{ikh}-1} 
-   = 0, \text{wenn } \dfrac{k}{N}\notin\mathbb{Z}
+   = 0, \text{wenn } \dfrac{k}{N}\notin\Z
 \end{align*}
 %
-Für $\tfrac{k}{N}\in\mathbb{Z}$ folgt wegen $q=1$, dass $S=N$ ist. 
+Für $\tfrac{k}{N}\in\Z$ folgt wegen $q=1$, dass $S=N$ ist. 
 
 Die Unabhängigkeit von Real- und Imaginärteil schließt den Beweis.
 \qed
@@ -182,15 +182,15 @@ Die Unabhängigkeit von Real- und Imaginärteil schließt den Beweis.
   %
   \begin{align*}
     \sum_{j=1}^{N} \cos(kx_j)\cos(lx_j) = \begin{cases}
-      0, &\text{falls } \tfrac{k+l}{N}\notin \mathbb{Z} \text{ und } \tfrac{k-l}{N}\notin \mathbb{Z} \\
-      N &\text{falls } \tfrac{k+l}{N}\in \mathbb{Z} \text{ und } \tfrac{k-l}{N}\in \mathbb{Z} \\
-      \tfrac{N}{2} &\text{falls } \tfrac{k+l}{N}\in \mathbb{Z} \text{ und } \tfrac{k-l}{N}\notin \mathbb{Z} \\
-      \tfrac{N}{2} &\text{falls } \tfrac{k+l}{N}\notin \mathbb{Z} \text{ und } \tfrac{k-l}{N}\in \mathbb{Z}
+      0, &\text{falls } \tfrac{k+l}{N}\notin \Z \text{ und } \tfrac{k-l}{N}\notin \Z \\
+      N &\text{falls } \tfrac{k+l}{N}\in \Z \text{ und } \tfrac{k-l}{N}\in \Z \\
+      \tfrac{N}{2} &\text{falls } \tfrac{k+l}{N}\in \Z \text{ und } \tfrac{k-l}{N}\notin \Z \\
+      \tfrac{N}{2} &\text{falls } \tfrac{k+l}{N}\notin \Z \text{ und } \tfrac{k-l}{N}\in \Z
     \end{cases}
     % = \begin{cases}
-    %   0, &\text{falls } \tfrac{k+l}{N}\notin \mathbb{Z} \text{ und } \tfrac{k-l}{N}\notin \mathbb{Z} \\
-    %   N &\text{falls } \tfrac{k+l}{N}\in \mathbb{Z} \text{ und } \tfrac{k-l}{N}\in \mathbb{Z}\\
-    %   \tfrac{N}{2} &\text{falls entweder } \tfrac{k+l}{N}\in \mathbb{Z} \text{ oder } \tfrac{k-l}{N}\in \mathbb{Z} \\
+    %   0, &\text{falls } \tfrac{k+l}{N}\notin \Z \text{ und } \tfrac{k-l}{N}\notin \Z \\
+    %   N &\text{falls } \tfrac{k+l}{N}\in \Z \text{ und } \tfrac{k-l}{N}\in \Z\\
+    %   \tfrac{N}{2} &\text{falls entweder } \tfrac{k+l}{N}\in \Z \text{ oder } \tfrac{k-l}{N}\in \Z \\
     % \end{cases}
   \end{align*}
   %
@@ -198,17 +198,17 @@ Die Unabhängigkeit von Real- und Imaginärteil schließt den Beweis.
   %
   \begin{align*}
     \sum_{j=1}^{N} \sin(kx_j)\sin(lx_j) = \begin{cases}
-      0, &\text{falls } \tfrac{k+l}{N}\notin \mathbb{Z} \text{ und } \tfrac{k-l}{N}\notin \mathbb{Z} \\
-      0 &\text{falls } \tfrac{k+l}{N}\in \mathbb{Z} \text{ und } \tfrac{k-l}{N}\in \mathbb{Z} \\
-      -\tfrac{N}{2} &\text{falls } \tfrac{k+l}{N}\in \mathbb{Z} \text{ und } \tfrac{k-l}{N}\notin \mathbb{Z} \\
-      \tfrac{N}{2} &\text{falls } \tfrac{k+l}{N}\notin \mathbb{Z} \text{ und } \tfrac{k-l}{N}\in \mathbb{Z}
+      0, &\text{falls } \tfrac{k+l}{N}\notin \Z \text{ und } \tfrac{k-l}{N}\notin \Z \\
+      0 &\text{falls } \tfrac{k+l}{N}\in \Z \text{ und } \tfrac{k-l}{N}\in \Z \\
+      -\tfrac{N}{2} &\text{falls } \tfrac{k+l}{N}\in \Z \text{ und } \tfrac{k-l}{N}\notin \Z \\
+      \tfrac{N}{2} &\text{falls } \tfrac{k+l}{N}\notin \Z \text{ und } \tfrac{k-l}{N}\in \Z
     \end{cases}
   \end{align*}
   %
   und 
   %
   \begin{align*}
-    \sum_{j=1}^{N} \cos(kx_j)\sin(lx_j) = 0 \quad \text{für all } k,l\in\mathbb{N}
+    \sum_{j=1}^{N} \cos(kx_j)\sin(lx_j) = 0 \quad \text{für all } k,l\in\N
   \end{align*}
   %
 \end{colbox}
@@ -224,7 +224,7 @@ verwendet und das Lemma \ref{lem:diskStstelSum} angewandt.
 \qed 
 
 \begin{colbox}{Satz}
-  Sei $N=2n$ mit $n\in\mathbb{N}$. Das Fourier-Polynom
+  Sei $N=2n$ mit $n\in\N$. Das Fourier-Polynom
   %
   \begin{align*}
   g_m^*(x) := \tfrac{1}{2}a^*_0 + \sum_{k=1}^{m}\Big(a^*_k\cos(kx)+b^*_k\sin(kx)\Big)
@@ -345,10 +345,10 @@ Durch
 %
 \begin{align*}
   \overline{\omega_n^{j(n-k)}} 
-  = \overline{\underbrace{\omega_n^{n}}_{1}} \cdot \overline{\omega_n^{-k}} 
-  = \overline{e^{-2\pi i \,/\,n\cdot(-k)}}
-  = e^{-2\pi i\,/\,n\cdot k}
-  = \overline{\omega_n^k} 
+  = \overline{\underbrace{\omega_n^{jn}}_{1}} \cdot \overline{\omega_n^{-jk}} 
+  = \overline{e^{-2\pi i \,/\,n\cdot(-jk)}}
+  = e^{-2\pi i\,/\,n\cdot jk}
+  = \overline{\omega_n^{jk}} 
 \end{align*}
 %
 erhalten wir für die Summanden der oberen Formel
@@ -390,19 +390,71 @@ und für die Summe
   &= \sum_{j=0}^{n-1}\Big(f(x_{2j})\left[\cos(kx_{2j})-i\sin(kx_{2j})\right]
   + f(x_{2j+1})\left[\cos(kx_{2j+1})-i\sin(kx_{2j+1})\right]\Big) \\
   &= \sum_{j=0}^{n-1}\Big(f(x_{2j})\cos(kx_{2j}) + f(x_{2j+1})\cos(kx_{2j+1})\Big)\\
-  & + i\cdot\sum_{j=0}^{n-1}\Big(f(x_{2j})\sin(kx_{2j}) + f(x_{2j+1})\sin(kx_{2j+1})\Big) \\
+  &\quad - i\cdot\sum_{j=0}^{n-1}\Big(f(x_{2j})\sin(kx_{2j}) + f(x_{2j+1})\sin(kx_{2j+1})\Big) \\
   &= a_k' - ib_k'
 \end{align*}
 Die zweite Formel des Satzes ergibt sich durch Substitution von $k$ durch $n-k$. 
 \qed
 
+Der Vorteil der komplexen DFT ist, dass eine Reduktion gerader Ordnung auf zwei komplexe DFT je der halben
+Ordnung ist möglich, führen wir diese Reduktion iterativ durch (was bei einer Potenz von $2$ möglich ist) 
+erhalten wir eine Divide \& Conquer Algorithmus mit linear-logarithmischer Laufzeit.
+
+\begin{colbox}{Satz}
+  Sei $n=2m$ mit $m\in\N$. Für die komplexen Fourier-Koeffizienten gilt:
+  \begin{align*}
+    \hat{f}_{2l} &= \sum_{j=0}^{m-1} (f_j+f_{m+j})\omega_n^{2lj} \\
+    \hat{f}_{2l+1} &= \sum_{j=0}^{m-1} (f_f-f_{m+j})\omega_n^{j}\cdot\omega_n^{2lj}
+  \end{align*}
+\end{colbox}
+
+\textit{Beweis.} \\
+Für die Einheitswurzeln gilt 
+%
+\begin{align*}
+  \omega_n^{2l(m+j)} 
+  = \omega_n^{2lj}\cdot \omega_n^{2lm} 
+  = \omega^{2lj}\cdot \big(\omega_n^{2m}\big)^l
+  = \omega^{2lj}\cdot \big(\underbrace{\omega_n^n}_{1}\big)^l
+  = \omega_n^{2lj} = \omega_m^{lj}
+\end{align*}
+%
+Diese Identität liefert die gewünschte Umformung der Fourier-Koeffizienten:
+%
+\begin{align*}
+  \hat{f}_{2l} 
+  &= \sum_{j=0}^{2m-1}f_j\omega_n^{2lj} \\
+  &= \sum_{j=0}^{m-1} f_j\omega_n^{2lj} + \sum_{j=0}^{m-1} f_{m+j}\underbrace{\omega_n^{2l(m+j)}}_{\omega_n^{2lj}} \\
+  &= \sum_{j=0}^{m-1} (f_j+f_{m+j})\omega_m^{lj}
+\end{align*}
+und 
+\begin{align*}
+  \hat{f}_{2l+1} &= \sum_{j=0}^{2m-1} f_j\omega_n^{(2l+1)j} \\
+  &= \sum_{j=0}^{m-1}f_j\omega_n^{(2l+1)j} + \sum_{j=0}^{m-1} f_{j+m}\omega_n^{(2l+1)(m+j)}\\
+  &= \sum_{j=0}^{m-1}f_j\omega_n^{2lj}\omega_n^j + \sum_{j=0}^{m-1} f_{j+m}
+  \underbrace{\omega_n^{2l(m+j)}}_{\omega_n^{2lj}}
+  \underbrace{\omega_n^{m}}_{-1}\omega_n^{j}\\
+%  &= \sum_{j=0}^{m-1}f_j\omega_n^{(2l+1)j} + \sum_{j=0}^{m-1} f_{j+m}\omega_n^{2l(m+j)}\omega_n^{m}\omega_n^{j}\\
+  &= \sum_{j=0}^{m-1}(f_j-f_{m+j})\omega_n^{j}\cdot\omega_m^{lj}
+\end{align*}
+%
+\qed
+
 \textcolor{green}{Wenn du hier bist, Datei aktualisieren :)}
 
-Die Reduktion einer komplexen Fourier-Transformation von gerader Ordnung auf zwei Fourier-Transformationen je der halben
-Ordnung ist möglich. \\
-Diese Reduktion der Ordnung wird iterativ durchgeführt: \\ \\
-Es sei $n=2m$, $m\in\mathbb{N}$. Dann gilt für die komplexe Fourier-Transformierte $c_k$ mit geraden Indizes 
-$k=2l$, $l=0,1,\dots,m-1$:
+Dieser Satz ermöglicht es uns nun die Fourier-Transformierte $\hat{f}$ als Kombination von zwei neuen 
+Fourier-Transformationen zu schreiben, denn für 
+\begin{align*}
+  g_{j} := f_j + f_{m+j}
+\end{align*}
+
+\textcolor{red}{Raus nehmen, weil umformuliert:}
+
+Sei $n=2m$, $m\in\N$, dann gilt für die komplexe Fourier-Transformierte $\hat{y}_k$ mit geraden Indizes 
+$k=2l$ für $l=0,1,\dots,m-1$:
+\begin{align*}
+  \hat{y}_{2l} = 
+\end{align*}
 \begin{align*}
   c_{2l} = \sum_{j=0}^{2m-1}y_j\omega_n^{2lj} = \sum_{j=0}^{m-1} (y_j+y_{m+j})\omega_n^{2lj}
 \end{align*}
@@ -441,7 +493,7 @@ sind die Koeffizienten
 die Fourier-Transformierten der Ordnung $m$ der Hilfswerte $z_{m+j}$. \\
 Die Zurückführung einer komplexen Fourier-Transformationen der Ordnung $n=2m$ auf $2$ komplexe Fourier-Transformationen 
 der Ordnung $m$ erfordert nach den obigen Formeln als wesentlichen Rechenaufwand $m$ komplexe Multiplikationen. \\
-In die Ordnung $n=2^\gamma$, $\gamma\in\mathbb{N}$, so kann die Reduktion auf $2$ Fourier-Transformationen halber Ordnung
+In die Ordnung $n=2^\gamma$, $\gamma\in\N$, so kann die Reduktion auf $2$ Fourier-Transformationen halber Ordnung
 iterativ durchgeführt werden. \\
 \begin{egbox}
   $FT_{32} \to 2FT_{16}\to 4FT_8 \to 8FT_4 \to 16FT_2\to 32FT_1$
