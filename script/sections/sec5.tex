@@ -10,12 +10,15 @@ Um die Idee hinter dem FFT-Algorithmus zu verstehen beginnen wir mit einer kurze
 Wir betrachten $f$ eine $2\pi$-periodische Funktion (d.h. $f(x+2\pi)=f(x)$ für alle $x\in\mathbb{R}$) mit 
 dem Ziel eine Annäherung durch Linearkombinationen $2\pi$-periodischen Funktionen $\{\cos(kx)\}_{k=0}^{n}$ und 
 $\{\sin(kx)\}_{k=1}^{n}$ zu finden:
+%
 \begin{align*}
   g_n(x) = \dfrac{1}{2}a_0 + \sum_{k=1}^{n}\Big(a_k\cos(kx)+b_k\sin(kx)\Big)
 \end{align*}
+%
 Wir suchen eine Approximation im Sinne der $L_2$ Norm, d.h. wir minimieren den Ausdruck
+%
 \begin{align*}
-  \vertn{2}{g_n(x)-f(x)}_2 = \left(\int_{-\pi}^{\pi} (g_n(x)-f(x))^2 \diff x\right)^{1/2}
+  \vertn{2}{g_n(x)-f(x)}_2 = \left(\int_{0}^{2\pi} (g_n(x)-f(x))^2 \diff x\right)^{1/2}
 \end{align*}
 
 \begin{colbox}{Satz}[Fourier-Koeffizienten]
@@ -134,7 +137,7 @@ Mit Berücksichtigung der $2\pi$-Periodizität von $f$ ergeben sich für $a_k$ u
   b_k^* &:= \dfrac{2}{N}\sum{j=1}^N f(x_j)\cdot \cos(kx_j), \quad k=1,2,3\dots
 \end{align*}
 
-\begin{colbox}{Satz}
+\begin{colbox}{Lemma}\label{lem:diskStstelSum}
   Für die diskreten Stützstellen $x_j=\tfrac{2\pi}{N}\cdot j$ mit $1\leq N$  gilt
   %
   \begin{align*}
@@ -144,10 +147,12 @@ Mit Berücksichtigung der $2\pi$-Periodizität von $f$ ergeben sich für $a_k$ u
       N, & \text{falls } \tfrac{k}{N}\in\mathbb{Z}
     \end{cases} \\
     \sum_{j=1}^N \sin(kx_j) 
-    &= 0 \text{für alle } k\in\mathbb{Z}
+    &= 0 \text{ für alle } k\in\mathbb{Z}
   \end{align*}
+  %
 \end{colbox}
-\textit{Beweis.}
+
+\textit{Beweis.}\\
 Wir betrachten die komplexe Kombination beider Ausdrücke und erhalten
 %
 \begin{align*}
@@ -155,7 +160,7 @@ Wir betrachten die komplexe Kombination beider Ausdrücke und erhalten
 \end{align*}%
 Dies ist eine endliche geometrische Reihe mit komplexem $q := e^{ikh} = e^{2\pi ik/N}$
 
-Ist $\tfrac{k}{N}\notin\mathbb{Z}$, dann ist $q\neq 1$, und die Summenformel der endlichen geometrischen Reihe ergibt 
+Ist $\tfrac{k}{N}\notin\mathbb{Z}$, dann ist $q\neq 1$, und die Summenformel der endlichen geometrischen Reihe liefert 
 %
 \begin{align*}
    S_N 
@@ -164,21 +169,33 @@ Ist $\tfrac{k}{N}\notin\mathbb{Z}$, dann ist $q\neq 1$, und die Summenformel der
    = 0, \text{wenn } \dfrac{k}{N}\notin\mathbb{Z}
 \end{align*}
 %
-Für $\tfrac{k}{N}\in\mathbb{Z}$ folgt wegen $q=1$, dass $S=N$ ist. \\
-Betrachtung on Realteilt und Imaginärteil liefert die Behauptung.
+Für $\tfrac{k}{N}\in\mathbb{Z}$ folgt wegen $q=1$, dass $S=N$ ist. 
+
+Die Unabhängigkeit von Real -und Imaginärteil schließt den Beweis.
+\qed
 
 \textcolor{red}{Intuition Bilder}
 
 \begin{colbox}{Satz}
-  Die trigonometrischen Funktionen erfüllen für die äquidistanten Stützstellen $x_j$ die diskreten Orthogonalitätsrelationen
+  Die trigonometrischen Funktionen erfüllen für die äquidistanten Stützstellen $x_j$ 
+  die diskreten Orthogonalitätsrelationen:
+  %
   \begin{align*}
     \sum_{j=1}^{N} \cos(kx_j)\cos(lx_j) = \begin{cases}
       0, &\text{falls } \tfrac{k+l}{N}\notin \mathbb{Z} \text{ und } \tfrac{k-l}{N}\notin \mathbb{Z} \\
-      \tfrac{N}{2} &\text{falls entweder } \tfrac{k+l}{N}\in \mathbb{Z} \text{ oder } \tfrac{k-l}{N}\in \mathbb{Z} \\
-      N &\text{falls } \tfrac{k+l}{N}\in \mathbb{Z} \text{ und } \tfrac{k-l}{N}\in \mathbb{Z}
+      N &\text{falls } \tfrac{k+l}{N}\in \mathbb{Z} \text{ und } \tfrac{k-l}{N}\in \mathbb{Z} \\
+      \tfrac{N}{2} &\text{falls } \tfrac{k+l}{N}\in \mathbb{Z} \text{ und } \tfrac{k-l}{N}\notin \mathbb{Z} \\
+      \tfrac{N}{2} &\text{falls } \tfrac{k+l}{N}\notin \mathbb{Z} \text{ und } \tfrac{k-l}{N}\in \mathbb{Z}
     \end{cases}
+    % = \begin{cases}
+    %   0, &\text{falls } \tfrac{k+l}{N}\notin \mathbb{Z} \text{ und } \tfrac{k-l}{N}\notin \mathbb{Z} \\
+    %   N &\text{falls } \tfrac{k+l}{N}\in \mathbb{Z} \text{ und } \tfrac{k-l}{N}\in \mathbb{Z}\\
+    %   \tfrac{N}{2} &\text{falls entweder } \tfrac{k+l}{N}\in \mathbb{Z} \text{ oder } \tfrac{k-l}{N}\in \mathbb{Z} \\
+    % \end{cases}
   \end{align*}
+  %
   und 
+  %
   \begin{align*}
     \sum_{j=1}^{N} \sin(kx_j)\sin(lx_j) = \begin{cases}
       0, &\text{falls } \tfrac{k+l}{N}\notin \mathbb{Z} \text{ und } \tfrac{k-l}{N}\notin \mathbb{Z} \\
@@ -187,34 +204,49 @@ Betrachtung on Realteilt und Imaginärteil liefert die Behauptung.
       \tfrac{N}{2} &\text{falls } \tfrac{k+l}{N}\notin \mathbb{Z} \text{ und } \tfrac{k-l}{N}\in \mathbb{Z}
     \end{cases}
   \end{align*}
+  %
   und 
+  %
   \begin{align*}
     \sum_{j=1}^{N} \cos(kx_j)\sin(lx_j) = 0 \quad \text{für all } k,l\in\mathbb{N}
   \end{align*}
+  %
 \end{colbox}
-\textit{Beweis.} Zur Überprüfung der Orthogonalitätsrelationen werden die trigonometrischen Identitäten
+
+\textit{Beweis.} \\
+Zur Überprüfung der Orthogonalitätsrelationen werden die trigonometrischen Identitäten
 \begin{align*}
   \cos(kx_j)\cos(lx_j) = \tfrac{1}{2}\Big(\cos(\big(k+l\big)x_j) + \cos(\big(k-l\big)x_j)\Big) \\
   \sin(kx_j)\sin(lx_j) = \tfrac{1}{2}\Big(\cos(\big(k-l\big)x_j) - \cos(\big(k+l\big)x_j)\Big) \\
   \cos(kx_j)\sin(lx_j) = \tfrac{1}{2}\Big(\sin(\big(k+l\big)x_j) - \sin(\big(k-l\big)x_j)\Big) \\
 \end{align*}
-verwendet und die Aussagen des folgenden Satzes angewendet
+verwendet und das Lemma \ref{lem:diskStstelSum} angewandt.
+\qed 
+
 \begin{colbox}{Satz}
-  Es sei $N=2n$, mit $n\in\mathbb{N}$. Da Fourier-Polynom
+  Sei $N=2n$ mit $n\in\mathbb{N}$. Das Fourier-Polynom
+  %
   \begin{align*}
-  g_n^*(x) := \tfrac{1}{2}a^*_0 + \sum_{k=1}^{m}\{a^*_k\cos(kx)+b^*_k\sin(kx)\}
+  g_m^*(x) := \tfrac{1}{2}a^*_0 + \sum_{k=1}^{m}\Big(a^*_k\cos(kx)+b^*_k\sin(kx)\Big)
   \end{align*}
-  von Gram $m<n$ mit Koeffizienten $a_k^*$ und $b^*_k$ approximiert die Funtkion $f(x)$ im diskreten quadratischen 
-  Mittel der $N$ Stützstellen $x_j$ derart, dass die Summe der Quadrate der Abweichungen
+  %
+  von Grad $m<n$ mit Koeffizienten $a_k^*$ und $b^*_k$ approximiert die Funktion $f(x)$ im diskreten quadratischen 
+  Mittel der $N$ Stützstellen $x_j$ derart, dass die Summe der quadratischen Abweichungen 
+  %
   \begin{align*}
-  F:=\sum_{j=1}^{N}\{g^*_n(x_j)-f(x_k)\}^2
+    F:=\sum_{j=1}^{N}\{g^*_n(x_j)-f(x_k)\}^2
   \end{align*}
+  %
   minimal ist.
 \end{colbox}
-\begin{egbox}
+\textit{ohne Beweis.}
+
+
+\begin{colbox}{Beispiel}
   Sei $f(x)=x^2$: \\
   \textcolor{red}{$x^2$ Plot} 
-\end{egbox}
+\end{colbox}
+\textcolor{green}{Wenn du hier bist, Datei aktualisieren :)}
 
 \subsection{Effiziente Berechnung der Fourier-Koeffizienten}
 Die näherungsweise Berechnung der Fourier-Koeffizienten $a_k^*$ und $b_k^*$ ist für eine große Anzahl $N$ der 
