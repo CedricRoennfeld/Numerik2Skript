@@ -397,8 +397,8 @@ Die zweite Formel des Satzes ergibt sich durch Substitution von $k$ durch $n-k$.
 \qed
 
 Der Vorteil der komplexen DFT ist, dass eine Reduktion gerader Ordnung auf zwei komplexe DFT je der halben
-Ordnung ist möglich, führen wir diese Reduktion iterativ durch (was bei einer Potenz von $2$ möglich ist) 
-erhalten wir eine Divide \& Conquer Algorithmus mit linear-logarithmischer Laufzeit.
+Ordnung möglich ist, führen wir diese Reduktion iterativ durch (was bei einer Potenz von $2$ möglich ist) 
+erhalten wir einen Divide \& Conquer Algorithmus mit linear-logarithmischer Laufzeit.
 
 \begin{colbox}{Satz}
   Sei $n=2m$ mit $m\in\N$. Für die komplexen Fourier-Koeffizienten gilt:
@@ -440,65 +440,42 @@ und
 %
 \qed
 
-\textcolor{green}{Wenn du hier bist, Datei aktualisieren :)}
+%\textcolor{green}{Wenn du hier bist, Datei aktualisieren :)}
 
 Dieser Satz ermöglicht es uns nun die Fourier-Transformierte $\hat{f}$ als Kombination von zwei neuen 
-Fourier-Transformationen zu schreiben, denn für 
+Fourier-Transformationen zu schreiben, denn für die Hilfswerte
+%
 \begin{align*}
-  g_{j} := f_j + f_{m+j}
+  g_{j} := f_j + f_{m+j} 
+  \quad \text{und}\quad 
+  h_{j} := (f_j) - (f_{m+j})\omega_n^j
+\end{align*}
+%
+gilt 
+\begin{align*}
+  \hat{g} = (\hat{f}_0,\hat{f}_2,\dots,\hat{f}_{2m-1})^T 
+  \quad\text{und}\quad 
+  \hat{h} = (\hat{f}_1,\hat{f}_3,\dots,\hat{f}_{2m})^T 
 \end{align*}
 
-\textcolor{red}{Raus nehmen, weil umformuliert:}
+Wir haben damit die Berechnung einer DFT von $f\in\C^{2m}$ (einmal Ordnung $2m$) auf die Berechnung zweier DFTs von 
+$g\in\C^m$ und $h\in\C^m$ (zweimal Ordnung $m$). 
 
-Sei $n=2m$, $m\in\N$, dann gilt für die komplexe Fourier-Transformierte $\hat{y}_k$ mit geraden Indizes 
-$k=2l$ für $l=0,1,\dots,m-1$:
-\begin{align*}
-  \hat{y}_{2l} = 
-\end{align*}
-\begin{align*}
-  c_{2l} = \sum_{j=0}^{2m-1}y_j\omega_n^{2lj} = \sum_{j=0}^{m-1} (y_j+y_{m+j})\omega_n^{2lj}
-\end{align*}
-Dabei wurde die Identität 
-\begin{align*}
-  \omega_n^{2l(m+j)} 
-  = \omega_n^{2lj}\cdot \omega_n^{2lm} 
-  = \omega^{2lj}\cdot \omega_n^{ln} = \omega_n^{2lj}\cdot \left(e^{-i\tfrac{2\pi}{n}}\right)^{2ln} 
-  = \omega_n^{2lj}\cdot \left(e^{-i\cdot2\pi}\right)^l 
-  = \omega_n^{2lj}
-\end{align*}
-Mit den $m$ Hilfswerten 
-\begin{align*}
-  z_j := y_j + y_{m+j}, \quad j=0,\dots,m-1
-\end{align*}
-und wegen $\omega_n^2 = \omega_m$ sind die Koeffizienten 
-\begin{align*}
-  c_{2l} = \sum_{j=0}^{m-1} z_jw_m^{jl}
-\end{align*}
-die Fourier-Transformierten der Ordnung $m$ der Hilfswerte $z_j$. \\
-Für die $c_k$ mit ungeraden Indizes $k=2l+1$ mit $l=0,1,\dots,m-1$ gilt 
-\begin{align*}
-  c_{2l+1} &= \sum_{j=0}^{2m-1} y_j\omega_n^{(2l+1)j} \\
-  &= \sum_{j=0}^{m-1}\left\{ y_j\omega_n^{(2l+1)j}+y_{j+m}\omega_n^{(2l+1)(n+j)}\right\}\\
-  &= \sum_{j=0}^{m-1}(y_j-y_{m+j})\omega_n^{(2l+1)j} \\
-  &= \sum_{j=0}^{m-1}(y_j-y_{m+j})\omega_n^{j}\cdot\omega_n^{2lj}
-\end{align*}
-Mit den weiteren $m$ Hilfswerten
-\begin{align*}
-  z_{m+j} := (y_j-y_{m+j})\omega_n^j,\quad j=0,1,\dots,m-1
-\end{align*}
-sind die Koeffizienten
-\begin{align*}
-  c_{2l+1} = \sum_{j=0}^{m-1} z_{m+j} \omega_m^{jl}, \quad l=0,1,\dots,m-1
-\end{align*}
-die Fourier-Transformierten der Ordnung $m$ der Hilfswerte $z_{m+j}$. \\
-Die Zurückführung einer komplexen Fourier-Transformationen der Ordnung $n=2m$ auf $2$ komplexe Fourier-Transformationen 
-der Ordnung $m$ erfordert nach den obigen Formeln als wesentlichen Rechenaufwand $m$ komplexe Multiplikationen. \\
-In die Ordnung $n=2^\gamma$, $\gamma\in\N$, so kann die Reduktion auf $2$ Fourier-Transformationen halber Ordnung
-iterativ durchgeführt werden. \\
-\begin{egbox}
-  $FT_{32} \to 2FT_{16}\to 4FT_8 \to 8FT_4 \to 16FT_2\to 32FT_1$
-\end{egbox}
-Da jeder Schritt $n\,/\,2$ komplexe Multiplikationen fordert, beträgt der gesamte Rechenaufwand
-\begin{align*}
-  z_{FT,n} = \tfrac{1}{2}n\gamma = \tfrac{1}{2}n\log_2 n
-\end{align*}
+\begin{colbox}{Beispiel}
+  Wollen wir eine DFT Ordnung $32$ durchführen, so brechen wir dies erst auf die Berechnung von zwei DFTs mit Ordnung 
+  16 herunter. Jede dieser DFTs wird dann wiederum in zwei DFTs mit Ordnung 8 vereinfacht. Wiederholt man dies iterativ 
+  so ergibt sich:\\
+  $
+  \qquad FT_{32} 
+  \rightarrow 2\ FT_{16} 
+  \rightarrow 4\ FT_{8} 
+  \rightarrow 8\ FT_{4} 
+  \rightarrow 16\ FT_{2} 
+  \rightarrow 32\ FT_{1}
+  $
+\end{colbox}
+
+\begin{colbox}{Bemerkung}
+  Der Rechenaufwand für die Berechnung einer diskreten komplexen Fourier-Transformation nach der Methode des Aufteilens
+  entspricht $\mathcal{O}(n\log(n))$.
+\end{colbox}
