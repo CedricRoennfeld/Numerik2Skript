@@ -717,7 +717,7 @@ und bekommen
 \end{colbox}
 \textit{ohne Beweis.}
 
-\textcolor{red}{Insert images.}
+\textcolor{red}{Insert compare of DCT Versions.}
 
 \subsection{Mehrdimensionale DCT}
 In der Anwendung dient DCT-II für die digitale Bildverarbeitung, wir müssen dafür jedoch eine Möglichkeit der 
@@ -734,3 +734,230 @@ erhalten dann für $x\in\R^{N_1\times N_2}$ folgende Transformation
 \textcolor{red}{Detaillierte Erklärung zu JPEG und 8x8 Bildern}
 
 \subsection{Wavelets}
+Bisher haben wir uns primär mit der Fourier-Transformation und ihren diskreten Varianten (DFT oder DCT) beschäftigt 
+und diese als Werkzeug der Spektralanalyse kennengelernt. 
+
+Die dafür verwendeten trigonometrischen Polynome ermöglichen eine einfache Trennung von nieder- und hochfrequenten 
+Anteilen unseres Signals und verwenden dabei glatte Basisfunktionen. 
+
+Ein wesentlicher Nachteil der Verwendung von Sinusoiden als Basis liegt in der Eigenschaft der globalen Ausdehnung, 
+also dass jede Basisfunktion über dem gesamten Definitionsbereich \glqq{relevant}\grqq{} ist. Ohne einer 
+lokalen Begrenzung gehen dadurch örtliche Informationen verloren. 
+
+Außerdem kommt es bei der Annäherung von unstetigen Funktionen durch eine Fourier-Reihe zu Über- und Unterschwingern 
+an den Unstetigkeitsstellen:
+
+\textcolor{red}{Insert Gibbs phenomenon example for square wave.}
+
+Um diesen Nachteilen entgegen zu wirken führen wir nun das Konzept der Wavelets als eine multiskalare Basis ein. 
+Sie erlaubt ähnlich wie die Fourier-Analyse auch eine Frequenzzerlegung gewährleistet gleichzeitig aber auch eine 
+zeitliche Lokalisierung. 
+
+Wir wollen uns im folgenden lediglich auf die dikrete Wavelet-Transformation konzentrieren und betrachten dabei 
+das Intervall $[0,1]$ als Definitionsbereich, d.h. wir suchen eine alternative Möglichkeit eine auf $[0,1]$ integrierbare 
+Funktion $f$ approximieren. 
+
+Wir beginnen damit absteigende Aufteilung des Intervall $[0,1]$ in äquidistante Teilintervalle zu definieren, 
+für welche wir dann stückweise konstante Funktionen betrachten. 
+
+\begin{colbox}{Definition}
+  Sei $p\in\N$ fest. Für $k=0,1,\dots,p$ ist 
+  %
+  \begin{align*}
+    \Delta_k := \{j\cdot h_k \,|\, j=0,\dots,2^k, k_k=2^{-k}\} \subset [0,1]
+  \end{align*}
+  %
+  ein Gitter von Feinheitsgrad $k$. Die Unterteilung $\Delta_{k+1}$ entsteht dabei durch eine Verfeinerung 
+  von $\Delta_k$. 
+
+  Das feinste Gitter ist $\Delta_p$ mit Gitterweite $h_p=2^{-p}$ und das gröbste ist $\Delta_0$ mit Gitterweite $h_0=0$.
+
+  Eine Skala von Funktionsräumen ergibt sich durch 
+  %
+  \begin{align*}
+    V_0 \subset V_1 \subset \dots V_p
+  \end{align*}
+  %
+  wobei $V_k$ der Raum aller Treppenfunktionen über $\Delta_k$ ist, d.h. 
+  %
+  \begin{align*}
+    V_k := \{f:[0,1]\to\R \,|\, \forall j=0,\dots,2^k-1: f \text{ konstant auf } I_{k,j}=[j\cdot h_k, (j+1)\cdot h_k] \}
+  \end{align*}
+  %
+\end{colbox}
+
+Eine triviale Basis von $V_k$ bilden dabei die charakteristischen Funktionen auf $I_{k,j}$ und eine Skalierung 
+mit $2^{k/2}$ macht diese Basis zu einem Orthonormalsystem:
+
+\begin{colbox}{Satz}\label{satz:chiOrthonorm}
+  Die Menge $\{\chi_{k,j}\}_{j=0}^{2^k-1}$ mit $\chi = \chi_{[0,1]}$ und
+  %
+  \begin{align*}
+    \chi_{k,j}(x) = 2^{k/2}\chi(2^kx-j) = \begin{cases}
+      2^{k/2}, &x\in I_{k,j}\\
+      0, &\text{sonst}
+    \end{cases} 
+  \end{align*}
+  %
+  bildet eine Orthonormalbasis von $V_k$ bzgl. dem $L^2$-Skalarprodukt.
+\end{colbox}
+\textit{Beweis.}
+\begin{enumerate}
+  \item Jede Funktion $f\in V_k$ lässt sich nach Definition von $V_k$ als Treppenfunktionen über $\Delta_k$ schreiben, 
+  d.h. sie hat die Darstellung 
+  \begin{align*}
+    f(x) 
+    = \sum_{j=0}^{2^k-1} c_j\cdot \chi_{I_{j,k}}(x)
+    = \sum_{j=0}^{2^k-1} 2^{-k/2}c_j\cdot \chi_{j,k}(x) \in 
+    \Span\{\chi_{k,j} \,|\, j=0,\dots,2^k-1\}
+  \end{align*}
+  \item Für $j\neq l$ sind $I_{j,k}$ und $I_{l,k}$ disjunkt und es gilt:
+  \begin{align*}
+    &\int_{0}^{1} \chi_{j,k}(x) \cdot \chi_{l,k}(x) \diff x \\
+    &\quad = 2^{k}\cdot \int_{0}^{1} \chi_{I_{j,k}}(x) \cdot \chi_{I_{l,k}}(x) \diff x \\
+    &\quad = 2^{k}\cdot\left(
+      \int_{I_{j,k}} \underbrace{\chi_{I_{j,k}}(x)}_{1} \cdot \underbrace{\chi_{I_{l,k}}(x)}_{0} \diff x
+      + \int_{I_{j,k}} \underbrace{\chi_{I_{j,k}}(x)}_{0} \cdot \underbrace{\chi_{I_{l,k}}(x)}_{1} \diff x
+      + \int_{[0,1]\backslash(I_{j,k}\cup I_{l,j})} 
+      \underbrace{\chi_{I_{j,k}}(x)}_{0} \cdot \underbrace{\chi_{I_{l,k}}(x)}_{0}  \diff x
+    \right) \\
+    &\quad = 2^{k} \left(\Big((j+1)2^{-k} - j2^{-k}\Big) + \Big((l+1)2^{-k} - l2^{-k}\Big) + 0\right) \\
+    &\quad = 0
+  \end{align*}
+  Im Fall $l=j$ ergibt sich:
+  \begin{align*}
+    \int_{0}^{1} \underbrace{\chi_{j,k}(x)^2}_{0^2=0, 1^2=1} \diff x 
+    = 2^k \cdot \int_{0}^{1} \chi_{I_{j,k}}(x) \diff x 
+    = 2^k \cdot \Big((j+1)2^{-k} - j2^{-k}\Big) 
+    = 1
+  \end{align*}
+  Damit bildet die Menge ein Orthonormalsystem, also auch linear unabhängig ist durch 1. eine Orthonormalbasis.
+  \qed
+\end{enumerate}
+
+\begin{colbox}{Bemerkung}
+  Es gilt $\chi(x) = \chi(2x) + \chi(2x-1)$ und damit folgt
+  %
+  \begin{align*}
+    \chi_{k,j} 
+    = \dfrac{1}{\sqrt{2}}\Big(\chi_{k+1,2j}(x) + \chi_{k+1,2j+1}(x)\Big)
+  \end{align*}
+  %
+\end{colbox}
+
+Die Idee hinter Wavelets ist es nun für eine Festes $k$ das Gitter $\Delta_k$ zu $\Delta_{k+1}$ zu verfeinern. 
+Da wir wissen, dass $V_k$ ein Unterraum von $V_{k+1}$ ist, 
+lässt sich die Basis $\{\chi_{k,j}\}_{j=0}^{2^k-1}$ zu einer Basis 
+von $V_{k+1}$ erweitern. Durch die Setzung $W_k = V_{k+1} \cap V_k^\perp$ ergibt sich 
+%
+\begin{align*}
+  V_{k+1} = V_k \oplus W_k
+\end{align*}
+%
+und wir können durch das finden einer Basis von $W_k$ eine Basis von $V_k$ konstruieren. Für die Basis 
+$\{\psi_{k,j}\}_{j=0}^{2^k-1}$ fordern wir erneut die Schreibweise in Abhängigkeit einer Grundfunktion $\psi$:
+%
+\begin{align*}
+  \psi_{k,j}(x) = 2^{k/2}\psi(2^kx-j) 
+  \tag{1} \label{eq:waveletsEQ1}
+\end{align*}
+%
+sowie die Bedingung $\psi_{k,j}\in W_k$, d.h. 
+%
+\begin{align*}
+  \psi_{k,j} &\in V_{k+1} 
+  \tag{2}\label{eq:waveletsEQ2}\\
+  \langle\psi(k,j), \chi_{k,l}\rangle_2 &= 0 \qquad \text{für alle } l=0,\dots,2^k-1
+  \tag{3}\label{eq:waveletsEQ3}
+\end{align*}
+%
+Außerdem wollen wir auch hier wieder eine Orthonormalbasis, also fordern wir weiter 
+%
+\begin{align*}
+  \langle\psi(k,j), \psi_{k,l}\rangle_2 &= \delta_{jl} = \begin{cases}
+    1, \quad & j=l \\
+    0, \quad & j\neq l
+  \end{cases} \qquad \text{für alle } l=0,\dots,2^k-1
+  \tag{4}\label{eq:waveletsEQ4}
+\end{align*}
+%
+\begin{colbox}{Lemma}
+  Für die Funktion
+  %
+  \begin{align*}
+    \psi(x) := \chi(2x) - \chi(2x-1) = \begin{cases}
+      1, \quad & 0\leq x\leq \tfrac{1}{2}\\
+      -1, \quad & \tfrac{1}{2}\leq x\leq 1 \\
+      0, \quad & \text{sonst}
+    \end{cases}
+  \end{align*}
+  %
+  erfüllen $\{\psi_{k,j}\}_{j=0}^{2^k-1}$ aus (\ref{eq:waveletsEQ1}) die 
+  Bedingungen (\ref{eq:waveletsEQ2}), (\ref{eq:waveletsEQ3}) und (\ref{eq:waveletsEQ4}).
+\end{colbox}
+
+\textit{Beweis.} 
+\begin{enumerate}
+  \item[(2)] 
+  Für $j=0,\dots,2^k-1$ gilt 
+  \begin{align*}
+    \psi_{k,j} 
+    = 2^{k/2}\psi(2^kx-j) 
+    &= 2^{k/2}\Big(\chi(2^{k+1}x-j)-\chi(2^{k+1}x-2j-1)\Big) \\
+    &= \dfrac{1}{\sqrt{2}}\Big(\chi_{k+1,2j}(x) - \chi_{k+1,2j+1}(x)\Big)
+    %\tag{5}(\label{eq:waveletsEQ5})
+  \end{align*}
+  %
+  Da wir wissen, dass $\{\chi_{k+1,j}\}_{j=0}^{2^{k+1}-1}$ eine Basis von $V_{k+1}$ ist, folgt $\psi_{k,j}\in V_{k+1}$.
+  \item[(3)] Verwenden wir die Darstellungen von $\psi_{k,j}$ und $\chi_{k,j}$ durch $\{\chi_{k+1,j}\}_{j=0}^{2^{k+1}-1}$
+  erhalten wir durch Satz \ref{satz:chiOrthonorm} die geforderte Orthogonalität für $j\neq k$:
+  %
+  \begin{align*}
+    \langle \psi_{k,j}, \chi_{k,l} \rangle
+    &= \left\langle \dfrac{1}{\sqrt{2}}\Big(\chi_{k+1,2j}(x) - \chi_{k+1,2j+1}(x)\Big), 
+    \dfrac{1}{\sqrt{2}}\Big(\chi_{k+1,2l}(x) + \chi_{k+1,2l+1}(x)\Big) \right\rangle _2 \\
+    &= \dfrac{1}{2}\left(
+      \underbrace{\langle \chi_{k+1,2j}(x), \chi_{k+1,2l}(x) \rangle_2}_{0}
+      + \underbrace{\langle \chi_{k+1,2j}(x), \chi_{k+1,2l+1}(x) \rangle_2}_{0}\right.\\
+      &\qquad \left.- \underbrace{\langle \chi_{k+1,2j+1}(x), \chi_{k+1,2l}(x) \rangle_2}_{0}
+      - \underbrace{\langle \chi_{k+1,2j+1}(x), \chi_{k+1,2l+1}(x) \rangle_2}_{0} 
+    \right)\\
+    &= 0
+  \end{align*}
+  %
+  \item[(4)] Analog erhalten wir auch, dass $\{\psi_{k,j}\}_{j=0}^{2^k-1}$ ein Orthonormalsystem bildet.
+\end{enumerate}
+
+\begin{colbox}{Bemerkung}
+  Im allgemeinen werden die Funktion $\chi$ und $\psi$ Vater- und Mutter-Wavelet genannt. Für unseren speziellen Fall 
+  heißt $\{\psi_{k,j}\}_{j=0}^{2^k-1}$ Haar-Wavelet-Basis. 
+
+  Neben der Haar-Wavelet-Basis ergeben sich durch andere Wahlen von $\chi$ und $\psi$ neue Basismengen, Beispiele 
+  hierfür sind Meyer-Wavelet, Mexikanischer Hut oder Daubechies D4-Wavelet:
+
+  \textcolor{red}{Insert images of other wavelets.}
+\end{colbox}
+
+Das Finden einer Basis für $W_{k}$ erlaubt das konstruieren einer neuen Basis von $V_{k+1}$, diese nennen wir 
+auch Zweiskalenbasis. Durch das rekursive Zerlegen von $V_k=V_{k-1}+W_{k-1}$ erhalten wir 
+%
+\begin{align*}
+  V_p = V_0 \oplus W_0 \oplus W_1 \oplus \dots \oplus W_{p-1}
+\end{align*}
+%
+mit der Basis 
+%
+\begin{align*}
+  \{\chi_{0,0}\}
+  \cup \{\psi_{1,0}, \psi_{1,1}\}
+  \cup \{\psi_{2,0},\dots,\psi_{2,3}\} 
+  \cup \dots \cup\{\psi_{p-1,0}, \dots, \psi_{p-1,2^{p-1}-1}\}
+\end{align*}
+%
+wobei $\chi_{0,0}$ auf $[0,1]$ einfach nur konstant $1$ ist.
+
+\begin{colbox}{Bemerkung}
+  Wie auch schon bei der Fourier-Transformation sind wir nun in der Lage eine Bestapproximation zu $f$ im Raum $V_k$ 
+  zu finden, die Wavelet-Transformation. Auch hier lässt sich daraus eine diskrete Wavelet-Transformation und eine 
+  schnelle Wavelet-Transformation herleiten. 
+\end{colbox}
