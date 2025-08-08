@@ -1,0 +1,60 @@
+% !TeX root = ../script.tex
+
+\section{Minimierung von Funktionen}
+Wir erinnern uns an das Gradientenabstiegsverfahren, in welchem wir die Minimierung des Funktionals 
+%
+\begin{align*}
+  \phi(x) = \dfrac{1}{2}x^HAx - x^Hb 
+\end{align*}
+%
+verwendet haben um die Lösung des linearen Gleichungssystems $Ax=b$ zu finden. 
+
+Analog dazu können wir diesen Ansatz auch für beliebige Nullstellenprobleme verwenden. 
+
+Für eine hinreichend glatte Funktion $f:D(f)\subset \R^n\to\R^m$ mit $m\geq n$, 
+wandeln wir unser Nullstellenproblem $f(x)=0$ in ein nichtlineares Ausgleichsproblem um und minimieren 
+%
+\begin{align*}
+  \phi(x) = \dfrac{1}{2}\vertn{2}{f(x)}_2^2
+\end{align*}
+
+Für eine Nullstelle $\hat{x}$ von $f$ gelten die notwendigen und hinreichenden Bedingungen eines lokalen Minimums:
+%
+\begin{align*}
+  \nabla \phi(\hat{x}) 
+  &= J_f(\hat{x})^T \cdot f(\hat{x}) = 0\\
+  \nabla^2 \phi(\hat{x}) 
+  &= J_f(\hat{x})^TJ_f(\hat{x}) + \sum_{i=1}^{m} f_i(\hat{x})\cdot \nabla^2 f_i(\hat{x}) 
+  = J_f(\hat{x})^TJ_f(\hat{x}) \succeq 0
+\end{align*}
+%
+
+Um eine potentielle Nullstelle von $f$ zu finden können wir also auch ein Minimum von $\phi$ bestimmen. Das 
+bekannte Gradientenabstiegsverfahren wäre eine Möglichkeit hierfür, konvergiert jedoch nicht besonders schnell.
+
+Eine Alternative hierzu ist die Newton-Methode oder Newton-artige Verfahren, bei welchen wir eine in jedem 
+Iterationsschritt Linearisierung durchführen.
+
+Als kurze Wiederholung betrachten wir hierfür noch einmal die Idee hinter der Newton Methode. Gegeben sei erneut 
+eine hinreichend glatte Funktion $f:\R^n\to\R^n$. Für das Ziel eine Nullstelle von $f$ zu finden, betrachten wir 
+die Linearisierung (Taylor-Formel 1. Ordnung)
+%
+\begin{align*}
+  f_L(x) = f(x_0) + \dfrac{\partial }{\partial x} f(x) \Big|_{x=x_0}\cdot (x-x_0)
+\end{align*}
+%
+Da $f(x) \approx f_L(x)$ bestimmen wir nun die Nullstelle von $f_L(x)$. Als lineares Gleichungssystem ist dies leicht 
+zu lösen uns es ergibt sich 
+%
+\begin{align*}
+  x = x_0 - \left(\dfrac{\partial }{\partial x} f(x) \Big|_{x=x_0}\right)^{-1}\cdot F(x_0)
+\end{align*}
+%
+Aus dieser Nullstelle bilden wir eine rekursive Vorschrift und erhalten die mehrdimensionale Newton-Methode:
+%
+\begin{align*}
+  x_{k+1} = x_k - \left(\dfrac{\partial }{\partial x} f(x) \Big|_{x=x_k}\right)^{-1}\cdot F(x_k),
+  \qquad x_0\in\R^n
+\end{align*}
+%
+\textcolor{red}{Probleme von Newton + Konvergenzgeschwindigkeit}

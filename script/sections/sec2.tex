@@ -15,7 +15,9 @@ Wir schreiben $A=M-N$, wobei $M$ invertierbar und häufig sogar eine Diagonalmat
   \iff 
   (M-N)x=b 
   \iff 
-  Mx=Nx+bx=\underbrace{M^{-1}\cdot(Nx+b)}_{\Tilde{T}x}
+  Mx=Nx+b
+  \iff
+  x=\underbrace{M^{-1}\cdot(Nx+b)}_{\Tilde{T}x}
 \end{align*}
 %
 $\Tilde{T}$ ist affin-linear, wir erhalten also unser FP-Problem $x=\Tilde{T}x=Tx+c$ 
@@ -188,7 +190,7 @@ und $\vertn{2}{\cdot}$, existiert eine Konstante $c_\varepsilon>0$ mit
 Folglich ist 
 %
 \begin{align*}
-  \varrho(T) 
+  \rho(T) 
   \leq \max_{x^{(0)}} \limsup_{k\rightarrow \infty} \vertn{2}{x^{(k)}-\hat{x}}^{1/k}
   \leq \vertn{3}{T}_\varepsilon
 \end{align*}
@@ -203,8 +205,8 @@ $(x^{(k)})$ mit Grenzwert $\hat{x}$ ist:
 \end{itemize}
 
 \begin{colbox}{Korollar} 
-  Die Zahl $\varrho(T)$ ist der (asymptotischer) Konvergenzfaktor von der Iteration $x^{(k)}=Tx^{(k-1)}+c$. \\
-  Die (asymptotische) Konvergenzrate lässt sich daher ausdrücken durch $r=-\log_{10}\varrho(T)$
+  Die Zahl $\rho(T)$ ist der (asymptotischer) Konvergenzfaktor von der Iteration $x^{(k)}=Tx^{(k-1)}+c$. \\
+  Die (asymptotische) Konvergenzrate lässt sich daher ausdrücken durch $r=-\log_{10}\rho(T)$
 \end{colbox}
 
 \subsection{Zwei einfache Iterationsverfahren}
@@ -417,7 +419,7 @@ Es ergibt sich somit ein eindimensionales Optimierungsproblem um die optimale Sc
 \end{align*}
 %
 Ein Nachteil des Verfahrens ist die mögliche Entstehung oszillierender Pfade (\glqq Zick-Zack-Verhalten\grqq{}) 
-aufgrund unvorteilhafter Richtungen (\textcolor{red}{Richtungen noch nicht orthogonal zu Niveaulinien, überarbeiten!}):
+aufgrund unvorteilhafter Richtungen (\textcolor{red}{direkter Weg irreführend, lieber 2 Schritte wie bei cg}):
 
 \begin{center}
   \input{figures/zickZackCourse.tikz}
