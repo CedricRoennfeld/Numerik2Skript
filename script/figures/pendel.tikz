@@ -1,0 +1,37 @@
+\begin{tikzpicture}[scale=1.1,>=Latex]
+  \usetikzlibrary{arrows.meta,angles,quotes}
+
+  % Parameter
+  \def\L{3.0}      % Pendellänge
+  \def\ang{25}     % Winkel in Grad
+
+  % Punkte
+  \coordinate (O) at (0,0);
+  \coordinate (V) at (0,-\L); % Vertikal nach unten
+  \coordinate (P) at ({\L*sin(\ang)},{-\L*cos(\ang)}); % Bob-Position
+
+  % Aufhängung
+  \draw[line width=0.5pt] (-1.4,0) -- (1.4,0);
+  \draw[fill=black] (O) circle (1.2pt);
+
+  % Ruhelage (vertikal) und Faden
+  \draw[densely dashed] (O) -- (V);
+  \draw[line width=0.9pt] (O) -- (P) node[midway, right]{$\ell$};
+
+  % Bob
+  \draw[fill=white,line width=0.9pt] (P) circle (0.18);
+  \node[below right=0pt and 2pt of P] {$m$};
+
+  % Winkelbogen und Beschriftung
+  \draw (0,-1.1) arc[start angle=-90, end angle={-90+\ang}, radius=1.1];
+  \node at ({1.1*sin(\ang/2)},{-0.7-0.55*cos(\ang/2)}) {$\alpha$};
+
+  % Gewichtskraft mg
+  \draw[->,line width=0.9pt] (P) -- ++(0,-1) node[below] {$F_G = mg$};
+
+  % Tangentiale Komponente mg sin(alpha) (Rückstellkraft)
+  \draw[->,line width=0.9pt]
+    (P) -- ++({-0.9*cos(\ang)},{-0.9*sin(\ang)})
+    node[below left] {$F_{tang} = mg\sin\alpha$};
+
+\end{tikzpicture}

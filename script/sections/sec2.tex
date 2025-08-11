@@ -119,7 +119,8 @@ Einsetzen der Definition von $\tilde{T}$ liefert:
     Falls $\rho(T)<1$ dann existiert eine Norm $\vertn{2}{\cdot}_\varepsilon$ auf $\K^n$ 
     und eine dadurch induzierte Operatornorm $\vertn{3}{\cdot}_\varepsilon$ auf $\K^{n\times n}$ 
     mit $\vertn{3}{T}_\varepsilon \leq \rho(T) + \varepsilon < 1$ für $\varepsilon$ klein genug 
-    (\textcolor{red}{vgl. Aufgabe 2.3}). 
+    (Übungsaufgabe).
+    %(\textcolor{red}{vgl. Aufgabe 2.3}). 
 
     Satz \ref{satz:konvergenzAlg1Norm} liefert dann die Konvergenz des Algorithmus. 
 
@@ -139,7 +140,7 @@ Einsetzen der Definition von $\tilde{T}$ liefert:
     %
     \begin{align*}
       x^{(k)}-\hat{x} 
-      = T^k(x^{0}-\hat{x})
+      = T^k(x^{(0)}-\hat{x})
       =T^kz
       =\lambda^kz
     \end{align*}
@@ -419,15 +420,20 @@ Es ergibt sich somit ein eindimensionales Optimierungsproblem um die optimale Sc
 \end{align*}
 %
 Ein Nachteil des Verfahrens ist die mögliche Entstehung oszillierender Pfade (\glqq Zick-Zack-Verhalten\grqq{}) 
-aufgrund unvorteilhafter Richtungen (\textcolor{red}{direkter Weg irreführend, lieber 2 Schritte wie bei cg}):
-
+aufgrund unvorteilhafter Richtungen :
+%(\textcolor{red}{Richtungen sind keine Gradienten})
+%
+%\begin{center}
+%  \input{figures/zickZackCourse.tikz}
+%\end{center}
+%
 \begin{center}
-  \input{figures/zickZackCourse.tikz}
+  \includegraphics[width=0.9\linewidth,trim=50 40 50 50,clip]{figures/zickZackCourse.pdf}
 \end{center}
 
 \subsubsection{Das Verfahren der konjugierten Gradienten}
 Die obige Idee kann zur effizienten Lösung linearer Gleichungssysteme genutzt werden.
-Gegeben sei das LGS $Ax=b$ mit $A\in\K^{n\times n}$ hermitisch
+Gegeben sei das LGS $Ax=b$ mit $A\in\K^{n\times n}$ hermetisch
 ($a_{ij}=\overline{a_{ji}}$). Das impliziert insbesondere, dass die Hauptdiagonale reell ist, und dass $x^HAy = y^HAx$ 
 für $x,y\in\K^n$ gilt.
 
@@ -439,7 +445,7 @@ Zur Lösung wird dieses Mal die Minimierung folgendes quadratischen Funktionals 
   \tag{1}\label{eq:CGVeq1}
 \end{align*}
 %
-Denn sollte eine Lösung $\hat{x}=A^{-1}b$ des LGS $Ax=b$ existieren, so gilt für alle $x\in\K^{n\times n}$:
+Denn sollte eine Lösung $\hat{x}=A^{-1}b$ des LGS $Ax=b$ existieren, so gilt für alle $x\in\K^{n}$:
 %
 \begin{align*}
   &\phi(x)-\phi(\hat{x}) \\
@@ -465,8 +471,8 @@ Denn sollte eine Lösung $\hat{x}=A^{-1}b$ des LGS $Ax=b$ existieren, so gilt f�
 Die Funktion hat demnach ein eindeutiges Minimum bei $\hat{x}$.
 
 \begin{colbox}{Definition}
-  Ist $A\in\K^{n\times n}$ hermitisch und pos. definitiv, dann wird durch $\vertn{2}{x}_A=\sqrt{x^HAx}, 
-  x\in\K^{n\times n}$ eine Norm in $\K^n$ definiert, die sogenannte Energienorm. 
+  Ist $A\in\K^{n\times n}$ hermetisch und pos. definitiv, dann wird durch $\vertn{2}{x}_A=\sqrt{x^HAx}, 
+  x\in\K^{n}$ eine Norm in $\K^n$ definiert, die sogenannte Energienorm. 
   Zur Energienorm gehört ein inneres Produkt $\langle x,y\rangle_A=x^HAy, x,y\in\K^n$.
   Es ergibt sich die Abweichung des Funktionals von seinem Minimum als:
   %
@@ -478,7 +484,7 @@ Die Funktion hat demnach ein eindeutiges Minimum bei $\hat{x}$.
   %
 \end{colbox}
 
-\textbf{geometrische Interpretation:} Der Graph von $\phi$ bezüglich der Energienorm ist ein kreisförmiger Parabloid, 
+\textbf{geometrische Interpretation:} Der Graph von $\phi$ bezüglich der Energienorm ist ein kreisförmiger Paraboloid, 
 welcher über dem Mittelpunkt $\hat{x}$ liegt. 
 
 \textbf{Idee:} Konstruktion eines Verfahrens, welches die Lösung $\hat{x}$ von $Ax=b$ iterativ approximiert, 
@@ -540,7 +546,7 @@ Bedingung ergibt sich dann
   \tag{7}\label{eq:CGVeq7}
 \end{align*}
 
-Die Gleichungen (\ref{eq:CGVeq5}) und (\ref{eq:CGVeq7}) sind wohldefiniert, wenn ${d^{(k)}}^*Ad^{(k)}\neq 0$, 
+Die Gleichungen (\ref{eq:CGVeq5}) und (\ref{eq:CGVeq7}) sind wohldefiniert, wenn ${d^{(k)H}}Ad^{(k)}\neq 0$, 
 aufgrund der positiv Definitheit von $A$ ist dies genau dann der Fall wenn $d^{(k)}\neq 0$. 
 
 Nach (\ref{eq:CGVeq6}) ist $d^{(k)} = 0$ jedoch nur dann möglich, wenn $r^{(k)}$ und $d^{(k-1)}$ linear abhängig sind, 
@@ -638,7 +644,7 @@ und somit folgt durch (\ref{eq:CGVeq6}):
 \end{align*}
 %
 Angenommen $\alpha^{(j)} = 0$, dann folgt aus der Definition von $\alpha^{(j)}$ (\ref{eq:CGVeq5}), 
-dass auch ${r^{(j)}}^*d^{(j)}=0$ und mit (\ref{eq:CGVeq6}) 
+dass auch ${r^{(j)H}}d^{(j)}=0$ und mit (\ref{eq:CGVeq6}) 
 %
 \begin{align*}
   0 = {r^{(j)H}}d^{(j)}
@@ -653,7 +659,7 @@ die Residuen ein Orthogonalsystem und sind damit linear unabhängig.
 Es muss sich daher nach spätestens $n$ Schritten $r^{(n)}=0$, also $x^{(n)}=\hat{x}$ ergeben.
 
 \begin{colbox}{Korollar}\label{cor:CGVconvn}
-  Für $A\in\K^{n\times n}$ hermitisch und positiv definit findet das CG-Verfahren nach 
+  Für $A\in\K^{n\times n}$ hermetisch und positiv definit findet das CG-Verfahren nach 
   höchstens $n$ Schritten die exakte Lösung $x^{(n)}=\hat{x}$.
 \end{colbox}
 
@@ -672,7 +678,7 @@ Krylov-Räume:
 \end{colbox}
 
 \begin{colbox}{Satz}\label{satz:CGVkrylov}
-  Sei $A\in\K^{n\times n}$ hermitisch und positiv definit, $d^{(0)}=r^{(0)}$, und $x^{(k)}\neq \hat{x}$ 
+  Sei $A\in\K^{n\times n}$ hermetisch und positiv definit, $d^{(0)}=r^{(0)}$, und $x^{(k)}\neq \hat{x}$ 
   die $k$-te Iterierte des CG-Verfahrens. 
   Dann gilt 
   %
@@ -829,7 +835,7 @@ Es ergibt sich damit folgender Algorithmus:
 \algorithmbox{CG-Verfahren}{
 \begin{algorithm}[H]
   \SetAlgoNoLine
-  \InitTe{$A\in \K^{n\times n}$ sei hermitisch und positiv definit.}
+  \InitTe{$A\in \K^{n\times n}$ sei hermetisch und positiv definit.}
   \ErgTe{
     $x^{(k)}$ als Approximation für $A^{-1}b$, 
     \newline $r^{(k)}=b-Ax^{(k)}$ als zugehöriges Residuum.
@@ -839,7 +845,7 @@ Es ergibt sich damit folgender Algorithmus:
   $r^{(0)} \leftarrow b-Ax^{(0)}$ \\
   $d^{(0)} \leftarrow r^{(0)}$ \\
   \ForTe{$k=0,1,\dots,$}{
-    $\alpha^{(k)} \leftarrow \dfrac{\vertn{2}{r^{(k)}}_2^2}{{d^{(k)}}^*Ad^{(k)}}$ \\
+    $\alpha^{(k)} \leftarrow \dfrac{\vertn{2}{r^{(k)}}_2^2}{{d^{(k)H}}Ad^{(k)}}$ \\
     $x^{(k+1)} \leftarrow x^{(k)} + \alpha^{(k)}d^{(k)}$ \\
     $r^{(k+1)} \leftarrow r^{(k)} - \alpha^{(k)}Ad^{(k)}$ \\
     $\beta^{(k)} \leftarrow \dfrac{\vertn{2}{r^{(k+1)}}_2^2}{\vertn{2}{r^{(k)}}_2^2}$ \\
@@ -855,7 +861,7 @@ und ist damit vergleichbar mit dem Gesamt -und Einzelschritt.
 
 \begin{colbox}{Bemerkung}
   Das CG-Verfahren ist typischerweise wesentlich schneller als das Gesamt -bzw. Einzelschrittverfahren, 
-  \textbf{aber} verlangt, dass die vorausgesetzte Matrix hermitisch ist. \\
+  \textbf{aber} verlangt, dass die vorausgesetzte Matrix hermetisch ist. \\
   Ein schnelles und einfaches Verfahren für allgemeine Matrizen ist derzeit nicht bekannt, ein komplizierteres 
   Verfahren mit ähnlicher Konvergenzgeschwindigkeit ist das GMRES-Verfahren 
   (Vgl. Hanku-Bourgeois, Kapitel 3, Abschnitt 16). 
@@ -900,10 +906,10 @@ Gleichungssystem $Ax=b$ in ein äquivalentes LGS umwandeln, sodass die Kondition
   \begin{align*}
     M^{-1}Ax = M^{-1}b  \tag{{\scriptsize$\triangle$}} \label{eq:präForm}
   \end{align*}
-wobei $M$ hermitisch und positiv definit ist. 
+wobei $M$ hermetisch und positiv definit ist. 
 
 \textbf{Problem:} 
-Die Matrix $M^{-1}A$ muss nicht notwendig hermitisch sein, daher nutzen wir die 
+Die Matrix $M^{-1}A$ muss nicht notwendig hermetisch sein, daher nutzen wir die 
 Cholesky-Zerlegung $M=LL^H$
 und erhalten\footnote{$L^{-H} = (L^H)^{-1} = (L^{-1})^H$}: 
 %
@@ -911,7 +917,7 @@ und erhalten\footnote{$L^{-H} = (L^H)^{-1} = (L^{-1})^H$}:
   L^{-H}L^{-1}Ax = L^{-H}L^{-1}b \implies L^{-1}AL^{-*}z = L^{-1}b \quad \text{mit } x = L^{-*}z
 \end{align*}
 %
-Hierbei ist die Koeffizientenmatrix $L^{-1}AL^{-H}$ sicher hermitisch und positiv definit, 
+Hierbei ist die Koeffizientenmatrix $L^{-1}AL^{-H}$ sicher hermetisch und positiv definit, 
 denn $(L^{-1}AL^{-H})^H = (L^{-H})^HA^H(L^{-1})^H = L^{-1}AL^{-H}$ und für beliebiges 
 $z\in\K^n$ und $x=L^{-H}z$ gilt: 
 %
@@ -929,7 +935,7 @@ CG-Verfahren direkt $x$ berechnen.
 liefert schnellere Konvergenz der Iterierten $z^{(k)}$ und der Lösung $x^{(k)}=L^{-*}z$ 
 
 \begin{colbox}{Bemerkung}
-  Die Faktorisierung $M=LL^*$ muss nicht explizit berechnet werden, 
+  Die Faktorisierung $M=LL^H$ muss nicht explizit berechnet werden, 
   da die Variable $z$ wieder durch $x$ substituiert werden kann.
 
   Für die Berechnung der Koeffizienten $\beta^{(k)}$ und die dafür benötigte Norm 
@@ -954,7 +960,7 @@ liefert schnellere Konvergenz der Iterierten $z^{(k)}$ und der Lösung $x^{(k)}=
 \algorithmbox{Präkonditioniertes CG-Verfahren (PCGV)}{
 \begin{algorithm}[H]
   \SetAlgoNoLine
-  \InitTe{$A,M\in \K^{n\times n}$ seien hermitisch und positiv definit.}
+  \InitTe{$A,M\in \K^{n\times n}$ seien hermetisch und positiv definit.}
   \ErgTe{$x^{(k)}$ als Approximation für $A^{-1}b$, 
   \newline $r^{(k)}=b-Ax^{(k)}$ Residuum im Schritt $k$,
   \newline $s^{(k)}$ das Residuum von ({\scriptsize$\triangle$}).} 
@@ -984,7 +990,7 @@ Da $A$ bei Anwendung des CGV typischerweise dünn besetzt ist, dominieren die Ko
 bei dem Gesamtkosten des PCGV.
 
 \begin{colbox}{Satz}
-  Die $k$-te Iteriterte $x^{(k)}$ vom Algorithmus des PCGV liegt in dem affin verschobene Krylov-Raum
+  Die $k$-te Iterierte $x^{(k)}$ vom Algorithmus des PCGV liegt in dem affin verschobene Krylov-Raum
   $x^{(0)} + \mathcal{K}_k(M^{-1}A, M^{-1}r^{(0)})$ und ist in dieser Menge die eindeutig bestimmte Minimalstelle
   des Funktionals $\phi(x) = \tfrac{1}{2}x^HAx-x^Hb$.
 \end{colbox}

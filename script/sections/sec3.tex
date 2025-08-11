@@ -184,7 +184,7 @@ Sei $\lambda=\lambda(B)$ kein Eigenwert von $A$, so gilt
 Mit dem Hilfssatz \ref{hsatz:normIneq} folgt dann die Behauptung. 
 \qed 
 
-Für hermitische Matrizen $A\in\K^{n\times n}$ existiert bekannterweise eine Orthonormalbasis des 
+Für hermetische Matrizen $A\in\K^{n\times n}$ existiert bekannterweise eine Orthonormalbasis des 
 $\K^{n\times n}$ aus Eigenvektoren, sodass die Matrix $W$ als unitär angenommen werden kann, 
 d.h. $W^{-1}=W^H$. In diesem Fall gilt $\vertn{2}{W} = \sqrt{\lambda_{\max}(W^HW)} = \sqrt{\lambda_{\max}(I)}=1$
 und analog $\vertn{2}{W^H} = 1$, also 
@@ -193,7 +193,7 @@ und analog $\vertn{2}{W^H} = 1$, also
   \Cond_2(W)=\vertn{2}{W^{-1}}_2\cdot\vertn{2}{W}_2 = 1
 \end{align*}
 %
-\textbf{Regel:} Allgemein kann man sagen, dass das Eigenwertproblem für hermitische Matrizen gut konditioniert
+\textbf{Regel:} Allgemein kann man sagen, dass das Eigenwertproblem für hermetische Matrizen gut konditioniert
 ist, während das allgemeine Eigenwertproblem je nach Größe von $\Cond_2(W)$ beliebig schlecht konditioniert 
 sein kann.
 
@@ -427,7 +427,7 @@ Der historische Ansatz von Google ist die Potenzmethode:
 
 \begin{colbox}{Lemma}
   Sei $A\in\R^{n\times n}$ eine stochastische Matrix und $p\in\R^{n}$ ein stochastischer Vektor, dann ist 
-  das Produkt $Ap\in\R^{n\times n}$ wieder ein stochastischer Vektor.
+  das Produkt $Ap\in\R^{n}$ wieder ein stochastischer Vektor.
 \end{colbox}
 
 \textit{Beweis.} \\
@@ -443,7 +443,7 @@ Offensichtlich $(Ap)_{ij}\geq 0$, weiter es sei $a_i$ die $i$-te Spalte der Matr
 \qed
 
 \begin{colbox}{Korollar}\label{cor:stochMatProd}
-  Seien $A,B\in\R^{n\times n}$ stoch. Matrizen, dann ist das Produkt $A\cdot B$ wieder eine stoch. Matrix.
+  Seien $A,B\in\R^{n\times n}$ stochastische Matrizen, dann ist das Produkt $A\cdot B$ wieder eine stochastische Matrix.
 \end{colbox}
 
 \textit{Beweis.} Folgt direkt aus Lemma 3.9.

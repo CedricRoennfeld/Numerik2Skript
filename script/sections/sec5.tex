@@ -97,6 +97,67 @@ und
 In Unserem Fall, wo wir $f$ durch $g_n$ annähern wollen verwenden wir daher $f(x)$ bei der Bestimmung unserer 
 Koeffizienten.
 
+Diese Koeffizienten liefern Rückschlüsse Periodizität in $f$, die Analyse dessen nennen wir auch Fourier-Analyse 
+oder Spektralanalyse. 
+
+Als Beispiel hierfür betrachten wir einen rein harmonischen Oszillator, welcher zunächst als ungedämpfte Pendelbewegung 
+interpretiert werden kann:
+
+\begin{colboxBreakable}{Beispiel}
+  Gegeben sei ein Fadenpendel, jegliche Dämpfung wird zunächst nicht berücksichtigt:
+  \begin{center}
+    \input{figures/pendel.tikz}
+  \end{center}
+  Für dieses Pendel gilt die klassische DGL eines ungedämpften harmonischen Oszillators:
+  %
+    \begin{align*}
+      \ddot{x}(t) + \omega_0^2 x(t) = 0
+      \tag{1}\label{eq:PendelDGL1}
+    \end{align*}
+  %
+  Betrachten wir die Lösung dieser Differentialgleichung für und ihre Fourier Koeffizienten für eine Pendellänge von
+  $\ell=40cm$, dann erhalten wir:
+  
+  \begin{center}
+    \includegraphics[width=0.45\textwidth]{figures/zeit_sinus_ungedämpft.pdf}
+    \hfill
+    \includegraphics[width=0.45\textwidth]{figures/spektrum_sinus_ungedämpft.pdf}
+  \end{center}
+
+  Bei $f\approx 5$ ist ein klarer Peak zu erkennen, dies stimmt mit der echten Frequenz von 
+  $f_0\sqrt{g\,/\,\ell}\approx 4.95$ überein.
+
+  Betrachten wir stattdessen eine Dämpfung des Pendels, durch zum Beispiel einen Widerstand des Medium in welchem wir 
+  schwingen, so erhalten wir 
+    %
+    \begin{align*}
+      \ddot{x}(t) + \delta\dot{x}(t)+ \omega_0^2 x(t) = 0
+      \tag{2}\label{eq:PendelDGL2}
+    \end{align*}
+    %
+    Bei gleicher Pendellänge und einer Dämpfung $\delta>0$ ergibt sich 
+
+    \begin{center}
+      \includegraphics[width=0.45\textwidth]{figures/zeit_sinus_gedämpft.pdf}
+      \hfill
+      \includegraphics[width=0.45\textwidth]{figures/spektrum_sinus_gedämpft.pdf}
+    \end{center}
+
+    Wir haben erneut einen Peak bei $f\approx 5$, aber bekommen einen deutlich sanfteren Abfall im Vergleich zur
+    harmonischen Schwingung.
+\end{colboxBreakable}
+
+\begin{colbox}{Beispiel}
+  Betrachte wir mehrere überlagerte Schwingungen, so ergeben sich mehrere Peaks:
+  
+  \begin{center}
+    \includegraphics[width=0.45\textwidth]{figures/zeit_sinus_summe.pdf}
+    \hfill
+    \includegraphics[width=0.45\textwidth]{figures/spektrum_sinus_summe.pdf}
+  \end{center}
+
+\end{colbox}
+
 Im Allgemeinen ergeben sich für die Fourier-Koeffizienten $\{a_k\}_{k=0}^n$ und $\{b_k\}_{k=1}^n$ keine geschlossenen 
 Formeln, d.h. wir sind auf numerische Integration angewiesen um diese zu bestimmen.
 
@@ -136,8 +197,6 @@ Mit Berücksichtigung der $2\pi$-Periodizität von $f$ ergeben sich für $a_k$ u
   a_k^* &:= \dfrac{2}{N}\sum_{j=1}^N f(x_j)\cdot \cos(kx_j), \quad k=0,1,2,\dots \\
   b_k^* &:= \dfrac{2}{N}\sum_{j=1}^N f(x_j)\cdot \cos(kx_j), \quad k=1,2,3\dots
 \end{align*}
-
-\textcolor{red}{Intuition Bilder}
 
 \begin{colbox}{Lemma}\label{lem:diskStstelSum}
   Für die diskreten Stützstellen $x_j=\tfrac{2\pi}{N}\cdot j$ mit $1\leq N$  gilt
@@ -242,10 +301,10 @@ verwendet und das Lemma \ref{lem:diskStstelSum} angewandt.
 \textit{ohne Beweis.}
 
 
-\begin{colbox}{Beispiel}
-  Sei $f(x)=x^2$: \\
-  \textcolor{red}{$x^2$ Plot} 
-\end{colbox}
+%\begin{colbox}{Beispiel}
+%  Sei $f(x)=x^2$: \\
+%  \textcolor{red}{$x^2$ Plot} 
+%\end{colbox}
 
 \subsection{Effiziente Berechnung der Fourier-Koeffizienten}
 Die näherungsweise Berechnung der Fourier-Koeffizienten $a_k^*$ und $b_k^*$ ist für eine große Anzahl $N$ der 
@@ -440,8 +499,6 @@ und
 %
 \qed
 
-%\textcolor{green}{Wenn du hier bist, Datei aktualisieren :)}
-
 Dieser Satz ermöglicht es uns nun die Fourier-Transformierte $\hat{f}$ als Kombination von zwei neuen 
 Fourier-Transformationen zu schreiben, denn für die Hilfswerte
 %
@@ -621,6 +678,8 @@ In der Anwendung auf eine diskrete Zeitreihe $x_0,\dots,x_{N-1}$, zum Beispiel P
 sich verschiedene Möglichkeiten der spiegelsymmetrischen Fortsetzung und somit ergeben sich auch verschiedene 
 Versionen der diskreten Kosinustransformation (DCT):
 
+\textcolor{red}{auf beiden Seiten erweitern}
+
 \textbf{DCT-I}: \\
 Im ersten Fall setzten wir unsere Punkte auf einen Rändern spiegelsymmetrisch bzgl. des Randes fort, d.h. 
 zum Beispiel durch 
@@ -704,10 +763,10 @@ Als letztes verbinden wir die Idee von DCT-II und DCT-III indem wir spiegelsymme
 und bekommen
 %
 \begin{align*}
-  \hat{x}^{(III)}_k 
+  \hat{x}^{(IV)}_k 
   = \sum_{j=0}^{N-1} x_j \cos\left(\dfrac{\pi}{N}\Big(n+\dfrac{1}{2}\Big)\Big(k+\dfrac{1}{2}\Big)\right), 
   \quad k=0,\dots,N-1
-  \tag{III}\label{eq:DCTIIIeq}
+  \tag{IV}\label{eq:DCTIVeq}
 \end{align*}
 %
 
@@ -717,7 +776,7 @@ und bekommen
 \end{colbox}
 \textit{ohne Beweis.}
 
-\textcolor{red}{Insert compare of DCT Versions.}
+\textcolor{red}{Bilder der Fortsetzungen einfügen.}
 
 \subsection{Mehrdimensionale DCT}
 In der Anwendung dient DCT-II für die digitale Bildverarbeitung, wir müssen dafür jedoch eine Möglichkeit der 
@@ -747,13 +806,13 @@ lokalen Begrenzung gehen dadurch örtliche Informationen verloren.
 Außerdem kommt es bei der Annäherung von unstetigen Funktionen durch eine Fourier-Reihe zu Über- und Unterschwingern 
 an den Unstetigkeitsstellen:
 
-\textcolor{red}{Insert Gibbs phenomenon example for square wave.}
+\textcolor{red}{Gibbs Phänomen Beispiel für Rechteck-Funktionen einfügen}
 
 Um diesen Nachteilen entgegen zu wirken führen wir nun das Konzept der Wavelets als eine multiskalare Basis ein. 
 Sie erlaubt ähnlich wie die Fourier-Analyse auch eine Frequenzzerlegung gewährleistet gleichzeitig aber auch eine 
 zeitliche Lokalisierung. 
 
-Wir wollen uns im folgenden lediglich auf die dikrete Wavelet-Transformation konzentrieren und betrachten dabei 
+Wir wollen uns im folgenden lediglich auf die diskrete Wavelet-Transformation konzentrieren und betrachten dabei 
 das Intervall $[0,1]$ als Definitionsbereich, d.h. wir suchen eine alternative Möglichkeit eine auf $[0,1]$ integrierbare 
 Funktion $f$ approximieren. 
 
@@ -935,7 +994,7 @@ Außerdem wollen wir auch hier wieder eine Orthonormalbasis, also fordern wir we
   Neben der Haar-Wavelet-Basis ergeben sich durch andere Wahlen von $\chi$ und $\psi$ neue Basismengen, Beispiele 
   hierfür sind Meyer-Wavelet, Mexikanischer Hut oder Daubechies D4-Wavelet:
 
-  \textcolor{red}{Insert images of other wavelets.}
+  \textcolor{red}{Wavelet Bilder einfügen.}
 \end{colbox}
 
 Das Finden einer Basis für $W_{k}$ erlaubt das konstruieren einer neuen Basis von $V_{k+1}$, diese nennen wir 
