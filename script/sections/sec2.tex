@@ -870,7 +870,7 @@ und ist damit vergleichbar mit dem Gesamt -und Einzelschritt.
 \subsection{Präkonditionierung des CG-Verfahren}
 
 \begin{colbox}{Definition}
-  $\kappa_M(A) = \Cond_M(A) = \vertn{2}{A^{-1}}_M\cdot \vertn{2}{A}_M$ wird als Kondition der Matrix $A$ bezüglich 
+  $\kappa_M(A) = \cond_M(A) = \vertn{2}{A^{-1}}_M\cdot \vertn{2}{A}_M$ wird als Kondition der Matrix $A$ bezüglich 
   der Norm $\vertn{2}{\cdot}_M$ bezeichnet. 
   Sie beschreibt die schlimmstmögliche Fortpflanzung des Eingangsfehlers beim Lösen eines LGS.
 \end{colbox}
@@ -894,7 +894,7 @@ so ergibt sich als relativer Fehler:
   &= \dfrac{\vertn{2}{A^{-1}\Delta b}}{\vertn{2}{b}} \cdot\dfrac{\vertn{2}{Az}}{\vertn{2}{z}} \\
   &\leq \vertn{2}{A^{-1}}_M \cdot \vertn{2}{A}_M \cdot \dfrac{\vertn{2}{\Delta b}}{\vertn{2}{b}} 
   \cdot \dfrac{\vertn{2}{z}}{\vertn{2}{z}} \\
-  &= \Cond_M{A}\cdot\dfrac{\vertn{2}{\Delta b}}{\vertn{2}{b}} \\
+  &= \cond_M{A}\cdot\dfrac{\vertn{2}{\Delta b}}{\vertn{2}{b}} \\
 \end{align*}
 %
 Typischerweise ist die Konvergenz eines numerischen Verfahrens umso langsamer, je schlechter die Matrix $A$ 

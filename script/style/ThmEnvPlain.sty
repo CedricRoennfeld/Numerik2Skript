@@ -25,6 +25,23 @@
   \quad       % a little space after 'Definition 1.8.'
 }
 
+\NewDocumentEnvironment{colboxBreakable}{m o}    % m: type, o: Name 
+{
+  % Increase Counter
+  \refstepcounter{boxcounter}
+
+  \par\medskip\noindent                 % small vertical gap, no indent
+
+  \IfValueTF{#2}{
+    % Show title if exists
+    {\bfseries\sffamily #1 \theboxcounter\ (\sffamily\bfseries #2)\bfseries\sffamily.}
+  }{
+    % default
+    {\bfseries\sffamily #1 \theboxcounter\bfseries\sffamily.}
+  }
+  \quad       % a little space after 'Definition 1.8.'
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % EXAMPLE USAGES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -387,7 +387,7 @@ $\{\mu,w\}$ eine gute Approximation ist, basierend auf den berechneten Größen 
   }:
   %
   \begin{align*}
-    \vertn{2}{\mathcal{Q}^{H}\mathcal{Q}-I}_2 \leq \dfrac{c_1\cdot \Cond_2(A)}{1-c_2\cdot\Cond_2(A)}
+    \vertn{2}{\mathcal{Q}^{H}\mathcal{Q}-I}_2 \leq \dfrac{c_1\cdot \cond_2(A)}{1-c_2\cdot\cond_2(A)}
   \end{align*}
   %
   wobei $\mathcal{Q} = [q^{(1)}, \dots, q^{(n)}]$ und $A=[v^{(1)}, \dots, v^{(n)}]$. Die Konstanten $c_1,c_2$ kommen 
@@ -482,11 +482,11 @@ ergibt sich
   \mathcal{Q}^{(m)H} A \mathcal{Q}^{(m)} = T^{(m)}
 \end{align*} 
 %
-\begin{defbox}[Lanczos-Algorithmus]
+\begin{colbox}{Definition}[Lanczos-Algorithmus]
   Für eine hermitesche Matrix $A\in\C  ^{n\times n}$ bestimmt die Lanczos-Methode eine Menge von orthogonalen 
   Vektoren $\{q^{(1)},\dots,q^{(m)}\}$, $m\ll n$ durch Anwendung der Gram-Schmidt-Methode auf die Basis 
   $\{q,Aq,\dots,A^{m-1}q\}$ des Krylov-Raumes $K_m$.
-\end{defbox}
+\end{colbox}
 
 Durch Umstellen von (\ref{eq:lanczosEQ2}) erhalten wir folgenden Algorithmus:
 

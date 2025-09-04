@@ -165,7 +165,7 @@ Demnach liegt $\lambda\in K_i$.
   jedem Eigenwert $\lambda(B)$ von $B$ einen Eigenwert $\lambda(A)$ von $A$, sodass
   %
   \begin{align*}
-    |\lambda(A)-\lambda(B)|\leq\Cond_2(W)\cdot\vertn{2}{A-B}_2
+    |\lambda(A)-\lambda(B)|\leq\cond_2(W)\cdot\vertn{2}{A-B}_2
   \end{align*}
   %
 \end{colbox}
@@ -178,7 +178,7 @@ Sei $\lambda=\lambda(B)$ kein Eigenwert von $A$, so gilt
   &= \vertn{2}{(\lambda I - W\Lambda W^{-1})^{-1}}_2 \\
   &= \vertn{2}{W(\lambda I - \Lambda)^{-1}W^{-1}}_2 \\
   &\leq \vertn{2}{W}_2\cdot\vertn{2}{W^{-1}}_2\cdot\vertn{2}{(\lambda I-\Lambda)^{-1}}_2\\
-  &= \Cond_2(W)\cdot \max_{i=1,\dots,n} |\lambda-\lambda_i(A)|^{-1}
+  &= \cond_2(W)\cdot \max_{i=1,\dots,n} |\lambda-\lambda_i(A)|^{-1}
 \end{align*}
 %
 Mit dem Hilfssatz \ref{hsatz:normIneq} folgt dann die Behauptung. 
@@ -190,11 +190,11 @@ d.h. $W^{-1}=W^H$. In diesem Fall gilt $\vertn{2}{W} = \sqrt{\lambda_{\max}(W^HW
 und analog $\vertn{2}{W^H} = 1$, also 
 %
 \begin{align*}
-  \Cond_2(W)=\vertn{2}{W^{-1}}_2\cdot\vertn{2}{W}_2 = 1
+  \cond_2(W)=\vertn{2}{W^{-1}}_2\cdot\vertn{2}{W}_2 = 1
 \end{align*}
 %
 \textbf{Regel:} Allgemein kann man sagen, dass das Eigenwertproblem für hermetische Matrizen gut konditioniert
-ist, während das allgemeine Eigenwertproblem je nach Größe von $\Cond_2(W)$ beliebig schlecht konditioniert 
+ist, während das allgemeine Eigenwertproblem je nach Größe von $\cond_2(W)$ beliebig schlecht konditioniert 
 sein kann.
 
 \subsection{Iterative Verfahren}
