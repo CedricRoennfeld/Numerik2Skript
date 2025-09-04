@@ -57,8 +57,60 @@ Aus dieser Nullstelle bilden wir eine rekursive Vorschrift und erhalten die mehr
   \qquad x_0\in\R^n
 \end{align*}
 %
-\textcolor{red}{Probleme von Newton + Konvergenzgeschwindigkeit}
 
 \subsection{Gauß-Newton-Verfahren}
+Unter Verwendung der gleichen Idee betrachten wir nun wieder unser initiales Ausgleichsproblem, 
+die Minimierung von $\phi(x) = \frac{1}{2}\|f(x)\|_2^2$, und approximieren $f$ durch die Linearisierung 
+$f_L$ an $x^{(k)}$:
+%
+\begin{align*}
+  \phi(x) \approx \dfrac{1}{2} \left\| f(x^{(k)}) + f'(x^{(k)})(x - x^{(k)}) \right\|_2^2
+\end{align*}
+%
+Wir haben daher nun ein lineares Ausgleichsproblem, welches leichter zu lösen ist. Das Minimum ist
+gegeben durch
+%
+\begin{align*}
+  x^{(k+1)} = x^{(k)} - f'(x(k))^\dagger f(x^{(k)})
+\end{align*}
+%
+dabei beschreibt $A^\dagger$ das Pseudoinverse einer Matrix $A$.
+
+Das resultierende Itertionsverfahren heißt Gauß-Newton-Verfahren.
+
+\begin{colbox}{Bemerkung}
+  Wenn keinen vollen Spaltenrang hat, so muss das lineare Ausgleichsproblem nicht eindeutig lösbar sein.
+  $x^{(k+1)}$ gibt dann die Lösung an, welche zu $x^{(k)}$ den kleinsten euklidischen Abstand hat.
+\end{colbox}
+
+Bei der von uns gewählten Iterationsvorschrift kann es vorkommen, dass unsere lineare Annäherung
+nicht genau genug ist und wir so nicht gegen eine Lösung des ursprünglich nicht-linearen Ausgleichsproblem konvergieren. 
+Wir beheben dieses Problem, indem wir nicht alle Werte für $x^{(k+1)}$ erlauben,
+sondern nur diese welcher in einem bestimmten Radius um $x^{(k)}$ liegen und erhalten so ein neues
+Verfahren:
 
 \subsection{Levenberg-Marquardt-Verfahren}
+Da die Linearisierung $f_L$ nicht global geeignet ist sondern nur um $x^{(k)}$ herum, verschärfen wir unser 
+Ausgleichsproblem durch eine Nebenbedingung und erhalten:
+\begin{align*}
+  \text{Minimiere} \quad \frac{1}{2} \left\| f(x^{(k)}) + f'(x^{(k)})(x - x^{(k)}) \right\|_2^2 \quad \text{unter} \quad \left\| x - x^{(k)} \right\|_2 \leq \delta_k
+\end{align*}
+Damit liegt unsere nächste Iterierte $x^{(k+1)}$ innerhalb einer kompakten Trust-Region
+\begin{align*}
+  R_k = \left\{ x \in \mathbb{R}^n \mid \|x - x^{(k)}\|_2 \leq \delta_k \right\}
+\end{align*}
+Durch die Schreibweise
+\begin{align*}
+  A_k = f'(x^{(k)}), \quad h = x - x^{(k)}, \quad b_k = -f(x^{(k)})
+\end{align*}
+erhalten wir eine uns vertrautere Notation:
+\begin{align*}
+  \text{Minimiere} \ \Psi(x) = \frac{1}{2} \|A_k h - b_k\|_2^2 \quad \text{unter} \quad \|h\|_2 \leq \delta_k
+\end{align*}
+eine Lösung $h^{(k)}$ liefert dann die nächste Iterierte durch $x^{(k+1)} = x^{(k)} + h^{(k)}$.
+
+Ohne Beweis genügt eine solche Lösung $h^{(k)}$ der Gleichung
+\begin{align*}
+  (A_k^H A_k + \lambda_k I) h = A_k^H b_k
+\end{align*}
+für ein $\lambda_k \geq 0$. Weiter gilt, dass $\lambda_k$ genau dann positiv ist, wenn $\|h^{(k)}\|_2^2 = \delta_k$.

@@ -1,0 +1,52 @@
+\begin{tikzpicture}
+  \begin{axis}[
+    width=12cm, height=6cm,
+    axis x line=middle,
+    axis y line=none,
+    xmin=-21.5, xmax=21.5,
+    ymin=-4.7,
+    xtick={-21,-10, 0, 11,21},
+    xticklabels={-21,-10, 0, 11,21},              % keine Zahlen unterhalb
+    ytick=\empty,
+    tick style={black!50},
+    major x tick style={black, thick},
+    minor x tick style={black!20},
+    minor x tick num=1,
+  ]
+    % function used for the points: 3+1.5*cos(pi/8*(x-2))
+    % red points
+    \addplot+[ycomb, mark=*,
+              draw=red!80!black,
+              mark options={fill=red!80!black},
+              every ycomb/.style={thin,red!80!black},
+              every mark/.append style={draw=red!80!black}]
+      coordinates {
+        (0,4.061) (1,4.386) (2,4.5)   (3,4.386) (4,4.061)
+        (5,3.574) (6,3)     (7,2.426) (8,1.939) (9,1.614)
+        (10,1.5)
+      };
+    
+    % gray points
+    \addplot+[ycomb, mark=*,
+              draw=gray!60,
+              mark options={fill=gray!60},
+              every ycomb/.style={ultra thin,gray!60},
+              every mark/.append style={draw=gray!60}]
+      coordinates {
+        (11,0)
+        (12, -1.5)  (13,-1.614) (14,-1.939) (15,-2.426)
+        (16,-3)     (17,-3.574) (18,-4.061) (19,-4.386)
+        (20,-4.5)   (21,-4.386) 
+        (-1,4.386) (-2,4.5)   (-3,4.386) (-4,4.061)
+        (-5,3.574) (-6,3)     (-7,2.426) (-8,1.939) (-9,1.614)
+        (-10,0)
+        (-11, -1.5)  (-12,-1.614) (-13,-1.939) (-14,-2.426)
+        (-15,-3)     (-16,-3.574) (-17,-4.061) (-18,-4.386)
+        (-19,-4.5)   (-20,-4.386) (-21, -4.061)
+      };
+    
+
+  \end{axis}
+  \node[anchor=east, xshift=0mm, overlay, font=\bfseries]
+        at (current bounding box.west) {DCT-III:};
+\end{tikzpicture}

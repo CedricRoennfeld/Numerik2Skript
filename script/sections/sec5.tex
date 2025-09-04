@@ -510,9 +510,9 @@ Fourier-Transformationen zu schreiben, denn für die Hilfswerte
 %
 gilt 
 \begin{align*}
-  \hat{g} = (\hat{f}_0,\hat{f}_2,\dots,\hat{f}_{2m-1})^T 
+  \hat{g} = (\hat{f}_0,\hat{f}_2,\dots,\hat{f}_{2m-2})^T 
   \quad\text{und}\quad 
-  \hat{h} = (\hat{f}_1,\hat{f}_3,\dots,\hat{f}_{2m})^T 
+  \hat{h} = (\hat{f}_1,\hat{f}_3,\dots,\hat{f}_{2m-1})^T 
 \end{align*}
 
 Wir haben damit die Berechnung einer DFT von $f\in\C^{2m}$ (einmal Ordnung $2m$) auf die Berechnung zweier DFTs von 
@@ -681,21 +681,21 @@ Versionen der diskreten Kosinustransformation (DCT):
 \textcolor{red}{auf beiden Seiten erweitern}
 
 \textbf{DCT-I}: \\
-Im ersten Fall setzten wir unsere Punkte auf einen Rändern spiegelsymmetrisch bzgl. des Randes fort, d.h. 
+Im ersten Fall setzten wir unsere Punkte einem Rand spiegelsymmetrisch bzgl. des Randpunktes fort, d.h. 
 zum Beispiel durch 
-%
-\begin{align*}
-  y_0 = x_0, 
-  \dots, 
-  y_{N-2} = x_{N-2}, 
-  y_{N-1} = x_{N-1},
-  y_N = x_{N-2}, 
-  y_{N+1} = x_{N-3}, 
-  \dots, 
-  y_{2N-3} = x_1
-\end{align*}
-%
-oder in allgemeiner Schreibweise:
+% %
+% \begin{align*}
+%   y_0 = x_0, 
+%   \dots, 
+%   y_{N-2} = x_{N-2}, 
+%   y_{N-1} = x_{N-1},
+%   y_N = x_{N-2}, 
+%   y_{N+1} = x_{N-3}, 
+%   \dots, 
+%   y_{2N-3} = x_1
+% \end{align*}
+% %
+% oder in allgemeiner Schreibweise:
 %
 \begin{align*}
   y_{n} = \begin{cases}
@@ -704,15 +704,16 @@ oder in allgemeiner Schreibweise:
   \end{cases}
 \end{align*}
 %
-Führen wir jetzt eine \glqq{normale}\grqq{} diskrete Fourier-Transformation mit unsere neue Zeitreihe 
-$y_0,\dots,y_{2N-3}$ durch
+Anschaulich wird dann aus der Folge $abcde$ die Folge $abcdedcb$. Führen wir jetzt eine \glqq{normale}\grqq{} 
+diskrete Fourier-Transformation mit unsere neue Zeitreihe 
+$y_0,\dots,y_{2N-3}$ durch erhalten wir:
 %
 \begin{align*}
   \hat{y}_{k} 
   = \sum_{j=0}^{2N-3} y_j\cdot e^{-2\pi i\cdot \tfrac{jk}{2N-2}} 
 \end{align*}
 %
-Durch die Symmetry kommt jeder Punkt $x_j$ für $j=1,\dots,N-2$ doppelt vor und die Ränder $x_0$ und $x_{N-1}$ einfach.
+Durch die Symmetrie kommt jeder Punkt $x_j$ für $j=1,\dots,N-2$ doppelt vor und die Ränder $x_0$ und $x_{N-1}$ einfach.
 Wir erhalten daher mit analogen Umformungen wie bei der stetigen Sinus- / Kosinustransformation:
 %
 \begin{align*}
@@ -733,8 +734,9 @@ Nach einer Normierung mit dem Faktor $\tfrac{1}{2}$ erhalten wir:
 %
 
 \textbf{DCT-II}:
-Statt der exakten Fortsetzung auf $x_{N-1}$ setzen wir nun unsere Zeitreihe etwas versetzt fort, also so gesehen an 
-der Stelle $x_{N-1/2}$. Dies hat den Vorteil, dass für unsere neuen Punkte $y_{N}=x_{N-1}$ und $y_{2N-1}=x_0$ gilt. 
+Statt der exakten Fortsetzung auf $x_{N-1}$ setzen wir nun unsere Zeitreihe beidseitig versetzt fort, also bei den  
+Stellen $x_{-1/2}$ und $x_{N-1/2}$. Dies hat den Vorteil, dass für unsere neuen Punkte $y_{-N}=y_{N}=x_{N-1}$ und 
+$y_{-2N+1}=y_{2N-1}=x_0$ gilt. 
 Damit verschwindet der unschöne $x_0 + (-1)^kx_{N-1}$ aus (\ref{eq:DCTIeq}) und wir erhalten:
 %
 \begin{align*}
@@ -747,8 +749,8 @@ Damit verschwindet der unschöne $x_0 + (-1)^kx_{N-1}$ aus (\ref{eq:DCTIeq}) und
 
 \textbf{DCT-III}:
 DCT-III basiert auf einer Punktspiegelung, dafür erweitern wir zunächst mit einem neuen Punkt $y_N=0$ um dann nicht 
-spiegelsymmetrisch fortzusetzen, sondern mit $y_{N+n} = x_{N-n}$ für $n<N-1$. In der Herleitung haben wir daher 
-$x_0$ einfach und den Rest doppelt. Es ergibt sich
+spiegelsymmetrisch fortzusetzen, sondern mit $y_{N+n} = x_{N-n}$ für $n<N-1$, also punktsymmetrisch. 
+In der Herleitung haben wir daher $x_0$ einfach und den Rest doppelt. Es ergibt sich
 %
 \begin{align*}
   \hat{x}^{(III)}_k 
@@ -759,8 +761,8 @@ $x_0$ einfach und den Rest doppelt. Es ergibt sich
 %
 
 \textbf{DCT-IV}:
-Als letztes verbinden wir die Idee von DCT-II und DCT-III indem wir spiegelsymmetrisch bei $x_{N-1/2}$ fortsetzten 
-und bekommen
+Als letztes verbinden wir die Idee von DCT-II und DCT-III indem wir spiegelsymmetrisch bei $x_{-1/2}$ und punktsymmetrisch
+bei $x_{N-1/2}$ fortsetzten, wir bekommen
 %
 \begin{align*}
   \hat{x}^{(IV)}_k 
@@ -770,13 +772,24 @@ und bekommen
 \end{align*}
 %
 
+\begin{center}
+  \input{figures/dct1.tikz}
+\end{center}
+\begin{center}
+  \input{figures/dct2.tikz}
+\end{center}
+\begin{center}
+  \input{figures/dct3.tikz}
+\end{center}
+\begin{center}
+  \input{figures/dct4.tikz}
+\end{center}
+
 \begin{colbox}{Satz}
   Die DCT-III und DCT-II Verfahren sind (bis auf Skalierung) invers zu einander. DCT-I und DCT-IV sind hingegen 
   selbst-invers.
 \end{colbox}
 \textit{ohne Beweis.}
-
-\textcolor{red}{Bilder der Fortsetzungen einfügen.}
 
 \subsection{Mehrdimensionale DCT}
 In der Anwendung dient DCT-II für die digitale Bildverarbeitung, wir müssen dafür jedoch eine Möglichkeit der 
@@ -790,7 +803,49 @@ erhalten dann für $x\in\R^{N_1\times N_2}$ folgende Transformation
   \cos\Big(\dfrac{\pi}{N_2}\big(n_2+\tfrac{1}{2}\big)k_2\Big)
 \end{align*}
 
-\textcolor{red}{Detaillierte Erklärung zu JPEG und 8x8 Bildern}
+Die mehrdimensionalen DCT ermöglicht uns nun eine Art der Bildkompression auf welcher auch die
+JPEG-Kompression basiert. Als Vereinfachung betrachten wir lediglich die Kompression von Graustufenbildern, 
+bei Farbbildern kann für jeden Farbkanal, z.B. rot,grün,blau, eine separierte Kompression
+durchgeführt werden. Außerdem nehmen wir an, dass sich unser Bild in gleichgroße Quadrate zerlegend
+lässt.
+
+Die Grundidee besteht darin das Bild die Quadrate gleicher Größe zu zerlegen und diese einzeln zu
+komprimieren, für JPEG üblich ist dabei die Wahl von $8\times 8$ Quadraten.
+
+Gegeben eines Quadratausschnittes $x\in[0,1]^{N\times N}$ können wir nun die DCT durch
+%
+\begin{align*}
+  \hat{x} = \sum_{n_1=0}^{N-1}\sum_{n_2=0}^{N-1} x\cdot b_{n_1,n_2}
+\end{align*}
+%
+bestimmen, wobei
+%
+\begin{align*}
+  b_{n_1,n_2} = \left(\cos\Big(\dfrac{\pi}{N_1}\big(n_1+\tfrac{1}{2}\big)k_1\Big)
+  \cos\Big(\dfrac{\pi}{N_2}\big(n_2+\tfrac{1}{2}\big)k_2\Big)\right)_{k_1,k_2=0}^{N-1}
+\end{align*}
+%
+die DCT-Basismatrizen beschreibt. Für größer werdendes N ergeben sich größere Feinheiten in der
+Basis:
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/dct_basis_grid_8.png}\\[2mm]
+    \small $8 \times 8$ Basis
+  \end{minipage}\hfill
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/dct_basis_grid_16.png}\\[2mm]
+    \small $16 \times 16$ Basis
+  \end{minipage}
+\end{figure}
+
+Wenn wir auf unsere Transformierte $\hat{x}$ nun die mehrdimensionale DCT-III anwenden, so sollte wieder
+unser ursprüngliches Bild herauskommen. Um eine Kompression zu erreichen speichern wir dann
+nicht alle Komponenten unserer Transformierten, sondern nur einen Teil, indem zum Beispiel die
+bestragskleinsten 90\% der Werte von $\hat{x}$ auf 0 setzten und so nur die größten 10\% behalten.
 
 \subsection{Wavelets}
 Bisher haben wir uns primär mit der Fourier-Transformation und ihren diskreten Varianten (DFT oder DCT) beschäftigt 
@@ -803,10 +858,14 @@ Ein wesentlicher Nachteil der Verwendung von Sinusoiden als Basis liegt in der E
 also dass jede Basisfunktion über dem gesamten Definitionsbereich \glqq{relevant}\grqq{} ist. Ohne einer 
 lokalen Begrenzung gehen dadurch örtliche Informationen verloren. 
 
-Außerdem kommt es bei der Annäherung von unstetigen Funktionen durch eine Fourier-Reihe zu Über- und Unterschwingern 
-an den Unstetigkeitsstellen:
+Außerdem kommt es bei der Annäherung von unstetigen Funktionen durch eine Fourier-Reihe zu
+Über- und Unterschwingern an den Unstetigkeitsstellen, welche auch bei hohem Approximationsgrad
+bestehen bleibt: \\
 
-\textcolor{red}{Gibbs Phänomen Beispiel für Rechteck-Funktionen einfügen}
+\begin{center}
+  \includegraphics{figures/gibbsSquareWave100.png} \\
+  \small Approximation eines Rechtecksignals mit Approximationsgrad 100
+\end{center}
 
 Um diesen Nachteilen entgegen zu wirken führen wir nun das Konzept der Wavelets als eine multiskalare Basis ein. 
 Sie erlaubt ähnlich wie die Fourier-Analyse auch eine Frequenzzerlegung gewährleistet gleichzeitig aber auch eine 
@@ -994,7 +1053,14 @@ Außerdem wollen wir auch hier wieder eine Orthonormalbasis, also fordern wir we
   Neben der Haar-Wavelet-Basis ergeben sich durch andere Wahlen von $\chi$ und $\psi$ neue Basismengen, Beispiele 
   hierfür sind Meyer-Wavelet, Mexikanischer Hut oder Daubechies D4-Wavelet:
 
-  \textcolor{red}{Wavelet Bilder einfügen.}
+  \begin{minipage}[t]{.49\textwidth}
+    \includegraphics[width=\linewidth]{figures/haar_wavelet.png}\\[4pt]
+    \includegraphics[width=\linewidth]{figures/mexican_hat_wavelet.png}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{.49\textwidth}
+    \includegraphics[width=\linewidth]{figures/daubechies_d4_wavelet.png}\\[4pt]
+    \includegraphics[width=\linewidth]{figures/meyer_wavelet.png}
+  \end{minipage}
 \end{colbox}
 
 Das Finden einer Basis für $W_{k}$ erlaubt das konstruieren einer neuen Basis von $V_{k+1}$, diese nennen wir 
