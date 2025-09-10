@@ -10,7 +10,9 @@
 
 script/build/
 .vscode/
-implementation/matlab/test.m
+implementation/
 tasks/
 tempimg/
 implementation/
+.gitignore
+git_acp

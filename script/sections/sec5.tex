@@ -119,9 +119,9 @@ interpretiert werden kann:
   $\ell=40cm$, dann erhalten wir:
   
   \begin{center}
-    \includegraphics[width=0.45\textwidth]{figures/zeit_sinus_ungedämpft.pdf}
+    \includegraphics[width=0.45\textwidth]{figures/zeit_sinus_ungedämpft.png}
     \hfill
-    \includegraphics[width=0.45\textwidth]{figures/spektrum_sinus_ungedämpft.pdf}
+    \includegraphics[width=0.45\textwidth]{figures/spektrum_sinus_ungedämpft.png}
   \end{center}
 
   Bei $f\approx 5$ ist ein klarer Peak zu erkennen, dies stimmt mit der echten Frequenz von 
@@ -138,9 +138,9 @@ interpretiert werden kann:
     Bei gleicher Pendellänge und einer Dämpfung $\delta>0$ ergibt sich 
 
     \begin{center}
-      \includegraphics[width=0.45\textwidth]{figures/zeit_sinus_gedämpft.pdf}
+      \includegraphics[width=0.45\textwidth]{figures/zeit_sinus_gedämpft.png}
       \hfill
-      \includegraphics[width=0.45\textwidth]{figures/spektrum_sinus_gedämpft.pdf}
+      \includegraphics[width=0.45\textwidth]{figures/spektrum_sinus_gedämpft.png}
     \end{center}
 
     Wir haben erneut einen Peak bei $f\approx 5$, aber bekommen einen deutlich sanfteren Abfall im Vergleich zur
@@ -151,9 +151,9 @@ interpretiert werden kann:
   Betrachte wir mehrere überlagerte Schwingungen, so ergeben sich mehrere Peaks:
   
   \begin{center}
-    \includegraphics[width=0.45\textwidth]{figures/zeit_sinus_summe.pdf}
+    \includegraphics[width=0.45\textwidth]{figures/zeit_sinus_summe.png}
     \hfill
-    \includegraphics[width=0.45\textwidth]{figures/spektrum_sinus_summe.pdf}
+    \includegraphics[width=0.45\textwidth]{figures/spektrum_sinus_summe.png}
   \end{center}
 
 \end{colbox}
@@ -593,7 +593,7 @@ Auch hier geben wir eine kurze Wiederholung zur Fourier-Reihe:
 \textit{Beweis.} Ergibt sich direkt durch die Verwendung der eulerschen Formel und der Euler-Darstellung 
 von $\sin$ und $\cos$.
 
-\begin{colboxBreakable}{Bemerkung}
+\begin{colbox}{Bemerkung}
   \begin{enumerate}
     \item 
     Wenn $f$ punktsymmetrisch bzgl. $x=\pi$ ist, d.h. $f(\pi+x) = -f(\pi-x)$, so gilt 
@@ -630,7 +630,7 @@ von $\sin$ und $\cos$.
     \end{align*}
     %
   \end{enumerate}
-\end{colboxBreakable}
+\end{colbox}
 
 \textbf{Sinustransformation:} \\
 Sei $f$ eine Funktion, welche auf den Intervallgrenzen von $I=[0,\pi]$ verschwindet, d.h. $f(0)=f(\pi)=0$, so kann 
@@ -677,8 +677,6 @@ und es ergibt sich eine Sinustransformation
 In der Anwendung auf eine diskrete Zeitreihe $x_0,\dots,x_{N-1}$, zum Beispiel Pixelreihen eines Bildes, ergeben 
 sich verschiedene Möglichkeiten der spiegelsymmetrischen Fortsetzung und somit ergeben sich auch verschiedene 
 Versionen der diskreten Kosinustransformation (DCT):
-
-\textcolor{red}{auf beiden Seiten erweitern}
 
 \textbf{DCT-I}: \\
 Im ersten Fall setzten wir unsere Punkte einem Rand spiegelsymmetrisch bzgl. des Randpunktes fort, d.h. 
@@ -857,6 +855,8 @@ Anteilen unseres Signals und verwenden dabei glatte Basisfunktionen.
 Ein wesentlicher Nachteil der Verwendung von Sinusoiden als Basis liegt in der Eigenschaft der globalen Ausdehnung, 
 also dass jede Basisfunktion über dem gesamten Definitionsbereich \glqq{relevant}\grqq{} ist. Ohne einer 
 lokalen Begrenzung gehen dadurch örtliche Informationen verloren. 
+
+\newpage
 
 Außerdem kommt es bei der Annäherung von unstetigen Funktionen durch eine Fourier-Reihe zu
 Über- und Unterschwingern an den Unstetigkeitsstellen, welche auch bei hohem Approximationsgrad

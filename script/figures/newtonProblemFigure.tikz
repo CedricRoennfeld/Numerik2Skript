@@ -1,7 +1,7 @@
 
 \begin{tikzpicture}
 
-% Startwert
+% Macros
 \pgfmathsetmacro{\xzero}{1.5}
 \pgfmathsetmacro{\fxzero}{\xzero * exp(-\xzero^2)}
 \pgfmathsetmacro{\dfxzero}{exp(-\xzero^2) * (1 - 2 * \xzero^2)}
@@ -33,30 +33,28 @@
     }
 ]
 
-  % Funktion f(x) = x*exp(-x^2)
+  % Function f(x) = x*exp(-x^2)
   \addplot[thick, black] {x * exp(-x^2)} node[pos=0.2, above left] {$f(x)$};
 
-  % Punkte (x0, x1, x2)
+  % Points
   \addplot[only marks, mark=*, mark size=2pt] coordinates {
   (\xzero, \fxzero)
   (\xone, \fxone)
   (\xtwo, \fxtwo)
   };
   
-  % Beschriftung der x-Werte
+  % Label
   \node at (axis cs:\xzero,-0.065) {$x_0$};
   \node at (axis cs:\xone,-0.065) {$x_1$};
   \node at (axis cs:\xtwo,-0.065) {$x_2$};
   \node at (axis cs:\xthree,-0.065) {$x_3$};
 
-  % Tangente bei x0
+  % Tangents
   \addplot[dashed, domain=\xzero-1:\xzero+1] {\fxzero + \dfxzero*(x - \xzero)};
-  % Tangente bei x1
   \addplot[dashed, domain=\xone-1:\xone+1] {\fxone + \dfxone*(x - \xone)};
-  % Tangente bei x2
   \addplot[dashed, domain=\xtwo-1:\xtwo+1] {\fxtwo + \dfxtwo*(x - \xtwo)};
   
-  % Pfeile
+  % Arrows
   %\draw[->, thick] (axis cs:\xzero,\fxzero) -- (axis cs:\xone,0);
   %\draw[->, thick] (axis cs:\xone,\fxone) -- (axis cs:\xtwo,0);
   %\draw[->, thick] (axis cs:\xtwo,\fxtwo) -- (axis cs:\xthree,0);

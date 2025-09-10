@@ -1,19 +1,19 @@
 \begin{tikzpicture}
-  % Stabil: Schale mit Ball im Tal
+  % Stable 
   \begin{scope}
     \draw[thick] (-2,1) .. controls (-1,-0.75) and (1,-0.75) .. (2,1);
     \filldraw[black] (0,-0.2) circle (2.5pt);
     \node at (0,-1.4) {\small stabil};
   \end{scope}
   
-  % Instabil: Kuppe mit Ball oben und Rollpfeil
+  % Instable
   \begin{scope}[xshift=6cm]
     \draw[thick] (-1.5,0) .. controls (-1,3) and (1,3) .. (1.5,0);
     \filldraw[black] (0,2.35) circle (2.5pt);
+    \node at (0,-1.4) {\small instabil};
     
-    % Pfeil: horizontal und dann nach unten
+    % Arrow
     \draw[thick,->,rounded corners=6pt] (0,2.35) -- (0.4,2.3) -- (0.8,2);
     
-    \node at (0,-1.4) {\small instabil};
   \end{scope}
 \end{tikzpicture}

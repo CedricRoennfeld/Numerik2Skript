@@ -1,12 +1,12 @@
 \begin{tikzpicture}[>=Stealth, node distance=2.5cm, every node/.style={circle, draw, minimum size=1cm}, auto]
 
-% Knoten
+% Nodes
 \node (1) at (0,2.5) {1};
 \node (2) at (0,0) {2};
 \node (3) at (2.5,2.5) {3};
 \node (4) at (2.5,0) {4};
 
-% Kanten
+% Edges
 \draw[->, bend left=15] (1) to (3);
 \draw[->, bend left=15] (3) to (1); 
 \draw[->, bend left=15] (1) to (4); 
